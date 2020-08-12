@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Many Mods",
-  "description": "This is mod which combines the following mods into a single JAR : appleskin, modmenu, right-click-clear, CleanView, clear-skies, connected-block-textures, experimentaway, fastbench, flighthud, horse-stats, MissingBits, nomoreglowingpots, notenoughcrashes",
+  "description": "This is mod which combines the following mods into a single JAR : appleskin, modmenu, right-click-clear, CleanView, clear-skies, connected-block-textures, experimentaway, fastbench, flighthud, horse-stats, MissingBits, notenoughcrashes",
   "authors": [
     "H1ppyChick & Torphedo"
   ],
@@ -34,7 +34,6 @@
    {"file": "nested/flighthud-1.16.1-fabric-5.jar"},
    {"file": "nested/horse-stats-vanilla-3.0.0_MIN_MAX.jar"},
    {"file": "nested/MissingBits-v1.16.1Fabricb2.jar"},
-   {"file": "nested/nomoreglowingpots-1.0.2.jar"},
    {"file": "nested/notenoughcrashes-2.1.41.16.1jar"}
 ],
   "depends": {
