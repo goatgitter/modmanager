@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "manymods",
-  "version": "1.0.2",
+  "version": "1.0.3",
 
   "name": "Many Mods",
   "description": "This is mod which combines the following mods into a single JAR : appleskin, modmenu, right-click-clear, clear-skies, connected-block-textures, experimentaway, fastbench, flighthud, horse-stats, notenoughcrashes",
@@ -22,18 +22,7 @@
       "combined.ManyMods"
     ]
   },
-    "jars": [
-   {"file": "nested/appleskin-mc1.16-fabric-1.0.111.jar"},
-   {"file": "nested/modmenu-1.14.5build.30.jar"},
-   {"file": "nested/right-click-clear-2.0.2.jar"},
-   {"file": "nested/clear-skies-mc116-1.4.44.jar"},
-   {"file": "nested/connected-block-textures-0.1.21.16.jar"},
-   {"file": "nested/experimentaway-1.0.0.jar"},
-   {"file": "nested/fastbench-2.3.jar"},
-   {"file": "nested/flighthud-1.16.1-fabric-5.jar"},
-   {"file": "nested/horse-stats-vanilla-3.0.0_MIN_MAX.jar"},
-   {"file": "nested/notenoughcrashes-2.1.41.16.1jar"}
-],
+  "jars": [{"file": "nested/appleskin-mc1.16-fabric-1.0.111.jar"}, {"file": "nested/clear-skies-mc116-1.4.44.jar"}, {"file": "nested/connected-block-textures-0.1.21.16.jar"}, {"file": "nested/experimentaway-1.0.0.jar"}, {"file": "nested/fastbench-2.3.jar"}, {"file": "nested/flighthud-1.16.1-fabric-5.jar"}, {"file": "nested/horse-stats-vanilla-3.0.0_MIN_MAX.jar"}, {"file": "nested/modmenu-1.14.5build.30.jar"}, {"file": "nested/notenoughcrashes-2.1.41.16.1.jar"}, {"file": "nested/right-click-clear-2.0.2.jar"}],
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": "*",

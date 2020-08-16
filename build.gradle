@@ -9,7 +9,10 @@ targetCompatibility = JavaVersion.VERSION_1_8
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
-
+nestedJars = []
+fileTree(dir: 'nested', include: '**/*.jar').visit { FileVisitDetails details ->
+	nestedJars.add('{"file": "nested/' + details.file.name + '"}')
+}
 dependencies {
 	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -24,11 +27,13 @@ dependencies {
 }
 
 processResources {
+	Map<String, String> expandMap = [version:project.version, nestedJars: project.nestedJars]
 	inputs.property "version", project.version
-
+	inputs.property "nestedJars", project.nestedJars
+	
 	from(sourceSets.main.resources.srcDirs) {
 		include "fabric.mod.json"
-		expand "version": project.version
+		expand expandMap
 	}
 
 	from(sourceSets.main.resources.srcDirs) {
