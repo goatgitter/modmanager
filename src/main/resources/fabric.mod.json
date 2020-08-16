@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Many Mods",
-  "description": "This is mod which combines the following mods into a single JAR : appleskin, modmenu, right-click-clear, clear-skies, connected-block-textures, experimentaway, fastbench, flighthud, horse-stats, notenoughcrashes",
+  "description": "This is mod which combines many mods into a single JAR file.",
   "authors": [
     "H1ppyChick & Torphedo"
   ],
