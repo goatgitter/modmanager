@@ -13,6 +13,7 @@ nestedJars = []
 fileTree(dir: 'nested', include: '**/*.jar').visit { FileVisitDetails details ->
 	nestedJars.add('{"file": "nested/' + details.file.name + '"}')
 }
+def jarName = "${archivesBaseName}-${version}.jar"
 dependencies {
 	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -56,10 +57,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 	from sourceSets.main.allSource
 }
 
-//jar {
-//	from "LICENSE"
-//}
-
 jar {
 	into 'nested', {
 	  from 'nested'
@@ -85,4 +82,19 @@ publishing {
 		// uncomment to publish to the local maven
 		// mavenLocal()
 	}
+}
+
+// Task to copy the latest mod jar file to the minecraft mod folder.
+task('publishMod', type: Copy) {
+	def fileName = "$buildDir/libs/$jarName"
+	def appDataFolder = System.getenv('APPDATA')
+	from(file(fileName))
+	into("$appDataFolder/.minecraft/mods")
+}
+
+// Task to build the mod and copy it to the minecraft mod folder
+task all{
+	dependsOn 'buildNeeded'
+	dependsOn 'publishMod'
+	tasks.findByName('publishMod').mustRunAfter 'buildNeeded'
 }
