@@ -16,3 +16,8 @@
 /.gradle/checksums/md5-checksums.bin
 /.gradle/checksums/sha1-checksums.bin
 /.settings/org.eclipse.jdt.core.prefs
+/.gradle/
+/build/
+/run/
+/scripts/*.ps1
+/.classpath

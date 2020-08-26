@@ -1,0 +1,7 @@
+{
+  "manymods.mixinBtnTooltip": "Disable...",
+  "manymods.error": "Error",
+  "manymods.success": "Success",
+  "manymods.unload.error.desc": "Problem creating unload list",
+  "manymods.unload.success.desc": "Restart required to unload"
+}

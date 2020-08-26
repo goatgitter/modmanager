@@ -18,11 +18,11 @@
 
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "combined.ManyMods"
-    ]
-  },
+         "main": ["combined.ManyMods"],
+         "preLaunch": ["combined.ManyModsPreLaunch"]
+    },
   "jars": ${nestedJars},
+  "mixins": ["manymods.mixins.json"],
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": "*",

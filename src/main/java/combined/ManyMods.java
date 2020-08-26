@@ -1,5 +1,6 @@
 package combined;
 
+import combined.util.LogUtils;
 import net.fabricmc.api.ModInitializer;
 /**
  * 
@@ -10,8 +11,12 @@ import net.fabricmc.api.ModInitializer;
  * See README.md
  */
 public class ManyMods implements ModInitializer {
+	private static LogUtils LOG = new LogUtils("ManyMods");
+	
 	@Override
 	public void onInitialize() {
-		// Do Nothing
+		LOG.enter("onInitialize");
+		// No mod setup currently
+		LOG.exit("onInitialize");
 	}
 }
