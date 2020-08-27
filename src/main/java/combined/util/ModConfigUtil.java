@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
@@ -185,19 +186,35 @@ public class ModConfigUtil {
 			e.printStackTrace();
 		}
 		
-		
-		
 	}
 	
 	private static void initMixins()
 	{
 		try {
 			FieldUtils.writeField(fl, "frozen", false, true);
-			fl.freeze();
-			fl.getAccessWidener().loadFromMods();
+		} catch (IllegalAccessException e) {
+			LOG.warn("Problem updating frozen field");
+			e.printStackTrace();
+		}
+		fl.freeze();
+		fl.getAccessWidener().loadFromMods();
+		try {
+			LOG.info("Clearing init properties for Mixin Bootstrap");
+			Object clearInit = null;
+			GlobalProperties.put(GlobalProperties.Keys.INIT, clearInit);
+			FieldUtils.writeStaticField(MixinBootstrap.class,  "initialised", false, true);
+			FieldUtils.writeStaticField(MixinBootstrap.class,  "platform", null, true);
+			
 			LOG.info("Calling mixin bootstrap");
 			MixinBootstrap.init();
+		}
+		catch(Exception except) {
+			LOG.warn("Unable to init mixin boot strap");
+			except.printStackTrace();
+		}
 			
+		try
+		{
 			Constructor<FabricMixinBootstrap> c = FabricMixinBootstrap.class.getDeclaredConstructor();
 			c.setAccessible(true);
 			FabricMixinBootstrap fmb = c.newInstance();
@@ -212,6 +229,7 @@ public class ModConfigUtil {
 			LOG.warn("Problem initalizing Mixins");
 			e.printStackTrace();
 		}
+		
 	}
 	
 	@SuppressWarnings("unchecked")
