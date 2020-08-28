@@ -35,17 +35,29 @@ import net.fabricmc.loader.discovery.ModResolver;
 import net.fabricmc.loader.launch.common.FabricMixinBootstrap;
 import net.fabricmc.loader.metadata.ModMetadataV1;
 import net.fabricmc.loader.metadata.ModMetadataV1.CustomValueContainer;
+import net.fabricmc.loader.metadata.NestedJarEntry;
 
+/**
+ * @author h1ppyChic
+ * 
+ * I should probably refactor this...
+ * This is class of helper methods for changing the mod configurations during load (prelaunch)
+ * 
+ */
 public class ModConfigUtil {
-	private static boolean startedManyModLoad = false;
-	private static LogUtils LOG = new LogUtils("ModConfigUtil");	
+	// Constants
 	private static final String UNLOAD_LIST = "unloadlist.txt";
 	private static final String LOAD_LIST = "loadlist.txt";
 	public static final String MOD_ID = "manymods";
 	private static final String LOAD_JAR_DIR = "loadedJars/";
 	private static final String MM_PARENT_KEY = "modmenu:parent";
+	// Instance variables (fields)
+	private static boolean startedManyModLoad = false;
+	private static LogUtils LOG = new LogUtils("ModConfigUtil");
 	private static FabricLoader fl = (FabricLoader) net.fabricmc.loader.api.FabricLoader.getInstance();
 	private static CombinedLoader cl = new CombinedLoader();
+	
+	// Methods
 	public static ModMetadata getMetadata(ModListEntry mod)
 	{
 		ModMetadata mmd = null;
@@ -134,6 +146,53 @@ public class ModConfigUtil {
 		cl.removeJarFromFile(loadlistPath, srcJarPath);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static void loadMods() throws IOException, ModResolutionException
+	{
+		LOG.enter("loadMods");
+		
+		// Prevent an infinite loop
+		if (!startedManyModLoad)
+		{
+			startedManyModLoad = true;
+			extractLoadedMods();
+			try {
+				Map<String, ModContainer> oldModMap = (Map<String, ModContainer>) FieldUtils.readDeclaredField(fl, "modMap", true);
+				List<ModContainer> oldMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
+				Object oldGameDir = FieldUtils.readDeclaredField(fl, "gameDir", true);
+				Object oldEntrypointStorage = FieldUtils.readDeclaredField(fl, "entrypointStorage", true);
+				Map<String, List<?>> oldEntries = (Map<String, List<?>>)FieldUtils.readDeclaredField(oldEntrypointStorage, "entryMap", true);
+				Map<String, LanguageAdapter> oldAdapterMap = (Map<String, LanguageAdapter>) FieldUtils.readDeclaredField(fl, "adapterMap", true);
+				
+				addNewMods(oldModMap, oldEntrypointStorage);
+				initMixins();
+				
+				updateLoaderFields(oldModMap, oldMods, oldAdapterMap, oldGameDir,
+						oldEntrypointStorage, oldEntries);
+			} catch (IllegalAccessException e1) {
+				LOG.warn("How is this possible?");
+				e1.printStackTrace();
+			}
+			
+		}
+		
+		LOG.exit("loadMods");
+	}
+	
+	public static void finishMixinBootstrapping()
+	{
+		try {
+			Method m = MixinEnvironment.class.getDeclaredMethod("gotoPhase", MixinEnvironment.Phase.class);
+			m.setAccessible(true);
+			m.invoke(null, MixinEnvironment.Phase.INIT);
+			m.invoke(null, MixinEnvironment.Phase.DEFAULT);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	// Private methods
+	
 	private static void unZipLoadedJars(String jarFileName, String destDirName) throws IOException
 	{
 		JarFile jar = new JarFile(jarFileName);
@@ -187,7 +246,7 @@ public class ModConfigUtil {
 				}
 			}
 		} catch (IllegalAccessException | ModResolutionException | NoSuchMethodException | InvocationTargetException e) {
-			LOG.info("Problem adding new mods");
+			LOG.warn("Problem adding new mods");
 			e.printStackTrace();
 		}
 		
@@ -204,13 +263,13 @@ public class ModConfigUtil {
 		fl.freeze();
 		fl.getAccessWidener().loadFromMods();
 		try {
-			LOG.info("Clearing init properties for Mixin Bootstrap");
+			LOG.debug("Clearing init properties for Mixin Bootstrap");
 			Object clearInit = null;
 			GlobalProperties.put(GlobalProperties.Keys.INIT, clearInit);
 			FieldUtils.writeStaticField(MixinBootstrap.class,  "initialised", false, true);
 			FieldUtils.writeStaticField(MixinBootstrap.class,  "platform", null, true);
 			
-			LOG.info("Calling mixin bootstrap");
+			LOG.debug("Calling mixin bootstrap");
 			MixinBootstrap.init();
 		}
 		catch(Exception except) {
@@ -238,11 +297,43 @@ public class ModConfigUtil {
 	}
 	
 	@SuppressWarnings("unchecked")
+	private static void addParentToMod(ModContainer mod)
+	{
+		if (mod != null)
+		{
+			// Add custom metadata to show the loaded mod as a child of many mods.
+			ModMetadataV1 mm = (ModMetadataV1) mod.getMetadata();
+			CustomValueContainer cvc;
+			try {
+				cvc = (CustomValueContainer) FieldUtils.readDeclaredField(mm, "custom", true);
+				Map<String, CustomValue> cvUnmodifiableMap = (Map<String, CustomValue>) FieldUtils.readDeclaredField(cvc, "customValues", true);
+				Map<String, CustomValue> cvMap = new HashMap<String, CustomValue> (cvUnmodifiableMap);
+				CustomValue cv = new CustomValueImpl.StringImpl(MOD_ID);
+				cvMap.put(MM_PARENT_KEY, cv);
+				FieldUtils.writeField(cvc, "customValues", Collections.unmodifiableMap(cvMap), true);
+				FieldUtils.writeField(mm, "custom", cvc, true);
+			} catch (IllegalAccessException e) {
+				LOG.warn("Problem adding parent to mod => " + mod.getInfo().getId());
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
 	private static void updateLoaderFields(Map<String, ModContainer> oldModMap, List<ModContainer> oldMods, Map<String, LanguageAdapter> oldAdapterMap, Object oldGameDir,
 			Object oldEntrypointStorage, Map<String, List<?>> oldEntries)
 	{
 		
 		try {
+			// Add parent tag to any nested mods in many mods
+			ModContainer manyModsMod = oldModMap.get(MOD_ID);
+			for(NestedJarEntry nestedJar: manyModsMod.getInfo().getJars())
+			{
+				String jarFileName = cl.getNestedJarFileName(nestedJar);
+				ModContainer nestedMod = cl.getModForJar(jarFileName, oldMods);
+				addParentToMod(nestedMod);
+			}
 			List<ModContainer> changedMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
 			for(ModContainer mod : changedMods)
 			{
@@ -251,17 +342,8 @@ public class ModConfigUtil {
 				// Don't add the fabric api again
 				if (!cl.isRequiredMod(modId) && !oldModMap.containsKey(mod.getInfo().getId()))
 				{
-					// Add custom metadata to show the loaded mod as a child of many mods.
-					ModMetadataV1 mm = (ModMetadataV1) mod.getMetadata();
-					CustomValueContainer cvc = (CustomValueContainer) FieldUtils.readDeclaredField(mm, "custom", true);
-					Map<String, CustomValue> cvUnmodifiableMap = (Map<String, CustomValue>) FieldUtils.readDeclaredField(cvc, "customValues", true);
-					Map<String, CustomValue> cvMap = new HashMap<String, CustomValue> (cvUnmodifiableMap);
-					CustomValue cv = new CustomValueImpl.StringImpl(MOD_ID);
-					cvMap.put(MM_PARENT_KEY, cv);
-					FieldUtils.writeField(cvc, "customValues", Collections.unmodifiableMap(cvMap), true);
-					FieldUtils.writeField(mm, "custom", cvc, true);
-					
 					LOG.debug("Adding!" + modId);
+					addParentToMod(mod);
 					oldModMap.put(modId, mod);
 					oldMods.add(mod);
 					
@@ -310,56 +392,13 @@ public class ModConfigUtil {
 		{
 			Files.createDirectory(jarDir);
 		}
-		LOG.info("Unzipping mod JAR");
+		LOG.debug("Unzipping mod JAR");
 		unZipLoadedJars(jarPath.toString(), jarDir.toString());
 		} catch (IOException e) {
-			LOG.info("Problem extracting LoadedMods");
+			LOG.warn("Problem extracting LoadedMods");
 			e.printStackTrace();
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static void loadMods() throws IOException, ModResolutionException
-	{
-		LOG.enter("loadMods");
-		
-		// Prevent an infinite loop
-		if (!startedManyModLoad)
-		{
-			startedManyModLoad = true;
-			extractLoadedMods();
-			try {
-				Map<String, ModContainer> oldModMap = (Map<String, ModContainer>) FieldUtils.readDeclaredField(fl, "modMap", true);
-				List<ModContainer> oldMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
-				Object oldGameDir = FieldUtils.readDeclaredField(fl, "gameDir", true);
-				Object oldEntrypointStorage = FieldUtils.readDeclaredField(fl, "entrypointStorage", true);
-				Map<String, List<?>> oldEntries = (Map<String, List<?>>)FieldUtils.readDeclaredField(oldEntrypointStorage, "entryMap", true);
-				Map<String, LanguageAdapter> oldAdapterMap = (Map<String, LanguageAdapter>) FieldUtils.readDeclaredField(fl, "adapterMap", true);
-						
-				addNewMods(oldModMap, oldEntrypointStorage);
-				initMixins();
-				
-				updateLoaderFields(oldModMap, oldMods, oldAdapterMap, oldGameDir,
-						oldEntrypointStorage, oldEntries);
-			} catch (IllegalAccessException e1) {
-				LOG.warn("How is this possible?");
-				e1.printStackTrace();
-			}
-			
-		}
-		
-		LOG.exit("loadMods");
-	}
 	
-	public static void finishMixinBootstrapping()
-	{
-		try {
-			Method m = MixinEnvironment.class.getDeclaredMethod("gotoPhase", MixinEnvironment.Phase.class);
-			m.setAccessible(true);
-			m.invoke(null, MixinEnvironment.Phase.INIT);
-			m.invoke(null, MixinEnvironment.Phase.DEFAULT);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
 }

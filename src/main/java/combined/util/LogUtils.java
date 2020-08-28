@@ -5,12 +5,24 @@ import java.lang.reflect.Method;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * @author h1ppyChick
+ *  This is a utility class for generating log messages to the log file.
+ *  
+ *  Psst ....
+ *  The standard log file is "{yourUserName}\AppData\Roaming\.minecraft\logs\latest.log
+ *  The debug log file is "{yourUserName}\AppData\Roaming\.minecraft\logs\debug.log
+ *  	OR {yourModName}\run\logs\debug.log
+ */
 public class LogUtils {
-	private static final Logger LOG = LogManager.getFormatterLogger();
-	private String prefixName = getClass().getSimpleName();
+	// Constants
 	private static final String ENTER_MSG ="Entering ";
 	private static final String EXIT_MSG ="Exiting ";
 	public static final String MOD_ID = "manymods";
+	// Instance Variables (fields)
+	private static final Logger LOG = LogManager.getFormatterLogger();
+	private String prefixName = getClass().getSimpleName();
+	// Constructors
 	public LogUtils()
 	{
 		
@@ -21,6 +33,7 @@ public class LogUtils {
 		enterClass();
 	}
 	
+	// Methods
 	public void setPrefixName(String name)
 	{
 		prefixName = name;
@@ -33,7 +46,7 @@ public class LogUtils {
 	
 	public String getPrefixMsg()
 	{
-		return "[" + prefixName + "] ";
+		return "[" + MOD_ID + "->" + prefixName + "] ";
 	}
 	
 	public void info(String msg)
@@ -101,6 +114,12 @@ public class LogUtils {
 		LOG.debug(getLogMsg(EXIT_MSG + msg));
 	}
 	
+	
+	/**
+	 * This is really helpful when you are trying to figure out the field descriptors
+	 * for mixin classes.
+	 * @param classType - The type you want to know stuff about.
+	 */
 	public void logClassMethodInfo(Class<?> classType)
 	{
 		for(Method m : classType.getMethods())

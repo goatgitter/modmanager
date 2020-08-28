@@ -23,8 +23,18 @@ import org.apache.logging.log4j.Logger;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.ModContainer;
+import net.fabricmc.loader.metadata.NestedJarEntry;
 
+/**
+ * @author h1ppyChick
+ * I guess I should add some comments, huh?
+ * 
+ * This class contains many helper methods for loading the combined mods in a 
+ * user-friendly way.
+ *
+ */
 public class CombinedLoader {
+	// Constants
 	private static final String COMBINED_MODS_DIR = "manyMods\\";
 	private static final String MODS_DIR = "mods\\";
 	public static final Pattern FABRIC_PATTERN = Pattern.compile("^fabric-.*(-v\\d+)$");
@@ -35,12 +45,12 @@ public class CombinedLoader {
 	public static final String BASE_MOD_ID = "minecraft";
 	public static List<String> HIDDEN_MODS = Arrays.asList(API_MOD_ID, INDIGO_MOD_ID, LOADER_MOD_ID, FABRIC_MOD_ID, BASE_MOD_ID);
 	private static final Logger LOG = LogManager.getFormatterLogger("CombinedLoader");
-
+	// Instance variables (fields)
 	private static FabricLoader fl;
 	private static List<ModContainer> requiredMods = new ArrayList<ModContainer>();
 	private static Map<String, ModContainer> requiredModsMap = new HashMap<>();
 	
-
+	// Constructor
 	@SuppressWarnings("deprecation")
 	public CombinedLoader() {
 		fl = (FabricLoader) net.fabricmc.loader.api.FabricLoader.getInstance();	
@@ -55,6 +65,7 @@ public class CombinedLoader {
 		
 	}
 
+	// Methods
 	public Path getModsDir() {
 		Path baseModDir = getModsBaseDir();
 		Path combinedModsDir = baseModDir.resolve(COMBINED_MODS_DIR);
@@ -105,6 +116,41 @@ public class CombinedLoader {
 			}
 		}
 		return jarPath;
+	}
+	
+	public ModContainer getModForJar(String jarFileName, List<ModContainer> mods)
+	{
+		String fn = jarFileName.toLowerCase();
+		LOG.debug("Looking up mod id for jar file name =>" + fn +".");
+		ModContainer jarMod = null;
+		for (ModContainer mod: mods)
+		{
+			String modId = mod.getInfo().getId();
+			if (!isRequiredMod(modId))
+			{
+				LOG.debug("Checking mod =>" + modId);
+				if(fn.contains(modId))
+				{
+					String versionString = mod.getInfo().getVersion().getFriendlyString();
+					LOG.debug("Mod version => " + versionString);
+					if (fn.contains(versionString));
+					{
+						LOG.debug("Found " + jarFileName + " => " + modId);
+						jarMod = mod;
+						break;
+					}
+				}
+			}
+		}
+			
+		return jarMod;
+	}
+	
+	public String getNestedJarFileName(NestedJarEntry nestedJar)
+	{
+		String fn = nestedJar.getFile();
+		String returnName = fn.substring(fn.lastIndexOf("/") +1, fn.length());
+		return returnName;
 	}
 	
 	public Path getLoadFile(String loadList)
