@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -26,11 +27,14 @@ import io.github.prospector.modmenu.gui.ModListEntry;
 import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.ModContainer;
 import net.fabricmc.loader.api.LanguageAdapter;
+import net.fabricmc.loader.api.metadata.CustomValue;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.discovery.ModCandidate;
 import net.fabricmc.loader.discovery.ModResolutionException;
 import net.fabricmc.loader.discovery.ModResolver;
 import net.fabricmc.loader.launch.common.FabricMixinBootstrap;
+import net.fabricmc.loader.metadata.ModMetadataV1;
+import net.fabricmc.loader.metadata.ModMetadataV1.CustomValueContainer;
 
 public class ModConfigUtil {
 	private static boolean startedManyModLoad = false;
@@ -39,6 +43,7 @@ public class ModConfigUtil {
 	private static final String LOAD_LIST = "loadlist.txt";
 	public static final String MOD_ID = "manymods";
 	private static final String LOAD_JAR_DIR = "loadedJars/";
+	private static final String MM_PARENT_KEY = "modmenu:parent";
 	private static FabricLoader fl = (FabricLoader) net.fabricmc.loader.api.FabricLoader.getInstance();
 	private static CombinedLoader cl = new CombinedLoader();
 	public static ModMetadata getMetadata(ModListEntry mod)
@@ -246,6 +251,16 @@ public class ModConfigUtil {
 				// Don't add the fabric api again
 				if (!cl.isRequiredMod(modId) && !oldModMap.containsKey(mod.getInfo().getId()))
 				{
+					// Add custom metadata to show the loaded mod as a child of many mods.
+					ModMetadataV1 mm = (ModMetadataV1) mod.getMetadata();
+					CustomValueContainer cvc = (CustomValueContainer) FieldUtils.readDeclaredField(mm, "custom", true);
+					Map<String, CustomValue> cvUnmodifiableMap = (Map<String, CustomValue>) FieldUtils.readDeclaredField(cvc, "customValues", true);
+					Map<String, CustomValue> cvMap = new HashMap<String, CustomValue> (cvUnmodifiableMap);
+					CustomValue cv = new CustomValueImpl.StringImpl(MOD_ID);
+					cvMap.put(MM_PARENT_KEY, cv);
+					FieldUtils.writeField(cvc, "customValues", Collections.unmodifiableMap(cvMap), true);
+					FieldUtils.writeField(mm, "custom", cvc, true);
+					
 					LOG.debug("Adding!" + modId);
 					oldModMap.put(modId, mod);
 					oldMods.add(mod);
