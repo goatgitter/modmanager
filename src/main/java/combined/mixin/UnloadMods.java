@@ -1,8 +1,5 @@
 package combined.mixin;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -10,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import combined.util.CombinedLoader;
-import combined.util.LogUtils;
-import combined.util.ModConfigUtil;
+import combined.ManyMods;
+import combined.util.Log;
+import combined.util.ModConfig;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModMenuTexturedButtonWidget;
 import io.github.prospector.modmenu.gui.ModsScreen;
@@ -26,23 +23,16 @@ import net.minecraft.util.Identifier;
 
 @Mixin(ModsScreen.class)
 public class UnloadMods extends Screen{
-	private static final LogUtils LOG = new LogUtils("UnloadMods");
-	private static final String MOD_ID = "manymods";
+	private static final Log LOG = new Log("UnloadMods");
 	private int paneY = 48;
 	private int buttonHeight = 20;
 	private int buttonWidth = 32;
 	private int canvasHeight = 64;
 	private ModListEntry selected;
-	private static final TranslatableText UNLOAD_TOOLTIP_TEXT = new TranslatableText(MOD_ID + ".mixinBtnTooltip");
-	private static final TranslatableText REFRESH_TOOLTIP_TEXT = new TranslatableText(MOD_ID + ".mixinBtnTooltip");
-	private static final TranslatableText ERROR = new TranslatableText(MOD_ID + ".error");
-	private static final TranslatableText UNLOAD_ERROR_DESC = new TranslatableText(MOD_ID + ".unload.error.desc");
-	private static final TranslatableText SUCCESS = new TranslatableText(MOD_ID + ".success");
-	private static final TranslatableText UNLOAD_SUCCESS_DESC = new TranslatableText(MOD_ID + ".unload.success.desc");
-	private static final Identifier UNLOAD_BTN_IMG = new Identifier(MOD_ID, "button.png");
-	private static final Identifier REFRESH_BTN_IMG = new Identifier(MOD_ID, "refresh.png");
-	private CombinedLoader cl = new CombinedLoader();
-	
+	private static final TranslatableText TEXT_UNLOAD_TOOLTIP = new TranslatableText(ManyMods.MOD_ID + ".unload.tooltip");
+	private static final TranslatableText TEXT_REFRESH_TOOLTIP = new TranslatableText(ManyMods.MOD_ID + ".refresh.tooltip");
+	private static final Identifier UNLOAD_BTN_IMG = new Identifier(ManyMods.MOD_ID, "button.png");
+	private static final Identifier REFRESH_BTN_IMG = new Identifier(ManyMods.MOD_ID, "refresh.png");
 	public UnloadMods(Text title) {
 		super(title);
 	}
@@ -62,37 +52,23 @@ public class UnloadMods extends Screen{
 		// Create the unload mixin button with a lambda
 		ButtonWidget mixinButton = new ModMenuTexturedButtonWidget(getButtonX(1), paneY, buttonWidth, buttonHeight, 0, 0, UNLOAD_BTN_IMG, buttonWidth, canvasHeight, button -> 
 		{
-			boolean success = true;
 			LOG.debug("Requested unloading of mod " + selected);
-			try {
-				ModConfigUtil.requestUnload(selected);
-			
-			} catch (IOException e) {
-				Path src = cl.getModJarPath(selected);
-				
-				LOG.warn("Failed to copy mod from " + src );
-				e.printStackTrace();
-				SystemToast.add(client.getToastManager(), SystemToast.Type.PACK_COPY_FAILURE, ERROR, UNLOAD_ERROR_DESC);
-				success = false;
-			}
-			
-			if (success)
-			{
-				SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, SUCCESS, UNLOAD_SUCCESS_DESC);
-			}
+			ModConfig.requestUnload(selected);
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ManyMods.TEXT_SUCCESS, ManyMods.TEXT_RESTART);
 		},
-				UNLOAD_TOOLTIP_TEXT, (buttonWidget, matrices, mouseX, mouseY) -> {
+		TEXT_UNLOAD_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> 
+		{
 			// Cast to the correct type to access the isJustHovered method.
 			ModMenuTexturedButtonWidget button = (ModMenuTexturedButtonWidget) buttonWidget;
 			if (button.isJustHovered()) {
-				this.renderTooltip(matrices, UNLOAD_TOOLTIP_TEXT, mouseX, mouseY);
+				this.renderTooltip(matrices, TEXT_UNLOAD_TOOLTIP, mouseX, mouseY);
 			} else if (button.isFocusedButNotHovered()) {
-				this.renderTooltip(matrices, UNLOAD_TOOLTIP_TEXT, button.x, button.y);
+				this.renderTooltip(matrices, TEXT_UNLOAD_TOOLTIP, button.x, button.y);
 			}
 		}) {
 			@Override
 			public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-				visible = ModConfigUtil.canTurnOff(selected);
+				visible = ModConfig.canTurnOff(selected);
 				this.x = getButtonX(1);
 				super.render(matrices, mouseX, mouseY, delta);
 			}
@@ -115,13 +91,13 @@ public class UnloadMods extends Screen{
 			LOG.info("Requested mod reload");
 			
 		},
-		REFRESH_TOOLTIP_TEXT, (buttonWidget, matrices, mouseX, mouseY) -> {
+		TEXT_REFRESH_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
 			// Cast to the correct type to access the isJustHovered method.
 			ModMenuTexturedButtonWidget button = (ModMenuTexturedButtonWidget) buttonWidget;
 			if (button.isJustHovered()) {
-				this.renderTooltip(matrices, REFRESH_TOOLTIP_TEXT, mouseX, mouseY);
+				this.renderTooltip(matrices, TEXT_REFRESH_TOOLTIP, mouseX, mouseY);
 			} else if (button.isFocusedButNotHovered()) {
-				this.renderTooltip(matrices, REFRESH_TOOLTIP_TEXT, button.x, button.y);
+				this.renderTooltip(matrices, TEXT_REFRESH_TOOLTIP, button.x, button.y);
 			}
 		}) {
 			@Override
@@ -143,7 +119,7 @@ public class UnloadMods extends Screen{
 	{
 		// Figure out where to add the mixin Button
 		int newX = (width - (buttonWidth * addingBtnNum) ) - 2;
-		if (ModConfigUtil.isConfigurable(selected))
+		if (ModConfig.isConfigurable(selected))
 		{
 			newX -= 24;
 		}

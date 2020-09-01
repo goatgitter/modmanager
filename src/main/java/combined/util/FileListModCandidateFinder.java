@@ -13,21 +13,21 @@ import net.fabricmc.loader.util.UrlConversionException;
 import net.fabricmc.loader.util.UrlUtil;
 
 public class FileListModCandidateFinder implements ModCandidateFinder {
-	private LogUtils LOG = new LogUtils("FileListModCandidateFinder");
+	private Log LOG = new Log("FileListModCandidateFinder");
 	private CombinedLoader cl;
-	private String loadList;
+	private String modListFile;
 
 	public FileListModCandidateFinder(String loadList) 
 	{
 		this.cl = new CombinedLoader();
-		this.loadList = loadList;
+		this.modListFile = loadList;
 	}
 
 	@Override
 	public void findCandidates(FabricLoader loader, Consumer<URL> urlProposer) {
 		try 
 		{
-			Path loadListPath = cl.getLoadFile(loadList);
+			Path loadListPath = cl.getModList(modListFile);
 			List<String> mods = Files.readAllLines(loadListPath);
 
 			for (String modJarName : mods) {
@@ -48,7 +48,7 @@ public class FileListModCandidateFinder implements ModCandidateFinder {
 			}
 			
 		} catch (IOException e1) {
-			LOG.warn("Unable to read mod file list =>" + loadList);
+			LOG.warn("Unable to read mod file list =>" + modListFile);
 		}
 	}
 }

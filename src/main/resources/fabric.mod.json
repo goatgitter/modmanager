@@ -14,12 +14,13 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/manymods/icon.png",
 
   "environment": "*",
   "entrypoints": {
          "main": ["combined.ManyMods"],
-         "preLaunch": ["combined.ManyModsPreLaunch"]
+         "preLaunch": ["combined.ManyModsPreLaunch"],
+         "modmenu": ["combined.gui.ConfigApiImpl" ]
     },
   "jars": ${nestedJars},
   "mixins": ["manymods.mixins.json"],

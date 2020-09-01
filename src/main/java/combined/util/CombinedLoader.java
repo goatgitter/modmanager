@@ -3,6 +3,7 @@ package combined.util;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,12 +18,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.ModContainer;
+import net.fabricmc.loader.discovery.ModCandidate;
+import net.fabricmc.loader.discovery.ModResolutionException;
+import net.fabricmc.loader.discovery.ModResolver;
+import net.fabricmc.loader.metadata.LoaderModMetadata;
 import net.fabricmc.loader.metadata.NestedJarEntry;
 
 /**
@@ -35,6 +42,8 @@ import net.fabricmc.loader.metadata.NestedJarEntry;
  */
 public class CombinedLoader {
 	// Constants
+	private static final String UNLOAD_LIST = "unloadlist.txt";
+	private static final String LOAD_LIST = "loadlist.txt";
 	private static final String COMBINED_MODS_DIR = "manyMods\\";
 	private static final String MODS_DIR = "mods\\";
 	public static final Pattern FABRIC_PATTERN = Pattern.compile("^fabric-.*(-v\\d+)$");
@@ -43,7 +52,8 @@ public class CombinedLoader {
 	public final static String LOADER_MOD_ID = "fabricloader";
 	public final static String FABRIC_MOD_ID = "fabric";
 	public static final String BASE_MOD_ID = "minecraft";
-	public static List<String> HIDDEN_MODS = Arrays.asList(API_MOD_ID, INDIGO_MOD_ID, LOADER_MOD_ID, FABRIC_MOD_ID, BASE_MOD_ID);
+	public static final String LOAD_CATCHER_MOD_ID = "loadcatcher";
+	public static List<String> HIDDEN_MODS = Arrays.asList(API_MOD_ID, INDIGO_MOD_ID, LOADER_MOD_ID, FABRIC_MOD_ID, BASE_MOD_ID, LOAD_CATCHER_MOD_ID);
 	private static final Logger LOG = LogManager.getFormatterLogger("CombinedLoader");
 	// Instance variables (fields)
 	private static FabricLoader fl;
@@ -153,20 +163,16 @@ public class CombinedLoader {
 		return returnName;
 	}
 	
-	public Path getLoadFile(String loadList)
+	public Path getLoadFile()
 	{
-		Path loadListPath = getModsDir().resolve(loadList);
-		if (! Files.exists(loadListPath)){
-			LOG.info("Creating file " + loadListPath.getFileName());
-	        try 
-	        {
-				Files.createFile(loadListPath);
-				// Add all the required mods
-				for(ModContainer mc: getRequiredMods())
-				{
-					addJarToFile(loadListPath, mc);
-				}
-		        // First time creating the file, add all the JAR files in the mod dir.
+		Path loadListPath = getModList(LOAD_LIST);
+		try {
+			String currentJarList = FileUtils.readFileToString(loadListPath.toFile(), Charset.defaultCharset());
+			if (StringUtils.isEmpty(currentJarList.trim()))
+			{
+				// First time creating the file
+				
+				// Add all the JAR files in the mod dir.
 				for (File file : getModsDir().toFile().listFiles()) {
 					if (!file.isDirectory())
 					{
@@ -176,22 +182,37 @@ public class CombinedLoader {
 						addJarToFile(loadListPath, srcJarPath);
 					}
 				}
-	        } catch (IOException e) {
-				LOG.warn("Problem creating load list.");
-				e.printStackTrace();
 			}
-	    }
+		} catch (IOException e1) {
+			LOG.warn("Problem retrieving load list file");
+			e1.printStackTrace();
+		}
 		return loadListPath;
 	}
 	
-	public Path getUnLoadFile(String unLoadList) throws IOException
+	public Path getUnLoadFile()
 	{
-		Path unloadPath = getModsDir().resolve(unLoadList);
-	    if (! Files.exists(unloadPath)){
-	    	LOG.info("Creating file " + unloadPath.getFileName());
-	        Files.createFile(unloadPath);
+	    return getModList(UNLOAD_LIST);
+	}
+	
+	public Path getModList(String fileName)
+	{
+		Path modListPath = getModsDir().resolve(fileName);
+	    if (! Files.exists(modListPath)){
+	    	LOG.info("Creating file " + modListPath.getFileName());
+	        try {
+				Files.createFile(modListPath);
+				// Add all the required mods
+				for(ModContainer mc: getRequiredMods())
+				{
+					addJarToFile(modListPath, mc);
+				}
+			} catch (IOException e) {
+				LOG.warn("Problem retrieving Mod List file => " + fileName);
+				e.printStackTrace();
+			}
 	    }
-	    return unloadPath;
+	    return modListPath;
 	}
 	
 	public void addJarToFile(Path listPath, ModContainer mc) throws IOException
@@ -214,32 +235,43 @@ public class CombinedLoader {
 		}
 	}
 	
-	public void addJarToFile(Path listPath, Path jarPath) throws IOException
+	public void addJarToFile(Path listPath, Path jarPath)
 	{
 		if (Files.exists(jarPath))
 		{
-			String currentJarList = FileUtils.readFileToString(listPath.toFile(), Charset.defaultCharset());
-			// Remove extra .\ from path string.
-			String jarFile = jarPath.toString().replace("run\\.", "run");
-			if (jarPath != null && !currentJarList.contains(jarFile))
-			{
-				String line = jarFile + System.lineSeparator();
-				Files.write(listPath, line.getBytes(), StandardOpenOption.APPEND);
+			try {
+				String currentJarList = FileUtils.readFileToString(listPath.toFile(), Charset.defaultCharset());
+				// Remove extra .\ from path string.
+				String jarFile = jarPath.toString().replace("run\\.", "run");
+				if (jarPath != null && !currentJarList.contains(jarFile))
+				{
+					String line = jarFile + System.lineSeparator();
+					Files.write(listPath, line.getBytes(), StandardOpenOption.APPEND);
+				}
+			} catch (IOException e) {
+				LOG.warn("Problem adding jar to file !");
+				e.printStackTrace();
 			}
+			
 		}
 		
 	}
 	
-	public void removeJarFromFile(Path listPath, Path jarPath) throws IOException
+	public void removeJarFromFile(Path listPath, Path jarPath)
 	{
 		if (Files.exists(jarPath))
 		{
-			String currentJarList = FileUtils.readFileToString(listPath.toFile(), Charset.defaultCharset());
-			String jarFile = jarPath.toString();
-			if (jarPath != null && currentJarList.contains(jarFile))
-			{
-				String newJarList = currentJarList.replace(jarFile + System.lineSeparator(), "");				
-				Files.write(listPath, newJarList.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+			try {
+				String currentJarList = FileUtils.readFileToString(listPath.toFile(), Charset.defaultCharset());
+				String jarFile = jarPath.toString();
+				if (jarPath != null && currentJarList.contains(jarFile))
+				{
+					String newJarList = currentJarList.replace(jarFile + System.lineSeparator(), "");				
+					Files.write(listPath, newJarList.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+				}
+			} catch (IOException e) {
+				LOG.warn("Problem removing jar from file!");
+				e.printStackTrace();
 			}
 		}
 	}
@@ -289,5 +321,67 @@ public class CombinedLoader {
 		isRequiredMod = matcher.matches() || HIDDEN_MODS.contains(modId);
 		return isRequiredMod;
 	}
+	
+
+	private Map<String, ModCandidate> getModMap(String fileName)
+	{
+		Map<String, ModCandidate> candidateMap = null;
+		ModResolver resolver = new ModResolver();
+		resolver.addCandidateFinder(new FileListModCandidateFinder(fileName));
+		try {
+			candidateMap = resolver.resolve(fl);
+		} catch (ModResolutionException e) {
+			LOG.warn("Problem getting loaded mods");
+			e.printStackTrace();
+		}
+		return candidateMap;
+	}
+	
+	public Map<String, ModCandidate> getAvailableMods()
+	{
+		return getModMap(UNLOAD_LIST);
+	}
+	
+	public List<ModContainer> getAvailableModList()
+	{
 		
+		Map<String, ModCandidate> availModMap = getAvailableMods();		
+		return getModList(availModMap, false);
+	}
+	
+	public List<ModContainer> getSelectedModList(boolean includeLibs)
+	{
+		Map<String, ModCandidate> selectedModMap = getSelectedMods();
+		return getModList(selectedModMap, includeLibs);
+	}
+	
+	public List<ModContainer> getModList(Map<String, ModCandidate> modMap, boolean includeLibs)
+	{
+		List<ModContainer> mods = new ArrayList<>();
+		if (modMap != null)
+		{
+			for (ModCandidate candidate: modMap.values())
+			{
+				LoaderModMetadata info = candidate.getInfo();
+				URL originUrl = candidate.getOriginUrl();
+				String modId = info.getId();
+				if (!isRequiredMod(modId))
+				{
+					ModContainer container = new ModContainer(info, originUrl);
+					boolean foundInLibs = ModMenu.LIBRARY_MODS.contains(modId);
+					if ( (foundInLibs && includeLibs) || !foundInLibs)
+					{
+						mods.add(container);
+					}
+				}
+			}
+		}
+		return mods;
+	}
+	
+	
+	public Map<String, ModCandidate> getSelectedMods()
+	{
+		return getModMap(LOAD_LIST);
+	}
 }

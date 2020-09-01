@@ -1,7 +1,9 @@
 {
-  "manymods.mixinBtnTooltip": "Disable...",
   "manymods.error": "Error",
   "manymods.success": "Success",
-  "manymods.unload.error.desc": "Problem creating unload list",
-  "manymods.unload.success.desc": "Restart required to unload"
+  "manymods.refresh.tooltip": "Refresh",
+  "manymods.unload.tooltip": "Disable...",
+  "manymods.unload.error": "Problem creating unload list",
+  "manymods.config.screen.title":"Many Mods Configuration",
+  "manymods.restart":"Restart required to apply!"
 }

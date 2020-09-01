@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
  *  The debug log file is "{yourUserName}\AppData\Roaming\.minecraft\logs\debug.log
  *  	OR {yourModName}\run\logs\debug.log
  */
-public class LogUtils {
+public class Log {
 	// Constants
 	private static final String ENTER_MSG ="Entering ";
 	private static final String EXIT_MSG ="Exiting ";
@@ -23,11 +23,11 @@ public class LogUtils {
 	private static final Logger LOG = LogManager.getFormatterLogger();
 	private String prefixName = getClass().getSimpleName();
 	// Constructors
-	public LogUtils()
+	public Log()
 	{
 		
 	}
-	public LogUtils(String prefixName)
+	public Log(String prefixName)
 	{
 		setPrefixName(prefixName);
 		enterClass();

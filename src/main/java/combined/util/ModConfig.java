@@ -22,6 +22,9 @@ import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
+import combined.ManyMods;
+import combined.gui.ChildModEntry;
+import combined.gui.Menu;
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import net.fabricmc.loader.FabricLoader;
@@ -30,9 +33,8 @@ import net.fabricmc.loader.api.LanguageAdapter;
 import net.fabricmc.loader.api.metadata.CustomValue;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.discovery.ModCandidate;
-import net.fabricmc.loader.discovery.ModResolutionException;
-import net.fabricmc.loader.discovery.ModResolver;
 import net.fabricmc.loader.launch.common.FabricMixinBootstrap;
+import net.fabricmc.loader.metadata.EntrypointMetadata;
 import net.fabricmc.loader.metadata.ModMetadataV1;
 import net.fabricmc.loader.metadata.ModMetadataV1.CustomValueContainer;
 import net.fabricmc.loader.metadata.NestedJarEntry;
@@ -41,19 +43,12 @@ import net.fabricmc.loader.metadata.NestedJarEntry;
  * @author h1ppyChic
  * 
  * I should probably refactor this...
- * This is class of helper methods for changing the mod configurations during load (prelaunch)
+ * This is class of helper methods for changing the mod configuration
  * 
  */
-public class ModConfigUtil {
-	// Constants
-	private static final String UNLOAD_LIST = "unloadlist.txt";
-	private static final String LOAD_LIST = "loadlist.txt";
-	public static final String MOD_ID = "manymods";
-	private static final String LOAD_JAR_DIR = "loadedJars/";
-	private static final String MM_PARENT_KEY = "modmenu:parent";
+public class ModConfig {
 	// Instance variables (fields)
-	private static boolean startedManyModLoad = false;
-	private static LogUtils LOG = new LogUtils("ModConfigUtil");
+	private static Log LOG = new Log("ModConfigUtil");
 	private static FabricLoader fl = (FabricLoader) net.fabricmc.loader.api.FabricLoader.getInstance();
 	private static CombinedLoader cl = new CombinedLoader();
 	
@@ -105,7 +100,7 @@ public class ModConfigUtil {
 		else
 		{
 			Path srcJarPath = cl.getModJarPath(mod);
-			Path loadListPath = cl.getLoadFile(LOAD_LIST);
+			Path loadListPath = cl.getLoadFile();
 			try {
 				if (!cl.isModInLoadFile(loadListPath, srcJarPath))
 					canTurnOff=false;
@@ -137,24 +132,33 @@ public class ModConfigUtil {
 	{
 		return cl.getModsDir();
 	}
-	public static void requestUnload(ModListEntry mod) throws IOException
+	public static void requestUnload(ModListEntry mod)
 	{
-		Path unloadListPath = cl.getUnLoadFile(UNLOAD_LIST);
-		Path loadlistPath = cl.getLoadFile(LOAD_LIST);
+		LOG.info("Requested unload of mod =>" + mod.getMetadata().getId() + ".");
+		Path unloadListPath = cl.getUnLoadFile();
+		Path loadlistPath = cl.getLoadFile();
 		Path srcJarPath = cl.getModJarPath(mod);
 		cl.addJarToFile(unloadListPath, srcJarPath);
 		cl.removeJarFromFile(loadlistPath, srcJarPath);
+		removeMod(mod);
+		Menu.removeChildEntry(mod);
+	}
+	
+	public static void requestLoad(ChildModEntry mod)
+	{
+		LOG.info("Requested load of mod =>" + mod.getMetadata().getId() + ".");
+		Path unloadListPath = cl.getUnLoadFile();
+		Path loadlistPath = cl.getLoadFile();
+		Path srcJarPath = cl.getModJarPath(mod.getContainer());
+		cl.addJarToFile(loadlistPath, srcJarPath);
+		cl.removeJarFromFile(unloadListPath, srcJarPath);
+		loadMods();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void loadMods() throws IOException, ModResolutionException
+	public static void loadMods()
 	{
 		LOG.enter("loadMods");
-		
-		// Prevent an infinite loop
-		if (!startedManyModLoad)
-		{
-			startedManyModLoad = true;
 			extractLoadedMods();
 			try {
 				Map<String, ModContainer> oldModMap = (Map<String, ModContainer>) FieldUtils.readDeclaredField(fl, "modMap", true);
@@ -166,16 +170,12 @@ public class ModConfigUtil {
 				
 				addNewMods(oldModMap, oldEntrypointStorage);
 				initMixins();
-				
 				updateLoaderFields(oldModMap, oldMods, oldAdapterMap, oldGameDir,
 						oldEntrypointStorage, oldEntries);
 			} catch (IllegalAccessException e1) {
 				LOG.warn("How is this possible?");
 				e1.printStackTrace();
 			}
-			
-		}
-		
 		LOG.exit("loadMods");
 	}
 	
@@ -197,12 +197,12 @@ public class ModConfigUtil {
 	{
 		JarFile jar = new JarFile(jarFileName);
 		Enumeration<JarEntry> enumEntries = jar.entries();
-		Path loadFilePath = cl.getLoadFile(LOAD_LIST);
+		Path loadFilePath = cl.getLoadFile();
 		while (enumEntries.hasMoreElements()) {
 		    java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
 		    
-		    if (file.getName().contains(LOAD_JAR_DIR) && file.getName().endsWith(".jar")) {
-		    	String destFileName = destDirName + java.io.File.separator + file.getName().replace(LOAD_JAR_DIR, "");
+		    if (file.getName().contains(ManyMods.LOAD_JAR_DIR) && file.getName().endsWith(".jar")) {
+		    	String destFileName = destDirName + java.io.File.separator + file.getName().replace(ManyMods.LOAD_JAR_DIR, "");
 		    	
 		    	java.io.File f = new java.io.File(destFileName);
 		    	Path destFilePath = f.toPath();
@@ -225,10 +225,7 @@ public class ModConfigUtil {
 	private static void addNewMods(Map<String, ModContainer> oldModMap, Object oldEntrypointStorage)
 	{
 		try {
-			
-			ModResolver resolver = new ModResolver();
-			resolver.addCandidateFinder(new FileListModCandidateFinder(LOAD_LIST));
-			Map<String, ModCandidate> candidateMap = resolver.resolve(fl);
+			Map<String, ModCandidate> candidateMap = cl.getSelectedMods();
 			LOG.info("Loading " + candidateMap.values().size() + candidateMap.values().stream()
 					.map(info -> String.format("%s@%s", info.getInfo().getId(), info.getInfo().getVersion().getFriendlyString()))
 					.collect(Collectors.joining(", ")));
@@ -245,8 +242,71 @@ public class ModConfigUtil {
 					MethodUtils.invokeMethod(fl, true, "addMod", addArgs);
 				}
 			}
-		} catch (IllegalAccessException | ModResolutionException | NoSuchMethodException | InvocationTargetException e) {
+		} catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 			LOG.warn("Problem adding new mods");
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static void removeMod(ModListEntry mod)
+	{
+		try {
+			Map<String, ModContainer> oldModMap = (Map<String, ModContainer>) FieldUtils.readDeclaredField(fl, "modMap", true);
+			List<ModContainer> oldMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
+			Object oldGameDir = FieldUtils.readDeclaredField(fl, "gameDir", true);
+			Object oldEntrypointStorage = FieldUtils.readDeclaredField(fl, "entrypointStorage", true);
+			Map<String, List<?>> oldEntries = (Map<String, List<?>>)FieldUtils.readDeclaredField(oldEntrypointStorage, "entryMap", true);
+			Map<String, LanguageAdapter> oldAdapterMap = (Map<String, LanguageAdapter>) FieldUtils.readDeclaredField(fl, "adapterMap", true);
+			
+			String thisModId = mod.getMetadata().getId();
+			if (oldModMap.containsKey(thisModId))
+			{
+				ModContainer thisMod = oldModMap.get(thisModId);
+				// Remove Entry points
+				Map<String, List<?>> entriesToRemove = new HashMap<>();
+				oldEntries.forEach((k, v) -> {
+		            if(v.toString().contains(thisMod.getInfo().getId()))
+		            {
+		            	entriesToRemove.put(k, v);
+		            }
+				});
+				
+				entriesToRemove.forEach((k, v) -> {
+		            if(v.toString().contains(thisMod.getInfo().getId()))
+		            {
+		            	oldEntries.remove(k, v);
+		            }
+				});
+
+				for (String key : thisMod.getInfo().getEntrypointKeys()) {
+					for (EntrypointMetadata value : thisMod.getInfo().getEntrypoints(key)) {
+						oldEntries.remove(key, value);
+					}
+				}
+				
+				// Remove Lang Adapter
+				for (Map.Entry<String, String> laEntry : thisMod.getInfo().getLanguageAdapterDefinitions().entrySet()) {
+					if (oldAdapterMap.containsKey(laEntry.getKey())) {
+						oldAdapterMap.remove(laEntry.getKey(), laEntry.getValue());
+					}
+				}
+				
+				oldModMap.remove(thisModId, thisMod);
+				//addMod(candidate);
+				oldMods.remove(thisMod);
+			}
+			
+			FieldUtils.writeField(fl, "gameDir", oldGameDir, true);
+			FieldUtils.writeField(fl, "modMap", oldModMap, true);
+			FieldUtils.writeField(fl, "mods", oldMods, true);
+			FieldUtils.writeField(fl, "adapterMap", oldAdapterMap, true);
+			FieldUtils.writeField(oldEntrypointStorage, "entryMap", oldEntries, true);
+			FieldUtils.writeField(fl, "entrypointStorage", oldEntrypointStorage, true);
+			
+		} catch (IllegalAccessException e) {
+			LOG.warn("Problem removing mods");
 			e.printStackTrace();
 		}
 		
@@ -308,8 +368,8 @@ public class ModConfigUtil {
 				cvc = (CustomValueContainer) FieldUtils.readDeclaredField(mm, "custom", true);
 				Map<String, CustomValue> cvUnmodifiableMap = (Map<String, CustomValue>) FieldUtils.readDeclaredField(cvc, "customValues", true);
 				Map<String, CustomValue> cvMap = new HashMap<String, CustomValue> (cvUnmodifiableMap);
-				CustomValue cv = new CustomValueImpl.StringImpl(MOD_ID);
-				cvMap.put(MM_PARENT_KEY, cv);
+				CustomValue cv = new CustomValueImpl.StringImpl(ManyMods.MOD_ID);
+				cvMap.put(ManyMods.MM_PARENT_KEY, cv);
 				FieldUtils.writeField(cvc, "customValues", Collections.unmodifiableMap(cvMap), true);
 				FieldUtils.writeField(mm, "custom", cvc, true);
 			} catch (IllegalAccessException e) {
@@ -327,14 +387,16 @@ public class ModConfigUtil {
 		
 		try {
 			// Add parent tag to any nested mods in many mods
-			ModContainer manyModsMod = oldModMap.get(MOD_ID);
+			ModContainer manyModsMod = oldModMap.get(ManyMods.MOD_ID);
 			for(NestedJarEntry nestedJar: manyModsMod.getInfo().getJars())
 			{
 				String jarFileName = cl.getNestedJarFileName(nestedJar);
 				ModContainer nestedMod = cl.getModForJar(jarFileName, oldMods);
 				addParentToMod(nestedMod);
+				Menu.addChild(nestedMod);
 			}
 			List<ModContainer> changedMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
+			// Add the new mod data
 			for(ModContainer mod : changedMods)
 			{
 				String modId = mod.getMetadata().getId();
@@ -344,6 +406,7 @@ public class ModConfigUtil {
 				{
 					LOG.debug("Adding!" + modId);
 					addParentToMod(mod);
+					Menu.addChild(mod);
 					oldModMap.put(modId, mod);
 					oldMods.add(mod);
 					
@@ -386,7 +449,7 @@ public class ModConfigUtil {
 	private static void extractLoadedMods()
 	{
 		Path jarDir = cl.getModsDir();
-		Path jarPath = cl.getModJarPath(MOD_ID);
+		Path jarPath = cl.getModJarPath(ManyMods.MOD_ID);
 		try {
 		if (Files.notExists(jarDir))
 		{
@@ -399,6 +462,4 @@ public class ModConfigUtil {
 			e.printStackTrace();
 		}
 	}
-	
-	
 }

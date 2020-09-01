@@ -24,6 +24,8 @@ fileTree(dir: 'nested', include: '**/*.jar').visit { FileVisitDetails details ->
 	nestedJars.add('{"file": "nested/' + details.file.name + '"}')
 }
 def jarName = "${archivesBaseName}-${version}.jar"
+def onJarName = "${archivesBaseName}-${version}-on.jar"
+def offJarName = "${archivesBaseName}-${version}-off.jar"
 
 dependencies {
 	//to change the versions see the gradle.properties file
