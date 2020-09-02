@@ -27,3 +27,15 @@ Any additional mods added to the .minecraft\mods\manymods folder will be automat
 ## License
 
 This project is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+
+![](https://media.forgecdn.net/attachments/311/188/screenshot1.png "")
+
+![](https://media.forgecdn.net/attachments/311/189/screenshot2.png "")
+
+![](https://media.forgecdn.net/attachments/311/190/screenshot3.png "")
+
+![](https://media.forgecdn.net/attachments/311/191/screenshot4.png "")
+
+![](https://media.forgecdn.net/attachments/311/192/screenshot5.png "")
+
+![](https://media.forgecdn.net/attachments/311/193/screenshot6.png "")
