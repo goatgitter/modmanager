@@ -4,6 +4,7 @@ import combined.ManyMods;
 import combined.util.CombinedLoader;
 import combined.util.Log;
 import combined.util.ModConfig;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -34,7 +35,6 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	
 	private void doneButtonClick()
 	{
-		SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ManyMods.TEXT_SUCCESS, ManyMods.TEXT_RESTART);
 		this.onClose();
 	}
 	
@@ -76,7 +76,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		this.renderBackground(matrices);
 		this.availableMods.render(matrices, mouseX, mouseY, delta);
 	    this.selectedMods.render(matrices, mouseX, mouseY, delta);
-		this.drawTextWithShadow(matrices, this.textRenderer, this.title, this.width / 3 + 4, 8, 16777215);
+		DrawableHelper.drawTextWithShadow(matrices, this.textRenderer, this.title, this.width / 3 + 4, 8, 16777215);
 		addDoneButton();
 		super.render(matrices, mouseX, mouseY, delta);
 	}

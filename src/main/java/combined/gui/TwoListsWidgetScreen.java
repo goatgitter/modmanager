@@ -1,15 +1,24 @@
 package combined.gui;
 
+import java.io.IOException;
+
 import combined.util.Log;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModListWidget;
 import io.github.prospector.modmenu.gui.ModsScreen;
+import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ScreenTexts;
+import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.world.level.storage.LevelStorage;
 
 public abstract class TwoListsWidgetScreen extends Screen {
+	// Constants
+	private TranslatableText CONFIRM_RESTART_TITLE = new TranslatableText("manymods.restart.title");
+	private TranslatableText CONFIRM_RESTART_MSG = new TranslatableText("manymods.restart.msg");
 	// Instance Variables
 	private Log LOG = new Log("TwoListsWidgetScreen");
 	protected TwoListsWidget availableMods;
@@ -84,10 +93,15 @@ public abstract class TwoListsWidgetScreen extends Screen {
 	{
 		return -36;
 	}
-	
-	@Override
-	public void onClose() {
-		super.onClose();
+	private void onRestartConfirmed(boolean restart) {
+		if (restart) {
+			if (this.client.world != null)
+			{
+				this.client.world.disconnect();
+			}
+			this.client.disconnect();
+			this.client.scheduleStop();
+		}
 		this.selectedModList.close();
 		this.availableModList.close();
 		this.selected = null;
@@ -102,6 +116,13 @@ public abstract class TwoListsWidgetScreen extends Screen {
 			}
 		}
 		this.client.openScreen(priorScreen);
+	}
+	
+	@Override
+	public void onClose() {
+		this.client.openScreen(new ConfirmScreen(this::onRestartConfirmed, CONFIRM_RESTART_TITLE, CONFIRM_RESTART_MSG, ScreenTexts.YES, ScreenTexts.NO));
+        
+
 	}
 
 }

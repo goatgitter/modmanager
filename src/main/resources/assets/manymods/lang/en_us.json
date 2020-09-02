@@ -5,5 +5,7 @@
   "manymods.unload.tooltip": "Disable...",
   "manymods.unload.error": "Problem creating unload list",
   "manymods.config.screen.title":"Many Mods Configuration",
-  "manymods.restart":"Restart required to apply!"
+  "manymods.restart":"Restart required to apply!",
+  "manymods.restart.title":"Restart Required",
+  "manymods.restart.msg":"This change requires restarting the Minecraft Client to be applied.  Would you like to close Minecraft now?"
 }

@@ -8,6 +8,9 @@ This is Minecraft Fabric mod which combines the following original mods into a s
 The Mod also includes the mods below, which are extracted to the .minecraft\mods\manymods folder.  
 These mods can be turned off from the Mod Menu screen using the ON/OFF switch.  Mods can also be added and removed from the 
 manymods configuration screen. Restarting the client is required to apply the changes.  
+
+A confirmation screen will be displayed, giving the option to close the Minecraft Client.
+
 Any additional mods added to the .minecraft\mods\manymods folder will be automatically loaded when the game is started.
 
 * clear-skies : https://www.curseforge.com/minecraft/mc-mods/clear-skies : Apache License 2.0

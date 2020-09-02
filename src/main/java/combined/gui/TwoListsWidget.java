@@ -7,7 +7,6 @@ import java.util.Set;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import combined.util.CombinedLoader;
 import combined.util.Log;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModListWidget;

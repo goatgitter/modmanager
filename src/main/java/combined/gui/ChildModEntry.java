@@ -90,7 +90,6 @@ public class ChildModEntry extends ModListEntry{
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		
 		int i = mouseX - x;
-        int j = mouseY - y;
 		if (this.canTurnOff())
 		{
 			if (i < 16) {
