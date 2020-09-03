@@ -25,11 +25,9 @@ public class Menu {
 		return null;
 	}
 
-	public static void addChild(ModContainer mod)
+	public static void addChild(ModContainer parentMod, ModContainer childMod)
 	{
-		ModContainer thisMod = getThisMod();
-		if (thisMod == null) return;
-		ModMetadata metadata = mod.getMetadata();
+		ModMetadata metadata = childMod.getMetadata();
 		String id = metadata.getId();
 		boolean isLibrary = metadata.containsCustomValue("modmenu:api") && metadata.getCustomValue("modmenu:api").getAsBoolean();
 		if (isLibrary) {
@@ -50,7 +48,8 @@ public class Menu {
 				Conditional.add(ModMenu.PATCHWORK_FORGE_MODS,id);
 			}
 		}
-		Conditional.add(ModMenu.PARENT_MAP,thisMod, mod);
+		// Add mapping to Parent Map.
+		Conditional.add(ModMenu.PARENT_MAP,parentMod, childMod);
 		if (isLibrary) {
 			Conditional.add(ModMenu.CHILD_LIBRARIES,id);
 		} else {

@@ -18,10 +18,11 @@
 
   "environment": "*",
   "entrypoints": {
-         "main": ["combined.ManyMods"],
-         "preLaunch": ["combined.ManyModsPreLaunch"],
-         "modmenu": ["combined.gui.ConfigApiImpl" ]
-    },
+    "client": ["combined.ManyModsClient"],
+    "modmenu": ["combined.gui.ConfigApiImpl"],
+    "main": ["combined.ManyMods"],
+    "preLaunch": ["combined.ManyModsPreLaunch"]
+	},
   "jars": ${nestedJars},
   "mixins": ["manymods.mixins.json"],
   "depends": {

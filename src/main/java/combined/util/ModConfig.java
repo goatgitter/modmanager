@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -159,23 +160,26 @@ public class ModConfig {
 	public static void loadMods()
 	{
 		LOG.enter("loadMods");
-			extractLoadedMods();
-			try {
-				Map<String, ModContainer> oldModMap = (Map<String, ModContainer>) FieldUtils.readDeclaredField(fl, "modMap", true);
-				List<ModContainer> oldMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
-				Object oldGameDir = FieldUtils.readDeclaredField(fl, "gameDir", true);
-				Object oldEntrypointStorage = FieldUtils.readDeclaredField(fl, "entrypointStorage", true);
-				Map<String, List<?>> oldEntries = (Map<String, List<?>>)FieldUtils.readDeclaredField(oldEntrypointStorage, "entryMap", true);
-				Map<String, LanguageAdapter> oldAdapterMap = (Map<String, LanguageAdapter>) FieldUtils.readDeclaredField(fl, "adapterMap", true);
-				
-				addNewMods(oldModMap, oldEntrypointStorage);
-				initMixins();
-				updateLoaderFields(oldModMap, oldMods, oldAdapterMap, oldGameDir,
-						oldEntrypointStorage, oldEntries);
-			} catch (IllegalAccessException e1) {
-				LOG.warn("How is this possible?");
-				e1.printStackTrace();
-			}
+		// Setup the menu config for the mods that have already been loaded.
+//		ModMenu mm = new ModMenu();
+//		mm.onInitializeClient();
+		extractLoadedMods();
+		try {
+			Map<String, ModContainer> oldModMap = (Map<String, ModContainer>) FieldUtils.readDeclaredField(fl, "modMap", true);
+			List<ModContainer> oldMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
+			Object oldGameDir = FieldUtils.readDeclaredField(fl, "gameDir", true);
+			Object oldEntrypointStorage = FieldUtils.readDeclaredField(fl, "entrypointStorage", true);
+			Map<String, List<?>> oldEntries = (Map<String, List<?>>)FieldUtils.readDeclaredField(oldEntrypointStorage, "entryMap", true);
+			Map<String, LanguageAdapter> oldAdapterMap = (Map<String, LanguageAdapter>) FieldUtils.readDeclaredField(fl, "adapterMap", true);
+			
+			addNewMods(oldModMap, oldEntrypointStorage);
+			initMixins();
+			updateLoaderFields(oldModMap, oldMods, oldAdapterMap, oldGameDir,
+					oldEntrypointStorage, oldEntries);
+		} catch (IllegalAccessException e1) {
+			LOG.warn("How is this possible?");
+			e1.printStackTrace();
+		}
 		LOG.exit("loadMods");
 	}
 	
@@ -226,7 +230,7 @@ public class ModConfig {
 	{
 		try {
 			Map<String, ModCandidate> candidateMap = cl.getSelectedMods();
-			LOG.info("Loading " + candidateMap.values().size() + candidateMap.values().stream()
+			LOG.info("Loading " + candidateMap.values().size() + " mods! => " + candidateMap.values().stream()
 					.map(info -> String.format("%s@%s", info.getInfo().getId(), info.getInfo().getVersion().getFriendlyString()))
 					.collect(Collectors.joining(", ")));
 			FieldUtils.writeField(fl, "modMap", new HashMap<>(), true);
@@ -357,12 +361,12 @@ public class ModConfig {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static void addParentToMod(ModContainer mod)
+	private static void addParentToMod(ModContainer childMod)
 	{
-		if (mod != null)
+		if (childMod != null)
 		{
 			// Add custom metadata to show the loaded mod as a child of many mods.
-			ModMetadataV1 mm = (ModMetadataV1) mod.getMetadata();
+			ModMetadataV1 mm = (ModMetadataV1) childMod.getMetadata();
 			CustomValueContainer cvc;
 			try {
 				cvc = (CustomValueContainer) FieldUtils.readDeclaredField(mm, "custom", true);
@@ -373,13 +377,43 @@ public class ModConfig {
 				FieldUtils.writeField(cvc, "customValues", Collections.unmodifiableMap(cvMap), true);
 				FieldUtils.writeField(mm, "custom", cvc, true);
 			} catch (IllegalAccessException e) {
-				LOG.warn("Problem adding parent to mod => " + mod.getInfo().getId());
+				LOG.warn("Problem adding parent to mod => " + childMod.getInfo().getId());
 				e.printStackTrace();
 			}
 		}
 		
 	}
 	
+	private static boolean doesEntryExist(Map<String, List<?>> oldEntries, String stringVal)
+	{
+		boolean entryExists = false;
+		for(Object entry: oldEntries.values())
+		{
+			if (entry.toString().equals(stringVal)) {
+				entryExists = true;
+				break;
+			}
+		}
+		return entryExists;
+	}
+	
+	private static boolean doesEntryExist(Map<String, List<?>> oldEntries, String key, String stringVal)
+	{
+		boolean entryExists = false;
+		List<?> entries = oldEntries.get(key);
+		if (entries != null)
+		{
+			for(Object entry: entries)
+			{
+				if (entry.toString().equals(stringVal)) {
+					entryExists = true;
+					break;
+				}
+			}
+		}
+		
+		return entryExists;
+	}
 	@SuppressWarnings("unchecked")
 	private static void updateLoaderFields(Map<String, ModContainer> oldModMap, List<ModContainer> oldMods, Map<String, LanguageAdapter> oldAdapterMap, Object oldGameDir,
 			Object oldEntrypointStorage, Map<String, List<?>> oldEntries)
@@ -392,8 +426,10 @@ public class ModConfig {
 			{
 				String jarFileName = cl.getNestedJarFileName(nestedJar);
 				ModContainer nestedMod = cl.getModForJar(jarFileName, oldMods);
+				String nestedModId = nestedMod.getInfo().getId();
+				LOG.debug("Adding!-Nested mod => " + nestedModId);
 				addParentToMod(nestedMod);
-				Menu.addChild(nestedMod);
+				//Menu.addChild(manyModsMod, nestedMod);
 			}
 			List<ModContainer> changedMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
 			// Add the new mod data
@@ -406,7 +442,7 @@ public class ModConfig {
 				{
 					LOG.debug("Adding!" + modId);
 					addParentToMod(mod);
-					Menu.addChild(mod);
+					//Menu.addChild(manyModsMod, mod);
 					oldModMap.put(modId, mod);
 					oldMods.add(mod);
 					
@@ -421,17 +457,45 @@ public class ModConfig {
 			        });
 					
 					// Entry Points
-					oldEntrypointStorage = FieldUtils.readDeclaredField(fl, "entrypointStorage", true);
-					Map<String, List<?>> changedEntryMap = (Map<String, List<?>>) FieldUtils.readDeclaredField(oldEntrypointStorage, "entryMap", true);
-					changedEntryMap.forEach((k, v) -> {
-			            if(v.toString().contains(mod.getInfo().getId()))
-			            {
-			            	oldEntries.put(k, v);								
-			            }
-			        });
+					//oldEntrypointStorage = FieldUtils.readDeclaredField(fl, "entrypointStorage", true);
+					
+					for (String in : mod.getInfo().getOldInitializers()) {
+						String stringVal = modId + "->" + in;
+						boolean entryExists = doesEntryExist(oldEntries, stringVal);
+						
+						if (!entryExists)
+						{
+							String adapter = mod.getInfo().getOldStyleLanguageAdapter();
+							Object[] addArgs = {mod, adapter, in};
+							MethodUtils.invokeMethod(oldEntrypointStorage, true, "addDeprecated", addArgs);
+						}
+						
+					}
+
+					for (String key : mod.getInfo().getEntrypointKeys()) {
+						for (EntrypointMetadata in : mod.getInfo().getEntrypoints(key)) {
+							String stringVal = modId + "->(0.3.x)" + in.getValue();
+							boolean entryExists = doesEntryExist(oldEntries, key, stringVal);
+							if (!entryExists)
+							{
+								Object[] addArgs = {mod, key, in, oldAdapterMap};
+								MethodUtils.invokeMethod(oldEntrypointStorage, true, "add", addArgs);
+							}
+						}
+					}
 				}
 			}
-			
+			// Remove fabric mods from old map
+			List<ModContainer> modsToRemove = new ArrayList<ModContainer>();
+			for (ModContainer mod: oldMods)
+			{
+				String modId = mod.getMetadata().getId();
+				if (cl.isRequiredMod(modId) && !modId.equals(CombinedLoader.BASE_MOD_ID))
+				{
+					modsToRemove.add(mod);
+				}
+			}
+			oldMods.removeAll(modsToRemove);
 			FieldUtils.writeField(fl, "gameDir", oldGameDir, true);
 			FieldUtils.writeField(fl, "modMap", oldModMap, true);
 			FieldUtils.writeField(fl, "mods", oldMods, true);
@@ -439,7 +503,7 @@ public class ModConfig {
 			FieldUtils.writeField(oldEntrypointStorage, "entryMap", oldEntries, true);
 			FieldUtils.writeField(fl, "entrypointStorage", oldEntrypointStorage, true);
 			
-		} catch (IllegalAccessException e) {
+		} catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException  e) {
 			LOG.warn("Problem updating FabricLoader fields");
 			e.printStackTrace();
 		}

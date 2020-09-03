@@ -11,8 +11,6 @@ manymods configuration screen. Restarting the client is required to apply the ch
 
 A confirmation screen will be displayed, giving the option to close the Minecraft Client.
 
-Any additional mods added to the .minecraft\mods\manymods folder will be automatically loaded when the game is started.
-
 * clear-skies : https://www.curseforge.com/minecraft/mc-mods/clear-skies : Apache License 2.0
 * horse-stats : https://www.curseforge.com/minecraft/mc-mods/horsestatsvanilla : MIT License
 * right-click-clear : https://www.curseforge.com/minecraft/mc-mods/right-click-clear : CC0 1.0 Universal
@@ -22,6 +20,7 @@ Any additional mods added to the .minecraft\mods\manymods folder will be automat
 * Many Mod Icon changes to blank white square after it is expanded.  Displayed correctly after config screen is opened.
 
 ## Coming soon
+* Button to add additional mods.
 * Load changed mods without requiring client restart.
 
 ## License

@@ -165,29 +165,7 @@ public class CombinedLoader {
 	
 	public Path getLoadFile()
 	{
-		Path loadListPath = getModList(LOAD_LIST);
-		try {
-			String currentJarList = FileUtils.readFileToString(loadListPath.toFile(), Charset.defaultCharset());
-			if (StringUtils.isEmpty(currentJarList.trim()))
-			{
-				// First time creating the file
-				
-				// Add all the JAR files in the mod dir.
-				for (File file : getModsDir().toFile().listFiles()) {
-					if (!file.isDirectory())
-					{
-						if (!file.getName().endsWith(".jar")) continue;
-						String modJarName = file.getName();
-						Path srcJarPath = getModsDir().resolve(modJarName);
-						addJarToFile(loadListPath, srcJarPath);
-					}
-				}
-			}
-		} catch (IOException e1) {
-			LOG.warn("Problem retrieving load list file");
-			e1.printStackTrace();
-		}
-		return loadListPath;
+		return getModList(LOAD_LIST);
 	}
 	
 	public Path getUnLoadFile()
@@ -197,6 +175,7 @@ public class CombinedLoader {
 	
 	public Path getModList(String fileName)
 	{
+		boolean isLoad = fileName.equals(LOAD_LIST);
 		Path modListPath = getModsDir().resolve(fileName);
 	    if (! Files.exists(modListPath)){
 	    	LOG.info("Creating file " + modListPath.getFileName());
@@ -206,6 +185,21 @@ public class CombinedLoader {
 				for(ModContainer mc: getRequiredMods())
 				{
 					addJarToFile(modListPath, mc);
+				}
+				if (isLoad)
+				{
+					// First time creating the file
+					
+					// Add all the JAR files in the mod dir.
+					for (File file : getModsDir().toFile().listFiles()) {
+						if (!file.isDirectory())
+						{
+							if (!file.getName().endsWith(".jar")) continue;
+							String modJarName = file.getName();
+							Path srcJarPath = getModsDir().resolve(modJarName);
+							addJarToFile(modListPath, srcJarPath);
+						}
+					}
 				}
 			} catch (IOException e) {
 				LOG.warn("Problem retrieving Mod List file => " + fileName);
