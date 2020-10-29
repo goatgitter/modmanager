@@ -9,8 +9,6 @@ public class ManyModsClient implements ClientModInitializer{
 	@Override
 	public void onInitializeClient() {
 		LOG.enter("onInitializeClient");
-		// Update Mod Menu Entries
-		
 		LOG.exit("onInitializeClient");
 	}
 }
