@@ -97,8 +97,24 @@ publishing {
 	}
 }
 
+task startBuildMsg {
+	outputs.upToDateWhen { false }
+	println '-------------------------------------------------------'
+	println '              Starting Many Mods Build                 '
+	println '-------------------------------------------------------'
+	println ' APPDATA Folder       : ' + System.getenv('APPDATA') + " ."
+	println ' org.gradle.jvmargs   : ' + findProperty('org.gradle.jvmargs') + " ."
+	println ' org.gradle.java.home : ' + findProperty('org.gradle.java.home') + " ."
+}
+task endBuildMsg {
+	outputs.upToDateWhen { false }
+	println '-------------------------------------------------------'
+	println '              Ending Many Mods Build                 '
+	println '-------------------------------------------------------'
+}
 // Task to copy the latest mod jar file to the minecraft mod folder.
 task('publishMod', type: Copy) {
+	
 	def fileName = "$buildDir/libs/$jarName"
 	def appDataFolder = System.getenv('APPDATA')
 	from(file(fileName))
@@ -107,7 +123,9 @@ task('publishMod', type: Copy) {
 
 // Task to build the mod and copy it to the minecraft mod folder
 task all{
+	dependsOn 'startBuildMsg'
 	dependsOn 'buildNeeded'
 	dependsOn 'publishMod'
+	dependsOn 'endBuildMsg'
 	tasks.findByName('publishMod').mustRunAfter 'buildNeeded'
 }
