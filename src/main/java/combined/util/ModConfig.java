@@ -36,8 +36,7 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.discovery.ModCandidate;
 import net.fabricmc.loader.launch.common.FabricMixinBootstrap;
 import net.fabricmc.loader.metadata.EntrypointMetadata;
-import net.fabricmc.loader.metadata.ModMetadataV1;
-import net.fabricmc.loader.metadata.ModMetadataV1.CustomValueContainer;
+
 import net.fabricmc.loader.metadata.NestedJarEntry;
 
 /**
@@ -325,7 +324,7 @@ public class ModConfig {
 			e.printStackTrace();
 		}
 		fl.freeze();
-		fl.getAccessWidener().loadFromMods();
+		fl.loadAccessWideners();
 		try {
 			LOG.debug("Clearing init properties for Mixin Bootstrap");
 			Object clearInit = null;
@@ -366,16 +365,14 @@ public class ModConfig {
 		if (childMod != null)
 		{
 			// Add custom metadata to show the loaded mod as a child of many mods.
-			ModMetadataV1 mm = (ModMetadataV1) childMod.getMetadata();
-			CustomValueContainer cvc;
+			ModMetadata mm = childMod.getMetadata();
+			System.out.print(mm.getType());
 			try {
-				cvc = (CustomValueContainer) FieldUtils.readDeclaredField(mm, "custom", true);
-				Map<String, CustomValue> cvUnmodifiableMap = (Map<String, CustomValue>) FieldUtils.readDeclaredField(cvc, "customValues", true);
+				Map<String, CustomValue> cvUnmodifiableMap = (Map<String, CustomValue>) FieldUtils.readDeclaredField(mm, "customValues", true);
 				Map<String, CustomValue> cvMap = new HashMap<String, CustomValue> (cvUnmodifiableMap);
 				CustomValue cv = new CustomValueImpl.StringImpl(ManyMods.MOD_ID);
 				cvMap.put(ManyMods.MM_PARENT_KEY, cv);
-				FieldUtils.writeField(cvc, "customValues", Collections.unmodifiableMap(cvMap), true);
-				FieldUtils.writeField(mm, "custom", cvc, true);
+				FieldUtils.writeField(mm, "customValues", Collections.unmodifiableMap(cvMap), true);
 			} catch (IllegalAccessException e) {
 				LOG.warn("Problem adding parent to mod => " + childMod.getInfo().getId());
 				e.printStackTrace();

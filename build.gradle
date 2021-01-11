@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.5.22'
+	id 'fabric-loom' version '0.5-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -40,9 +40,14 @@ dependencies {
 }
 
 processResources {
-	Map<String, String> expandMap = [version:project.version, nestedJars: project.nestedJars]
+	Map<String, String> expandMap = [version:project.version, 
+		nestedJars: project.nestedJars,
+		minecraft_version: project.minecraft_version,
+		loader_version: project.loader_version]
 	inputs.property "version", project.version
 	inputs.property "nestedJars", project.nestedJars
+	inputs.property "minecraft_version", project.minecraft_version
+	inputs.property "loader_version", project.loader_version
 	
 	from(sourceSets.main.resources.srcDirs) {
 		include "fabric.mod.json"
@@ -105,6 +110,9 @@ task startBuildMsg {
 	println ' APPDATA Folder       : ' + System.getenv('APPDATA') + " ."
 	println ' org.gradle.jvmargs   : ' + findProperty('org.gradle.jvmargs') + " ."
 	println ' org.gradle.java.home : ' + findProperty('org.gradle.java.home') + " ."
+	println ' minecraft_version    : ' + findProperty('minecraft_version') + " ."
+	println ' loader_version       : ' + findProperty('loader_version') + " ."
+	println ' modmenu_version      : ' + findProperty('modmenu_version') + " ."
 }
 task endBuildMsg {
 	outputs.upToDateWhen { false }

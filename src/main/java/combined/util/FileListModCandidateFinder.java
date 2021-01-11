@@ -5,6 +5,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import net.fabricmc.loader.FabricLoader;
@@ -24,7 +25,7 @@ public class FileListModCandidateFinder implements ModCandidateFinder {
 	}
 
 	@Override
-	public void findCandidates(FabricLoader loader, Consumer<URL> urlProposer) {
+	public void findCandidates(FabricLoader loader, BiConsumer<URL, Boolean> urlProposer){
 		try 
 		{
 			Path loadListPath = cl.getModList(modListFile);
@@ -36,7 +37,7 @@ public class FileListModCandidateFinder implements ModCandidateFinder {
 				if(Files.exists(srcJarPath))
 				{
 					try {
-						urlProposer.accept(UrlUtil.asUrl(modFile));
+						urlProposer.accept(UrlUtil.asUrl(modFile), false);
 					} catch (UrlConversionException e) {
 						throw new RuntimeException("Failed to convert URL for mod '" + modJarName + "'!", e);
 					}
