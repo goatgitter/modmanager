@@ -1,11 +1,11 @@
 {
-  "manymods.error": "Error",
-  "manymods.success": "Success",
-  "manymods.refresh.tooltip": "Refresh",
-  "manymods.unload.tooltip": "Disable...",
-  "manymods.unload.error": "Problem creating unload list",
-  "manymods.config.screen.title":"Many Mods Configuration",
-  "manymods.restart":"Restart required to apply!",
-  "manymods.restart.title":"Restart Required",
-  "manymods.restart.msg":"This change requires restarting the Minecraft Client to be applied.  Would you like to close Minecraft now?"
+  "modmenuext.error": "Error",
+  "modmenuext.success": "Success",
+  "modmenuext.refresh.tooltip": "Refresh",
+  "modmenuext.unload.tooltip": "Disable...",
+  "modmenuext.unload.error": "Problem creating unload list",
+  "modmenuext.config.screen.title":"Many Mods Configuration",
+  "modmenuext.restart":"Restart required to apply!",
+  "modmenuext.restart.title":"Restart Required",
+  "modmenuext.restart.msg":"This change requires restarting the Minecraft Client to be applied.  Would you like to close Minecraft now?"
 }

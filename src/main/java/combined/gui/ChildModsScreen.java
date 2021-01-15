@@ -1,6 +1,6 @@
 package combined.gui;
 
-import combined.ManyMods;
+import combined.ModMenuExt;
 import combined.util.CombinedLoader;
 import combined.util.Log;
 import combined.util.ModConfig;
@@ -14,7 +14,7 @@ import net.minecraft.text.LiteralText;
 
 public class ChildModsScreen extends TwoListsWidgetScreen{
 	// Constants
-	private final static String TITLE_ID = ManyMods.MOD_ID + ".config.screen.title";
+	private final static String TITLE_ID = ModMenuExt.MOD_ID + ".config.screen.title";
 	
 	// Instance Variables
 	private Log LOG = new Log("ChildModsScreen");

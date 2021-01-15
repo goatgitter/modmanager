@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import combined.ModMenuExt;
+
 /**
  * @author h1ppyChick
  *  This is a utility class for generating log messages to the log file.
@@ -18,7 +20,6 @@ public class Log {
 	// Constants
 	private static final String ENTER_MSG ="Entering ";
 	private static final String EXIT_MSG ="Exiting ";
-	public static final String MOD_ID = "manymods";
 	// Instance Variables (fields)
 	private static final Logger LOG = LogManager.getFormatterLogger();
 	private String prefixName = getClass().getSimpleName();
@@ -46,7 +47,7 @@ public class Log {
 	
 	public String getPrefixMsg()
 	{
-		return "[" + MOD_ID + "->" + prefixName + "] ";
+		return "[" + ModMenuExt.MOD_ID + "->" + prefixName + "] ";
 	}
 	
 	public void info(String msg)

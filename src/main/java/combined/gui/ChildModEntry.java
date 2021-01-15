@@ -37,11 +37,11 @@ public class ChildModEntry extends ModListEntry{
 	// Instance Variables
 	Log LOG = new Log("ChildModEntry");
 	private boolean isHoveringIcon = false;
-	protected final TwoListsWidget manyModsList;
+	protected final TwoListsWidget modMenuExtList;
 
-	public ChildModEntry(ModContainer container, ModListWidget list, TwoListsWidget manyModsList) {
+	public ChildModEntry(ModContainer container, ModListWidget list, TwoListsWidget modMenuExtList) {
 		super(container, list);
-		this.manyModsList = manyModsList;
+		this.modMenuExtList = modMenuExtList;
 	}
 	
 
@@ -150,7 +150,7 @@ public class ChildModEntry extends ModListEntry{
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int i) {
 		if (isHoveringIcon) {
-			manyModsList.onClickEntry(this);
+			modMenuExtList.onClickEntry(this);
 		}
 		return super.mouseClicked(mouseX, mouseY, i);
 	}

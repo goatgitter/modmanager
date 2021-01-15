@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import combined.ManyMods;
+import combined.ModMenuExt;
 import combined.util.Log;
 import combined.util.ModConfig;
 import io.github.prospector.modmenu.gui.ModListEntry;
@@ -29,10 +29,10 @@ public class UnloadMods extends Screen{
 	private int buttonWidth = 32;
 	private int canvasHeight = 64;
 	private ModListEntry selected;
-	private static final TranslatableText TEXT_UNLOAD_TOOLTIP = new TranslatableText(ManyMods.MOD_ID + ".unload.tooltip");
-	private static final TranslatableText TEXT_REFRESH_TOOLTIP = new TranslatableText(ManyMods.MOD_ID + ".refresh.tooltip");
-	private static final Identifier UNLOAD_BTN_IMG = new Identifier(ManyMods.MOD_ID, "button.png");
-	private static final Identifier REFRESH_BTN_IMG = new Identifier(ManyMods.MOD_ID, "refresh.png");
+	private static final TranslatableText TEXT_UNLOAD_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".unload.tooltip");
+	private static final TranslatableText TEXT_REFRESH_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".refresh.tooltip");
+	private static final Identifier UNLOAD_BTN_IMG = new Identifier(ModMenuExt.MOD_ID, "button.png");
+	private static final Identifier REFRESH_BTN_IMG = new Identifier(ModMenuExt.MOD_ID, "refresh.png");
 	public UnloadMods(Text title) {
 		super(title);
 	}
@@ -54,7 +54,7 @@ public class UnloadMods extends Screen{
 		{
 			LOG.debug("Requested unloading of mod " + selected);
 			ModConfig.requestUnload(selected);
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ManyMods.TEXT_SUCCESS, ManyMods.TEXT_RESTART);
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_SUCCESS, ModMenuExt.TEXT_RESTART);
 		},
 		TEXT_UNLOAD_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> 
 		{

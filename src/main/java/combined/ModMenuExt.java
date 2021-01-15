@@ -13,7 +13,7 @@ import net.minecraft.text.TranslatableText;
 public class ModMenuExt implements ModInitializer {
 	private static Log LOG = new Log("ModMenuExt");
 	// Constants
-	public static final String MOD_ID = "modMenuExt";
+	public static final String MOD_ID = "modmenuext";
 	public static final String LOAD_JAR_DIR = "loadedJars/";
 	public static final String MM_PARENT_KEY = "modmenu:parent";
 	public static final TranslatableText TEXT_SUCCESS = new TranslatableText(MOD_ID + ".success");

@@ -17,8 +17,8 @@ import net.minecraft.world.level.storage.LevelStorage;
 
 public abstract class TwoListsWidgetScreen extends Screen {
 	// Constants
-	private TranslatableText CONFIRM_RESTART_TITLE = new TranslatableText("manymods.restart.title");
-	private TranslatableText CONFIRM_RESTART_MSG = new TranslatableText("manymods.restart.msg");
+	private TranslatableText CONFIRM_RESTART_TITLE = new TranslatableText("modmenuext.restart.title");
+	private TranslatableText CONFIRM_RESTART_MSG = new TranslatableText("modmenuext.restart.msg");
 	// Instance Variables
 	private Log LOG = new Log("TwoListsWidgetScreen");
 	protected TwoListsWidget availableMods;

@@ -23,7 +23,7 @@ import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
-import combined.ManyMods;
+import combined.ModMenuExt;
 import combined.gui.ChildModEntry;
 import combined.gui.Menu;
 import io.github.prospector.modmenu.ModMenu;
@@ -204,8 +204,8 @@ public class ModConfig {
 		while (enumEntries.hasMoreElements()) {
 		    java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
 		    
-		    if (file.getName().contains(ManyMods.LOAD_JAR_DIR) && file.getName().endsWith(".jar")) {
-		    	String destFileName = destDirName + java.io.File.separator + file.getName().replace(ManyMods.LOAD_JAR_DIR, "");
+		    if (file.getName().contains(ModMenuExt.LOAD_JAR_DIR) && file.getName().endsWith(".jar")) {
+		    	String destFileName = destDirName + java.io.File.separator + file.getName().replace(ModMenuExt.LOAD_JAR_DIR, "");
 		    	
 		    	java.io.File f = new java.io.File(destFileName);
 		    	Path destFilePath = f.toPath();
@@ -370,8 +370,8 @@ public class ModConfig {
 			try {
 				Map<String, CustomValue> cvUnmodifiableMap = (Map<String, CustomValue>) FieldUtils.readDeclaredField(mm, "customValues", true);
 				Map<String, CustomValue> cvMap = new HashMap<String, CustomValue> (cvUnmodifiableMap);
-				CustomValue cv = new CustomValueImpl.StringImpl(ManyMods.MOD_ID);
-				cvMap.put(ManyMods.MM_PARENT_KEY, cv);
+				CustomValue cv = new CustomValueImpl.StringImpl(ModMenuExt.MOD_ID);
+				cvMap.put(ModMenuExt.MM_PARENT_KEY, cv);
 				FieldUtils.writeField(mm, "customValues", Collections.unmodifiableMap(cvMap), true);
 			} catch (IllegalAccessException e) {
 				LOG.warn("Problem adding parent to mod => " + childMod.getInfo().getId());
@@ -418,15 +418,15 @@ public class ModConfig {
 		
 		try {
 			// Add parent tag to any nested mods in many mods
-			ModContainer manyModsMod = oldModMap.get(ManyMods.MOD_ID);
-			for(NestedJarEntry nestedJar: manyModsMod.getInfo().getJars())
+			ModContainer modMenuExtMod = oldModMap.get(ModMenuExt.MOD_ID);
+			for(NestedJarEntry nestedJar: modMenuExtMod.getInfo().getJars())
 			{
 				String jarFileName = cl.getNestedJarFileName(nestedJar);
 				ModContainer nestedMod = cl.getModForJar(jarFileName, oldMods);
 				String nestedModId = nestedMod.getInfo().getId();
 				LOG.debug("Adding!-Nested mod => " + nestedModId);
 				addParentToMod(nestedMod);
-				//Menu.addChild(manyModsMod, nestedMod);
+				//Menu.addChild(modMenuExtMod, nestedMod);
 			}
 			List<ModContainer> changedMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
 			// Add the new mod data
@@ -439,7 +439,7 @@ public class ModConfig {
 				{
 					LOG.debug("Adding!" + modId);
 					addParentToMod(mod);
-					//Menu.addChild(manyModsMod, mod);
+					//Menu.addChild(modMenuExtMod, mod);
 					oldModMap.put(modId, mod);
 					oldMods.add(mod);
 					
@@ -510,7 +510,7 @@ public class ModConfig {
 	private static void extractLoadedMods()
 	{
 		Path jarDir = cl.getModsDir();
-		Path jarPath = cl.getModJarPath(ManyMods.MOD_ID);
+		Path jarPath = cl.getModJarPath(ModMenuExt.MOD_ID);
 		try {
 		if (Files.notExists(jarDir))
 		{

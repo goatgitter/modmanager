@@ -1,8 +1,0 @@
-{
-  "required": true,
-  "minVersion": "0.8",
-  "package": "combined.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "client": ["UnloadMods"],
-  "injectors": {"defaultRequire": 1}
- }

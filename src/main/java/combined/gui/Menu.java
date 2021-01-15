@@ -1,6 +1,6 @@
 package combined.gui;
 
-import combined.ManyMods;
+import combined.ModMenuExt;
 import combined.util.Conditional;
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
@@ -17,7 +17,7 @@ public class Menu {
 		for( ModContainer key : ModMenu.PARENT_MAP.keySet())
 		{
 			String thisModId = key.getMetadata().getId();
-			if (thisModId.equals(ManyMods.MOD_ID)) {
+			if (thisModId.equals(ModMenuExt.MOD_ID)) {
 				return key;
 			}
 			
@@ -60,9 +60,9 @@ public class Menu {
 
 	public static void removeChildEntry(ModListEntry modEntry)
 	{
-		ModContainer manyModsMod = getThisMod();
+		ModContainer modMenuExtMod = getThisMod();
 		ModContainer modToRemove = null;
-		for (ModContainer mod : ModMenu.PARENT_MAP.get(manyModsMod))
+		for (ModContainer mod : ModMenu.PARENT_MAP.get(modMenuExtMod))
 		{
 			String thisModId = mod.getMetadata().getId();
 			String modEntryId = modEntry.getMetadata().getId();
@@ -85,7 +85,7 @@ public class Menu {
 			ModMenu.CLIENTSIDE_MODS.remove(modId);
 			ModMenu.DEPRECATED_MODS.remove(modId);
 			ModMenu.PATCHWORK_FORGE_MODS.remove(modId);	
-			ModMenu.PARENT_MAP.remove(manyModsMod, modToRemove);
+			ModMenu.PARENT_MAP.remove(modMenuExtMod, modToRemove);
 		}
 		
 	}

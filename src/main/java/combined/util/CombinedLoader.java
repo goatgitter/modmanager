@@ -44,7 +44,7 @@ public class CombinedLoader {
 	// Constants
 	private static final String UNLOAD_LIST = "unloadlist.txt";
 	private static final String LOAD_LIST = "loadlist.txt";
-	private static final String COMBINED_MODS_DIR = "manyMods\\";
+	private static final String COMBINED_MODS_DIR = "modmenuext\\";
 	private static final String MODS_DIR = "mods\\";
 	public static final Pattern FABRIC_PATTERN = Pattern.compile("^fabric-.*(-v\\d+)$");
 	public final static String API_MOD_ID = "fabric-api-base";
