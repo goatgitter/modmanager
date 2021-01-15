@@ -21,7 +21,3 @@
 /run/
 /scripts/*.ps1
 /.classpath
-/combined/
-/scripts/
-/src/
-/main/

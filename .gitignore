@@ -21,3 +21,5 @@
 /run/
 /scripts/*.ps1
 /.classpath
+/bin/logs/
+/bin/
