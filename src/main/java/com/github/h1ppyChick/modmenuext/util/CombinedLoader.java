@@ -53,7 +53,8 @@ public class CombinedLoader {
 	public final static String FABRIC_MOD_ID = "fabric";
 	public static final String BASE_MOD_ID = "minecraft";
 	public static final String LOAD_CATCHER_MOD_ID = "loadcatcher";
-	public static List<String> HIDDEN_MODS = Arrays.asList(API_MOD_ID, INDIGO_MOD_ID, LOADER_MOD_ID, FABRIC_MOD_ID, BASE_MOD_ID, LOAD_CATCHER_MOD_ID);
+	public static final String JRE = "jre";
+	public static List<String> HIDDEN_MODS = Arrays.asList(API_MOD_ID, INDIGO_MOD_ID, LOADER_MOD_ID, FABRIC_MOD_ID, BASE_MOD_ID, LOAD_CATCHER_MOD_ID, JRE);
 	private static final Logger LOG = LogManager.getFormatterLogger("CombinedLoader");
 	// Instance variables (fields)
 	private static FabricLoader fl;
