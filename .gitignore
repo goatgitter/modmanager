@@ -22,3 +22,4 @@
 /scripts/*.ps1
 /bin/logs/
 /bin/
+/.classpath
