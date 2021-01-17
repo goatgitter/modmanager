@@ -129,11 +129,21 @@ task('publishMod', type: Copy) {
 	into("$appDataFolder/.minecraft/mods")
 }
 
+// Task to copy the latest mod jar file to the minecraft mod folder.
+task('publishDebugMod', type: Copy) {
+	
+	def fileName = "$buildDir/libs/$jarName"
+	from(file(fileName))
+	into("run/mods")
+}
+
 // Task to build the mod and copy it to the minecraft mod folder
 task all{
 	dependsOn 'startBuildMsg'
 	dependsOn 'buildNeeded'
 	dependsOn 'publishMod'
+	dependsOn 'publishDebugMod'
 	dependsOn 'endBuildMsg'
 	tasks.findByName('publishMod').mustRunAfter 'buildNeeded'
+	tasks.findByName('publishDebugMod').mustRunAfter 'publishMod'
 }

@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "combined.mixin",
+  "package": "com.github.h1ppyChick.modmenuext.mixin",
   "compatibilityLevel": "JAVA_8",
   "client": ["UnloadMods"],
   "injectors": {"defaultRequire": 1}

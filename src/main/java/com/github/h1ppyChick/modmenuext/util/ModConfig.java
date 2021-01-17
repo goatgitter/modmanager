@@ -1,4 +1,4 @@
-package combined.util;
+package com.github.h1ppyChick.modmenuext.util;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -23,9 +23,9 @@ import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
-import combined.ModMenuExt;
-import combined.gui.ChildModEntry;
-import combined.gui.Menu;
+import com.github.h1ppyChick.modmenuext.ModMenuExt;
+import com.github.h1ppyChick.modmenuext.gui.ChildModEntry;
+import com.github.h1ppyChick.modmenuext.gui.Menu;
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import net.fabricmc.loader.FabricLoader;

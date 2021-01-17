@@ -1,4 +1,4 @@
-package combined.util;
+package com.github.h1ppyChick.modmenuext.util;
 
 import java.io.File;
 import java.io.IOException;

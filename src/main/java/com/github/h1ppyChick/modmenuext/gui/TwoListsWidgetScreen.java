@@ -1,8 +1,8 @@
-package combined.gui;
+package com.github.h1ppyChick.modmenuext.gui;
 
 import java.io.IOException;
 
-import combined.util.Log;
+import com.github.h1ppyChick.modmenuext.util.Log;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModListWidget;
 import io.github.prospector.modmenu.gui.ModsScreen;

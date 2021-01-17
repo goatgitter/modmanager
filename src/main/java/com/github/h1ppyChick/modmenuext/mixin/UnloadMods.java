@@ -1,4 +1,4 @@
-package combined.mixin;
+package com.github.h1ppyChick.modmenuext.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import combined.ModMenuExt;
-import combined.util.Log;
-import combined.util.ModConfig;
+import com.github.h1ppyChick.modmenuext.ModMenuExt;
+import com.github.h1ppyChick.modmenuext.util.Log;
+import com.github.h1ppyChick.modmenuext.util.ModConfig;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModMenuTexturedButtonWidget;
 import io.github.prospector.modmenu.gui.ModsScreen;

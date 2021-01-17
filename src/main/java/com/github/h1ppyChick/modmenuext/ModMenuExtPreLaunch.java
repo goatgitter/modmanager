@@ -1,7 +1,7 @@
-package combined;
+package com.github.h1ppyChick.modmenuext;
 
-import combined.util.Log;
-import combined.util.ModConfig;
+import com.github.h1ppyChick.modmenuext.util.Log;
+import com.github.h1ppyChick.modmenuext.util.ModConfig;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 
 public class ModMenuExtPreLaunch implements PreLaunchEntrypoint{

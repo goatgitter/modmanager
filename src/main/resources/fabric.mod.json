@@ -18,10 +18,10 @@
 
   "environment": "*",
   "entrypoints": {
-    "client": ["combined.ModMenuExtClient"],
-    "modmenu": ["combined.gui.ConfigApiImpl"],
-    "main": ["combined.ModMenuExt"],
-    "preLaunch": ["combined.ModMenuExtPreLaunch"]
+    "client": ["com.github.h1ppyChick.modmenuext.ModMenuExtClient"],
+    "modmenu": ["com.github.h1ppyChick.modmenuext.gui.ConfigApiImpl"],
+    "main": ["com.github.h1ppyChick.modmenuext.ModMenuExt"],
+    "preLaunch": ["com.github.h1ppyChick.modmenuext.ModMenuExtPreLaunch"]
 	},
   "jars": ${nestedJars},
   "mixins": ["modmenuext.mixins.json"],

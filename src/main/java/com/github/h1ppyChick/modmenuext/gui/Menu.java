@@ -1,7 +1,7 @@
-package combined.gui;
+package com.github.h1ppyChick.modmenuext.gui;
 
-import combined.ModMenuExt;
-import combined.util.Conditional;
+import com.github.h1ppyChick.modmenuext.ModMenuExt;
+import com.github.h1ppyChick.modmenuext.util.Conditional;
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import net.fabricmc.loader.api.ModContainer;

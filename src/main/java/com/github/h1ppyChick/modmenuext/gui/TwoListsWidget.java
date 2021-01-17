@@ -1,4 +1,4 @@
-package combined.gui;
+package com.github.h1ppyChick.modmenuext.gui;
 
 import java.util.HashSet;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import combined.util.Log;
+import com.github.h1ppyChick.modmenuext.util.Log;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModListWidget;
 import io.github.prospector.modmenu.mixin.EntryListWidgetAccessor;

@@ -1,9 +1,9 @@
-package combined.gui;
+package com.github.h1ppyChick.modmenuext.gui;
 
-import combined.ModMenuExt;
-import combined.util.CombinedLoader;
-import combined.util.Log;
-import combined.util.ModConfig;
+import com.github.h1ppyChick.modmenuext.ModMenuExt;
+import com.github.h1ppyChick.modmenuext.util.CombinedLoader;
+import com.github.h1ppyChick.modmenuext.util.Log;
+import com.github.h1ppyChick.modmenuext.util.ModConfig;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;

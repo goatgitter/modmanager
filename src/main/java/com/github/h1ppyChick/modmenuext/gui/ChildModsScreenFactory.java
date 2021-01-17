@@ -1,4 +1,4 @@
-package combined.gui;
+package com.github.h1ppyChick.modmenuext.gui;
 
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import net.minecraft.client.gui.screen.Screen;

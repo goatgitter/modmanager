@@ -1,11 +1,11 @@
-package combined.util;
+package com.github.h1ppyChick.modmenuext.util;
 
 import java.lang.reflect.Method;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import combined.ModMenuExt;
+import com.github.h1ppyChick.modmenuext.ModMenuExt;
 
 /**
  * @author h1ppyChick
