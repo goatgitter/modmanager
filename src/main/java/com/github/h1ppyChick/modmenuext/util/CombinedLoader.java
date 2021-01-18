@@ -93,7 +93,7 @@ public class CombinedLoader {
 	}
 	
 	public Path getModsBaseDir() {
-		return fl.getGameDir().resolve(MODS_DIR);
+		return fl.getGameDir().normalize().resolve(MODS_DIR);
 	}
 
 	@SuppressWarnings("deprecation")
