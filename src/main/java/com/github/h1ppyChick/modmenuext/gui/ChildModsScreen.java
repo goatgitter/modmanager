@@ -1,5 +1,11 @@
 package com.github.h1ppyChick.modmenuext.gui;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.github.h1ppyChick.modmenuext.ModMenuExt;
 import com.github.h1ppyChick.modmenuext.util.CombinedLoader;
 import com.github.h1ppyChick.modmenuext.util.Log;
@@ -7,6 +13,7 @@ import com.github.h1ppyChick.modmenuext.util.ModConfig;
 
 import io.github.prospector.modmenu.gui.ModMenuTexturedButtonWidget;
 import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -108,5 +115,53 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		super.render(matrices, mouseX, mouseY, delta);
 	}
 	
+	@Override
+	public void filesDragged(List<Path> paths) {
+		addMods(paths);
+	}
+	
+	// Used with files are dropped into the window, or add button is used.
+	private void addMods(List<Path> paths)
+	{
+		Path modsDirectory = cl.getModsDir();
+		
+		List<Path> mods = paths.stream()
+				.filter(CombinedLoader::isFabricMod)
+				.collect(Collectors.toList());
+
+		if (mods.isEmpty()) {
+			return;
+		}
+
+		String modList = mods.stream()
+				.map(Path::getFileName)
+				.map(Path::toString)
+				.collect(Collectors.joining(", "));
+		Path listFile = cl.getUnLoadFile();
+
+		this.client.openScreen(new ConfirmScreen((value) -> {
+			if (value) {
+				boolean allSuccessful = true;
+
+				for (Path path : mods) {
+					try {
+						Files.copy(path, modsDirectory.resolve(path.getFileName()));
+						cl.addJarToFile(listFile, path);
+					} catch (IOException e) {
+						LOG.warn(String.format("Failed to copy mod from {} to {}", path, modsDirectory.resolve(path.getFileName())));
+						SystemToast.addPackCopyFailure(client, path.toString());
+						allSuccessful = false;
+						break;
+					}
+				}
+
+				if (allSuccessful) {
+					this.availableModList.reloadFilters();
+					SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, new TranslatableText("modmenu.dropSuccessful.line1"), new TranslatableText("modmenu.dropSuccessful.line2"));
+				}
+			}
+			this.client.openScreen(this);
+		}, new TranslatableText("modmenu.dropConfirm"), new LiteralText(modList)));
+	}
 
 }

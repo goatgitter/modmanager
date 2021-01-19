@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -378,5 +379,13 @@ public class CombinedLoader {
 	public Map<String, ModCandidate> getSelectedMods()
 	{
 		return getModMap(LOAD_LIST);
+	}
+	
+	public static boolean isFabricMod(Path mod) {
+		try (JarFile jarFile = new JarFile(mod.toFile())) {
+			return jarFile.getEntry("fabric.mod.json") != null;
+		} catch (IOException e) {
+			return false;
+		}
 	}
 }

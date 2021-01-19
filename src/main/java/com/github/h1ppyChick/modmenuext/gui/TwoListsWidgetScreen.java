@@ -1,19 +1,16 @@
 package com.github.h1ppyChick.modmenuext.gui;
 
-import java.io.IOException;
-
 import com.github.h1ppyChick.modmenuext.util.Log;
+
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModListWidget;
 import io.github.prospector.modmenu.gui.ModsScreen;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
-import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.world.level.storage.LevelStorage;
 
 public abstract class TwoListsWidgetScreen extends Screen {
 	// Constants

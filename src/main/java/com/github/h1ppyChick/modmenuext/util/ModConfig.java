@@ -417,7 +417,7 @@ public class ModConfig {
 	{
 		
 		try {
-			// Add parent tag to any nested mods in many mods
+			// Add parent tag to any mods added to this mod
 			ModContainer modMenuExtMod = oldModMap.get(ModMenuExt.MOD_ID);
 			for(NestedJarEntry nestedJar: modMenuExtMod.getInfo().getJars())
 			{
