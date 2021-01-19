@@ -11,7 +11,7 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 
 public class Menu {
 
-	// Find the Many Mods mod in the parent map
+	// Find the mod in the parent map
 	public static ModContainer getThisMod()
 	{
 		for( ModContainer key : ModMenu.PARENT_MAP.keySet())

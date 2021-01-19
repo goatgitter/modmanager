@@ -18,8 +18,9 @@ public class ModMenuExt implements ModInitializer {
 	public static final String MM_PARENT_KEY = "modmenu:parent";
 	public static final TranslatableText TEXT_SUCCESS = new TranslatableText(MOD_ID + ".success");
 	public static final TranslatableText TEXT_ERROR = new TranslatableText(MOD_ID + ".error");
+	public static final TranslatableText TEXT_WARNING = new TranslatableText(MOD_ID + ".warning");
 	public static final TranslatableText TEXT_RESTART = new TranslatableText(MOD_ID + ".restart");
-	
+	public static final TranslatableText TEXT_NOT_IMPL = new TranslatableText(MOD_ID + ".notimpl");
 	@Override
 	public void onInitialize() {
 		LOG.enter("onInitialize");
