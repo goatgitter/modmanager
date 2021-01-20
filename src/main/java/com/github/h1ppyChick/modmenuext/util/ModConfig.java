@@ -1,5 +1,8 @@
 package com.github.h1ppyChick.modmenuext.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -7,12 +10,12 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -26,6 +29,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import com.github.h1ppyChick.modmenuext.ModMenuExt;
 import com.github.h1ppyChick.modmenuext.gui.ChildModEntry;
 import com.github.h1ppyChick.modmenuext.gui.Menu;
+
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import net.fabricmc.loader.FabricLoader;
@@ -36,7 +40,6 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.discovery.ModCandidate;
 import net.fabricmc.loader.launch.common.FabricMixinBootstrap;
 import net.fabricmc.loader.metadata.EntrypointMetadata;
-
 import net.fabricmc.loader.metadata.NestedJarEntry;
 
 /**
@@ -46,6 +49,8 @@ import net.fabricmc.loader.metadata.NestedJarEntry;
  * 
  */
 public class ModConfig {
+	
+	
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
@@ -56,6 +61,7 @@ public class ModConfig {
 	/***************************************************
 	 *              METHODS
 	 **************************************************/
+	
 	public static ModMetadata getMetadata(ModListEntry mod)
 	{
 		ModMetadata mmd = null;
@@ -165,7 +171,7 @@ public class ModConfig {
 		// Setup the menu config for the mods that have already been loaded.
 //		ModMenu mm = new ModMenu();
 //		mm.onInitializeClient();
-		extractLoadedMods();
+		extractFiles();
 		try {
 			Map<String, ModContainer> oldModMap = (Map<String, ModContainer>) FieldUtils.readDeclaredField(fl, "modMap", true);
 			List<ModContainer> oldMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
@@ -198,20 +204,17 @@ public class ModConfig {
 	}
 	
 	// Private methods
-	
-	private static void unZipLoadedJars(String jarFileName, String destDirName) throws IOException
+	private static void unzipConfigFile(String jarFileName) throws IOException
 	{
 		JarFile jar = new JarFile(jarFileName);
 		Enumeration<JarEntry> enumEntries = jar.entries();
-		Path loadFilePath = modListLoader.getSelectedModList();
 		while (enumEntries.hasMoreElements()) {
-		    java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
+			java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
 		    
-		    if (file.getName().contains(ModMenuExt.LOAD_JAR_DIR) && file.getName().endsWith(".jar")) {
-		    	String destFileName = destDirName + java.io.File.separator + file.getName().replace(ModMenuExt.LOAD_JAR_DIR, "");
+			if (file.getName().contains(ModMenuExt.CONFIG_DIR) && file.getName().endsWith(".properties")) {
+		    	Path destFilePath = modListLoader.getConfigPath();
+		    	java.io.File f = destFilePath.toFile();
 		    	
-		    	java.io.File f = new java.io.File(destFileName);
-		    	Path destFilePath = f.toPath();
 		    	if (Files.notExists(destFilePath))
 		    	{
 		    		java.io.InputStream is = jar.getInputStream(file); 
@@ -221,7 +224,6 @@ public class ModConfig {
 				    }
 				    fos.close();
 				    is.close();
-				    modListLoader.addJarToFile(loadFilePath, destFilePath);
 		    	}
 		    }
 		}
@@ -510,7 +512,7 @@ public class ModConfig {
 		
 	}
 	
-	private static void extractLoadedMods()
+	private static void extractFiles()
 	{
 		Path jarDir = modListLoader.getModsDir();
 		Path jarPath = modListLoader.getModJarPath(ModMenuExt.MOD_ID);
@@ -519,8 +521,7 @@ public class ModConfig {
 		{
 			Files.createDirectory(jarDir);
 		}
-		LOG.debug("Unzipping mod JAR");
-		unZipLoadedJars(jarPath.toString(), jarDir.toString());
+		unzipConfigFile(jarPath.toString());
 		} catch (IOException e) {
 			LOG.warn("Problem extracting LoadedMods");
 			e.printStackTrace();

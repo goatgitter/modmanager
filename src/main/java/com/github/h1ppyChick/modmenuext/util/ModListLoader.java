@@ -1,6 +1,8 @@
 package com.github.h1ppyChick.modmenuext.util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -14,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,6 +24,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.github.h1ppyChick.modmenuext.ModMenuExt;
 
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
@@ -42,8 +47,8 @@ public class ModListLoader {
 	/***************************************************
 	 *              CONSTANTS
 	 **************************************************/
+	private static final String KEY_SEL_LIST = "selectedModList";
 	private static final String AVAIL_MODS_LIST = "unloadlist.txt";
-	private static final String SELECTED_MODS_LIST = "loadlist.txt";
 	private static final String MODS_LIST_DIR = "modmenuext\\";
 	private static final String MODS_DIR = "mods\\";
 	public static final Pattern FABRIC_PATTERN = Pattern.compile("^fabric-.*(-v\\d+)$");
@@ -62,6 +67,7 @@ public class ModListLoader {
 	private static FabricLoader fl;
 	private static List<ModContainer> requiredMods = new ArrayList<ModContainer>();
 	private static Map<String, ModContainer> requiredModsMap = new HashMap<>();
+	private static Properties props = null;
 	
 	/***************************************************
 	 *              CONSTRUCTORS
@@ -83,19 +89,60 @@ public class ModListLoader {
 	/***************************************************
 	 *              METHODS
 	 **************************************************/
-	public Path getModsDir() {
-		Path baseModDir = getModsBaseDir();
-		Path combinedModsDir = baseModDir.resolve(MODS_LIST_DIR);
-		if(Files.notExists(combinedModsDir))
+	
+	/***************************************************
+	 *              CONFIG FILE METHODS
+	 **************************************************/
+	private static Path getConfigDir() {
+		return fl.getGameDir().normalize().resolve(ModMenuExt.CONFIG_DIR);
+	}
+	public Path getConfigPath()
+	{
+		return getConfigDir().resolve(ModMenuExt.MOD_ID + ".properties");
+	}
+	
+	private File getConfigFile()
+	{
+		return getConfigPath().toFile();
+	}
+	
+	private Properties getProps() {
+		if (props == null)
 		{
-			try {
-				Files.createDirectories(combinedModsDir);
+		    props = new Properties();
+		    File configFile = getConfigFile();
+		    try {
+		    	FileReader reader = new FileReader(configFile);
+				props.load(reader);
 			} catch (IOException e) {
-				LOG.warn("Could not create required directory => " + combinedModsDir + "."); 
+				LOG.warn("Could not read property file => " + configFile.getName() + "."); 
 				e.printStackTrace();
 			}
 		}
-		return combinedModsDir;
+		return props;
+	}
+	public String getSelectedModListName()
+	{
+		return getProps().getProperty(KEY_SEL_LIST);
+	}
+	private String getSelectedModListFileName()
+	{
+		return getSelectedModListName() + ".txt";
+	}
+	
+	public Path getModsDir() {
+		Path baseModDir = getModsBaseDir();
+		Path modListDir = baseModDir.resolve(MODS_LIST_DIR);
+		if(Files.notExists(modListDir))
+		{
+			try {
+				Files.createDirectories(modListDir);
+			} catch (IOException e) {
+				LOG.warn("Could not create required directory => " + modListDir + "."); 
+				e.printStackTrace();
+			}
+		}
+		return modListDir;
 	}
 	
 	public Path getModsBaseDir() {
@@ -172,7 +219,7 @@ public class ModListLoader {
 	
 	public Path getSelectedModList()
 	{
-		return getModList(SELECTED_MODS_LIST);
+		return getModList(getSelectedModListFileName());
 	}
 	
 	public Path getAvailModListFile()
@@ -182,7 +229,7 @@ public class ModListLoader {
 	
 	public Path getModList(String fileName)
 	{
-		boolean isLoad = fileName.equals(SELECTED_MODS_LIST);
+		boolean isLoad = fileName.equals(getSelectedModListFileName());
 		Path modListPath = getModsDir().resolve(fileName);
 	    if (! Files.exists(modListPath)){
 	    	LOG.info("Creating file " + modListPath.getFileName());
@@ -383,7 +430,7 @@ public class ModListLoader {
 	
 	public Map<String, ModCandidate> getSelectedMods()
 	{
-		return getModMap(SELECTED_MODS_LIST);
+		return getModMap(getSelectedModListFileName());
 	}
 	
 	public static boolean isFabricMod(Path mod) {

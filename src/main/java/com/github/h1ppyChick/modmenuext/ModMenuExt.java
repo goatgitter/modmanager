@@ -16,7 +16,7 @@ public class ModMenuExt implements ModInitializer {
 	 **************************************************/
 	public static final String MOD_ID = "modmenuext";
 	public static final String LOAD_JAR_DIR = "loadedJars/";
-	public static final String CONFIG_DIR = "../config/";
+	public static final String CONFIG_DIR = "config/";
 	public static final String MM_PARENT_KEY = "modmenu:parent";
 	public static final TranslatableText TEXT_SUCCESS = new TranslatableText(MOD_ID + ".success");
 	public static final TranslatableText TEXT_ERROR = new TranslatableText(MOD_ID + ".error");
