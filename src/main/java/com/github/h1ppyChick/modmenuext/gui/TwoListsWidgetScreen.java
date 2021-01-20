@@ -30,6 +30,7 @@ public abstract class TwoListsWidgetScreen extends Screen {
 	protected int rightPaneX;
 	protected Text tooltip;
 	protected Text title;
+	protected boolean restartRequired = false;
 	
 	// Constructors
 	protected TwoListsWidgetScreen(Text title) {
@@ -99,6 +100,10 @@ public abstract class TwoListsWidgetScreen extends Screen {
 			this.client.disconnect();
 			this.client.scheduleStop();
 		}
+		closeScreen();
+	}
+	protected void closeScreen()
+	{
 		this.selectedModList.close();
 		this.availableModList.close();
 		this.selected = null;
@@ -117,8 +122,14 @@ public abstract class TwoListsWidgetScreen extends Screen {
 	
 	@Override
 	public void onClose() {
-		this.client.openScreen(new ConfirmScreen(this::onRestartConfirmed, CONFIRM_RESTART_TITLE, CONFIRM_RESTART_MSG, ScreenTexts.YES, ScreenTexts.NO));
-        
+		if (restartRequired)
+		{
+			this.client.openScreen(new ConfirmScreen(this::onRestartConfirmed, CONFIRM_RESTART_TITLE, CONFIRM_RESTART_MSG, ScreenTexts.YES, ScreenTexts.NO));
+		}
+		else
+		{
+			closeScreen();
+		}
 
 	}
 

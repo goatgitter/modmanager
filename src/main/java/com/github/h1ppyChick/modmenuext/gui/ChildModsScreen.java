@@ -43,6 +43,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private int topRowHeight = 21;
 	private int leftPaneX = 5;
 	
+	
 	// Constructors
 	public ChildModsScreen(Screen previousScreen) {
 		super(previousScreen, TITLE_ID);
@@ -77,9 +78,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		
 		this.availableMods = new TwoListsWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, cl.getAvailableModList(), this, availableModList, availTitle,
 				(TwoListsWidget.LoadListAction) widget  -> widget.setContainerList(cl.getAvailableModList()),
-				(TwoListsWidget.ClickEntryAction) entry -> {
-					ModConfig.requestLoad(entry);
-				}
+				(TwoListsWidget.ClickEntryAction) entry -> loadMod(entry)
 		);
 		
 		this.availableMods.setLeftPos(leftPaneX);
@@ -88,13 +87,23 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		LiteralText selectedTitle = new LiteralText("Selected Mods");
 		this.selectedMods = new TwoListsWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, cl.getSelectedModList(false) , this, selectedModList, selectedTitle,
 				(TwoListsWidget.LoadListAction) list -> list.setContainerList(cl.getSelectedModList(false)),
-				(TwoListsWidget.ClickEntryAction) entry -> ModConfig.requestUnload(entry)
+				(TwoListsWidget.ClickEntryAction) entry -> unloadMod(entry)
 		);
 		this.selectedMods.setLeftPos(this.width / 2 + 4);
 		this.children.add(this.selectedMods);		
 		drawDoneButton();
 		drawAddButton();
 		drawListNameInput();
+	}
+	
+	private void loadMod(ChildModEntry mod) {
+		restartRequired = true;
+		ModConfig.requestLoad(mod);
+	}
+	
+	private void unloadMod(ChildModEntry mod) {
+		restartRequired = true;
+		ModConfig.requestUnload(mod);
 	}
 	
 	private void drawDoneButton()
@@ -149,6 +158,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	
 	@Override
 	public void filesDragged(List<Path> paths) {
+		restartRequired = true;
 		addMods(paths);
 	}
 	
@@ -156,7 +166,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		return listNameInput.getText();
 	}
 	
-	// Used with files are dropped into the window, or add button is used.
+	// Used with files are dropped into the window
 	private void addMods(List<Path> paths)
 	{
 		Path modsDirectory = cl.getModsDir();
