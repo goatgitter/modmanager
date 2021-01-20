@@ -130,6 +130,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private void drawListNameInput()
 	{
 		String listName = cl.getLoadFile().getFileName().toString();
+		listName = listName.substring(0, listName.lastIndexOf(".txt"));
 		Text listNameText = new LiteralText(listName);
 		this.listNameInput = new TextFieldWidget(this.textRenderer, listNameInputX, getTopRowY(), listNameInputWidth, topRowItemHeight, this.listNameInput, listNameText);
 		this.listNameInput.setText(listName);
