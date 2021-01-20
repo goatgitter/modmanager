@@ -18,18 +18,18 @@ public class FileListModCandidateFinder implements ModCandidateFinder {
 	private ModListLoader modListLoader;
 	private String modListFile;
 
-	public FileListModCandidateFinder(String loadList) 
+	public FileListModCandidateFinder(String selectedList) 
 	{
 		this.modListLoader = new ModListLoader();
-		this.modListFile = loadList;
+		this.modListFile = selectedList;
 	}
 
 	@Override
 	public void findCandidates(FabricLoader loader, BiConsumer<URL, Boolean> urlProposer){
 		try 
 		{
-			Path loadListPath = modListLoader.getModList(modListFile);
-			List<String> mods = Files.readAllLines(loadListPath);
+			Path selectedListPath = modListLoader.getModList(modListFile);
+			List<String> mods = Files.readAllLines(selectedListPath);
 
 			for (String modJarName : mods) {
 				File modFile = new File(modJarName);

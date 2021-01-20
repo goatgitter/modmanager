@@ -103,9 +103,9 @@ public class ModConfig {
 		else
 		{
 			Path srcJarPath = modListLoader.getModJarPath(mod);
-			Path loadListPath = modListLoader.getSelectedModList();
+			Path selectedListPath = modListLoader.getSelectedModList();
 			try {
-				if (!modListLoader.isModInListFile(loadListPath, srcJarPath))
+				if (!modListLoader.isModInListFile(selectedListPath, srcJarPath))
 					canTurnOff=false;
 			} catch (IOException e) {
 				LOG.warn("Problem determining if mod can be turned off");
@@ -138,11 +138,11 @@ public class ModConfig {
 	public static void requestUnload(ModListEntry mod)
 	{
 		LOG.info("Requested unload of mod =>" + mod.getMetadata().getId() + ".");
-		Path unloadListPath = modListLoader.getAvailModListFile();
-		Path loadlistPath = modListLoader.getSelectedModList();
+		Path availListPath = modListLoader.getAvailModListFile();
+		Path selectedListPath = modListLoader.getSelectedModList();
 		Path srcJarPath = modListLoader.getModJarPath(mod);
-		modListLoader.addJarToFile(unloadListPath, srcJarPath);
-		modListLoader.removeJarFromFile(loadlistPath, srcJarPath);
+		modListLoader.addJarToFile(availListPath, srcJarPath);
+		modListLoader.removeJarFromFile(selectedListPath, srcJarPath);
 		removeMod(mod);
 		Menu.removeChildEntry(mod);
 	}
@@ -150,11 +150,11 @@ public class ModConfig {
 	public static void requestLoad(ChildModEntry mod)
 	{
 		LOG.info("Requested load of mod =>" + mod.getMetadata().getId() + ".");
-		Path unloadListPath = modListLoader.getAvailModListFile();
-		Path loadlistPath = modListLoader.getSelectedModList();
+		Path availListPath = modListLoader.getAvailModListFile();
+		Path selectedListPath = modListLoader.getSelectedModList();
 		Path srcJarPath = modListLoader.getModJarPath(mod.getContainer());
-		modListLoader.addJarToFile(loadlistPath, srcJarPath);
-		modListLoader.removeJarFromFile(unloadListPath, srcJarPath);
+		modListLoader.addJarToFile(selectedListPath, srcJarPath);
+		modListLoader.removeJarFromFile(availListPath, srcJarPath);
 		loadMods();
 	}
 	
