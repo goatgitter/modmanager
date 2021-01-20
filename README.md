@@ -8,10 +8,6 @@ This is Minecraft Fabric mod which extends the Mod Menu mod to add ability to en
 ## Known Issues
 * Mod Icon changes to blank white square after it is expanded.  Displayed correctly after config screen is opened.
 
-## Coming soon
-* Button to add additional mods.
-* Load changed mods without requiring client restart.
-
 ## License
 
 This project is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
