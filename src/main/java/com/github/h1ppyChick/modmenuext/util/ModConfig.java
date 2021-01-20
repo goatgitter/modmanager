@@ -42,17 +42,20 @@ import net.fabricmc.loader.metadata.NestedJarEntry;
 /**
  * @author h1ppyChic
  * 
- * I should probably refactor this...
  * This is class of helper methods for changing the mod configuration
  * 
  */
 public class ModConfig {
-	// Instance variables (fields)
+	/***************************************************
+	 *              INSTANCE VARIABLES
+	 **************************************************/
 	private static Log LOG = new Log("ModConfigUtil");
 	private static FabricLoader fl = (FabricLoader) net.fabricmc.loader.api.FabricLoader.getInstance();
-	private static CombinedLoader cl = new CombinedLoader();
+	private static ModListLoader modListLoader = new ModListLoader();
 	
-	// Methods
+	/***************************************************
+	 *              METHODS
+	 **************************************************/
 	public static ModMetadata getMetadata(ModListEntry mod)
 	{
 		ModMetadata mmd = null;
@@ -93,16 +96,16 @@ public class ModConfig {
 	{
 		boolean canTurnOff = true;
 		String modId = getModId(mod);
-		if (cl.isRequiredMod(modId)) 
+		if (modListLoader.isRequiredMod(modId)) 
 		{
 			canTurnOff = false;
 		}
 		else
 		{
-			Path srcJarPath = cl.getModJarPath(mod);
-			Path loadListPath = cl.getLoadFile();
+			Path srcJarPath = modListLoader.getModJarPath(mod);
+			Path loadListPath = modListLoader.getSelectedModList();
 			try {
-				if (!cl.isModInLoadFile(loadListPath, srcJarPath))
+				if (!modListLoader.isModInListFile(loadListPath, srcJarPath))
 					canTurnOff=false;
 			} catch (IOException e) {
 				LOG.warn("Problem determining if mod can be turned off");
@@ -116,7 +119,7 @@ public class ModConfig {
 	
 	public static Path getModsDir()
 	{
-		return cl.getModsDir();
+		return modListLoader.getModsDir();
 	}
 	
 	public static Path getPath(Path root, String dirName) throws IOException
@@ -130,16 +133,16 @@ public class ModConfig {
 	
 	public static Path getCombinedModsDir() throws IOException
 	{
-		return cl.getModsDir();
+		return modListLoader.getModsDir();
 	}
 	public static void requestUnload(ModListEntry mod)
 	{
 		LOG.info("Requested unload of mod =>" + mod.getMetadata().getId() + ".");
-		Path unloadListPath = cl.getUnLoadFile();
-		Path loadlistPath = cl.getLoadFile();
-		Path srcJarPath = cl.getModJarPath(mod);
-		cl.addJarToFile(unloadListPath, srcJarPath);
-		cl.removeJarFromFile(loadlistPath, srcJarPath);
+		Path unloadListPath = modListLoader.getAvailModListFile();
+		Path loadlistPath = modListLoader.getSelectedModList();
+		Path srcJarPath = modListLoader.getModJarPath(mod);
+		modListLoader.addJarToFile(unloadListPath, srcJarPath);
+		modListLoader.removeJarFromFile(loadlistPath, srcJarPath);
 		removeMod(mod);
 		Menu.removeChildEntry(mod);
 	}
@@ -147,11 +150,11 @@ public class ModConfig {
 	public static void requestLoad(ChildModEntry mod)
 	{
 		LOG.info("Requested load of mod =>" + mod.getMetadata().getId() + ".");
-		Path unloadListPath = cl.getUnLoadFile();
-		Path loadlistPath = cl.getLoadFile();
-		Path srcJarPath = cl.getModJarPath(mod.getContainer());
-		cl.addJarToFile(loadlistPath, srcJarPath);
-		cl.removeJarFromFile(unloadListPath, srcJarPath);
+		Path unloadListPath = modListLoader.getAvailModListFile();
+		Path loadlistPath = modListLoader.getSelectedModList();
+		Path srcJarPath = modListLoader.getModJarPath(mod.getContainer());
+		modListLoader.addJarToFile(loadlistPath, srcJarPath);
+		modListLoader.removeJarFromFile(unloadListPath, srcJarPath);
 		loadMods();
 	}
 	
@@ -200,7 +203,7 @@ public class ModConfig {
 	{
 		JarFile jar = new JarFile(jarFileName);
 		Enumeration<JarEntry> enumEntries = jar.entries();
-		Path loadFilePath = cl.getLoadFile();
+		Path loadFilePath = modListLoader.getSelectedModList();
 		while (enumEntries.hasMoreElements()) {
 		    java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
 		    
@@ -218,7 +221,7 @@ public class ModConfig {
 				    }
 				    fos.close();
 				    is.close();
-				    cl.addJarToFile(loadFilePath, destFilePath);
+				    modListLoader.addJarToFile(loadFilePath, destFilePath);
 		    	}
 		    }
 		}
@@ -228,7 +231,7 @@ public class ModConfig {
 	private static void addNewMods(Map<String, ModContainer> oldModMap, Object oldEntrypointStorage)
 	{
 		try {
-			Map<String, ModCandidate> candidateMap = cl.getSelectedMods();
+			Map<String, ModCandidate> candidateMap = modListLoader.getSelectedMods();
 			LOG.info("Loading " + candidateMap.values().size() + " mods! => " + candidateMap.values().stream()
 					.map(info -> String.format("%s@%s", info.getInfo().getId(), info.getInfo().getVersion().getFriendlyString()))
 					.collect(Collectors.joining(", ")));
@@ -421,8 +424,8 @@ public class ModConfig {
 			ModContainer modMenuExtMod = oldModMap.get(ModMenuExt.MOD_ID);
 			for(NestedJarEntry nestedJar: modMenuExtMod.getInfo().getJars())
 			{
-				String jarFileName = cl.getNestedJarFileName(nestedJar);
-				ModContainer nestedMod = cl.getModForJar(jarFileName, oldMods);
+				String jarFileName = modListLoader.getNestedJarFileName(nestedJar);
+				ModContainer nestedMod = modListLoader.getModForJar(jarFileName, oldMods);
 				String nestedModId = nestedMod.getInfo().getId();
 				LOG.debug("Adding!-Nested mod => " + nestedModId);
 				addParentToMod(nestedMod);
@@ -435,7 +438,7 @@ public class ModConfig {
 				String modId = mod.getMetadata().getId();
 				LOG.debug("Checking changed mod id =>" + modId);
 				// Don't add the fabric api again
-				if (!cl.isRequiredMod(modId) && !oldModMap.containsKey(mod.getInfo().getId()))
+				if (!modListLoader.isRequiredMod(modId) && !oldModMap.containsKey(mod.getInfo().getId()))
 				{
 					LOG.debug("Adding!" + modId);
 					addParentToMod(mod);
@@ -487,7 +490,7 @@ public class ModConfig {
 			for (ModContainer mod: oldMods)
 			{
 				String modId = mod.getMetadata().getId();
-				if (cl.isRequiredMod(modId) && !modId.equals(CombinedLoader.BASE_MOD_ID))
+				if (modListLoader.isRequiredMod(modId) && !modId.equals(ModListLoader.BASE_MOD_ID))
 				{
 					modsToRemove.add(mod);
 				}
@@ -509,8 +512,8 @@ public class ModConfig {
 	
 	private static void extractLoadedMods()
 	{
-		Path jarDir = cl.getModsDir();
-		Path jarPath = cl.getModJarPath(ModMenuExt.MOD_ID);
+		Path jarDir = modListLoader.getModsDir();
+		Path jarPath = modListLoader.getModJarPath(ModMenuExt.MOD_ID);
 		try {
 		if (Files.notExists(jarDir))
 		{

@@ -19,7 +19,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,17 +34,17 @@ import net.fabricmc.loader.metadata.NestedJarEntry;
 
 /**
  * @author h1ppyChick
- * I guess I should add some comments, huh?
  * 
- * This class contains many helper methods for loading the combined mods in a 
- * user-friendly way.
+ * This class contains many helper methods for loading the mods in the mod list.
  *
  */
-public class CombinedLoader {
-	// Constants
-	private static final String UNLOAD_LIST = "unloadlist.txt";
-	private static final String LOAD_LIST = "loadlist.txt";
-	private static final String COMBINED_MODS_DIR = "modmenuext\\";
+public class ModListLoader {
+	/***************************************************
+	 *              CONSTANTS
+	 **************************************************/
+	private static final String AVAIL_MODS_LIST = "unloadlist.txt";
+	private static final String SELECTED_MODS_LIST = "loadlist.txt";
+	private static final String MODS_LIST_DIR = "modmenuext\\";
 	private static final String MODS_DIR = "mods\\";
 	public static final Pattern FABRIC_PATTERN = Pattern.compile("^fabric-.*(-v\\d+)$");
 	public final static String API_MOD_ID = "fabric-api-base";
@@ -57,14 +56,18 @@ public class CombinedLoader {
 	public static final String JRE = "java";
 	public static List<String> HIDDEN_MODS = Arrays.asList(API_MOD_ID, INDIGO_MOD_ID, LOADER_MOD_ID, FABRIC_MOD_ID, BASE_MOD_ID, LOAD_CATCHER_MOD_ID, JRE);
 	private static final Logger LOG = LogManager.getFormatterLogger("CombinedLoader");
-	// Instance variables (fields)
+	/***************************************************
+	 *              INSTANCE VARIABLES
+	 **************************************************/
 	private static FabricLoader fl;
 	private static List<ModContainer> requiredMods = new ArrayList<ModContainer>();
 	private static Map<String, ModContainer> requiredModsMap = new HashMap<>();
 	
-	// Constructor
+	/***************************************************
+	 *              CONSTRUCTORS
+	 **************************************************/
 	@SuppressWarnings("deprecation")
-	public CombinedLoader() {
+	public ModListLoader() {
 		fl = (FabricLoader) net.fabricmc.loader.api.FabricLoader.getInstance();	
 		for(ModContainer mc: fl.getMods())
 		{
@@ -77,10 +80,12 @@ public class CombinedLoader {
 		
 	}
 
-	// Methods
+	/***************************************************
+	 *              METHODS
+	 **************************************************/
 	public Path getModsDir() {
 		Path baseModDir = getModsBaseDir();
-		Path combinedModsDir = baseModDir.resolve(COMBINED_MODS_DIR);
+		Path combinedModsDir = baseModDir.resolve(MODS_LIST_DIR);
 		if(Files.notExists(combinedModsDir))
 		{
 			try {
@@ -165,19 +170,19 @@ public class CombinedLoader {
 		return returnName;
 	}
 	
-	public Path getLoadFile()
+	public Path getSelectedModList()
 	{
-		return getModList(LOAD_LIST);
+		return getModList(SELECTED_MODS_LIST);
 	}
 	
-	public Path getUnLoadFile()
+	public Path getAvailModListFile()
 	{
-	    return getModList(UNLOAD_LIST);
+	    return getModList(AVAIL_MODS_LIST);
 	}
 	
 	public Path getModList(String fileName)
 	{
-		boolean isLoad = fileName.equals(LOAD_LIST);
+		boolean isLoad = fileName.equals(SELECTED_MODS_LIST);
 		Path modListPath = getModsDir().resolve(fileName);
 	    if (! Files.exists(modListPath)){
 	    	LOG.info("Creating file " + modListPath.getFileName());
@@ -272,7 +277,7 @@ public class CombinedLoader {
 		}
 	}
 	
-	public boolean isModInLoadFile(Path listPath, Path jarPath) throws IOException
+	public boolean isModInListFile(Path listPath, Path jarPath) throws IOException
 	{
 		boolean isModInLoadFile = false;
 		if (jarPath != null && Files.exists(jarPath))
@@ -335,7 +340,7 @@ public class CombinedLoader {
 	
 	public Map<String, ModCandidate> getAvailableMods()
 	{
-		return getModMap(UNLOAD_LIST);
+		return getModMap(AVAIL_MODS_LIST);
 	}
 	
 	public List<ModContainer> getAvailableModList()
@@ -378,7 +383,7 @@ public class CombinedLoader {
 	
 	public Map<String, ModCandidate> getSelectedMods()
 	{
-		return getModMap(LOAD_LIST);
+		return getModMap(SELECTED_MODS_LIST);
 	}
 	
 	public static boolean isFabricMod(Path mod) {

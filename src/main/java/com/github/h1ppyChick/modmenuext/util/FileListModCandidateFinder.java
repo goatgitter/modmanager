@@ -15,12 +15,12 @@ import net.fabricmc.loader.util.UrlUtil;
 
 public class FileListModCandidateFinder implements ModCandidateFinder {
 	private Log LOG = new Log("FileListModCandidateFinder");
-	private CombinedLoader cl;
+	private ModListLoader modListLoader;
 	private String modListFile;
 
 	public FileListModCandidateFinder(String loadList) 
 	{
-		this.cl = new CombinedLoader();
+		this.modListLoader = new ModListLoader();
 		this.modListFile = loadList;
 	}
 
@@ -28,7 +28,7 @@ public class FileListModCandidateFinder implements ModCandidateFinder {
 	public void findCandidates(FabricLoader loader, BiConsumer<URL, Boolean> urlProposer){
 		try 
 		{
-			Path loadListPath = cl.getModList(modListFile);
+			Path loadListPath = modListLoader.getModList(modListFile);
 			List<String> mods = Files.readAllLines(loadListPath);
 
 			for (String modJarName : mods) {

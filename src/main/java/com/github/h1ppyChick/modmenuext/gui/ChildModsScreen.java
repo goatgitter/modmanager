@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.github.h1ppyChick.modmenuext.ModMenuExt;
-import com.github.h1ppyChick.modmenuext.util.CombinedLoader;
+import com.github.h1ppyChick.modmenuext.util.ModListLoader;
 import com.github.h1ppyChick.modmenuext.util.Log;
 import com.github.h1ppyChick.modmenuext.util.ModConfig;
 
@@ -39,7 +39,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 *              INSTANCE VARIABLES
 	 **************************************************/
 	private Log LOG = new Log("ChildModsScreen");
-	private CombinedLoader cl = new CombinedLoader();
+	private ModListLoader modListLoader = new ModListLoader();
 	private TextFieldWidget listNameInput;
 	private int listNameInputX;
 	private int listNameInputWidth;
@@ -73,8 +73,8 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		listNameInputX = rightPaneX + listNameInputWidth + 2;
 		LiteralText availTitle = new LiteralText("Available Mods");	
 		
-		this.availableMods = new TwoListsWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, cl.getAvailableModList(), this, availableModList, availTitle,
-				(TwoListsWidget.LoadListAction) widget  -> widget.setContainerList(cl.getAvailableModList()),
+		this.availableMods = new TwoListsWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, modListLoader.getAvailableModList(), this, availableModList, availTitle,
+				(TwoListsWidget.LoadListAction) widget  -> widget.setContainerList(modListLoader.getAvailableModList()),
 				(TwoListsWidget.ClickEntryAction) entry -> loadMod(entry)
 		);
 		
@@ -82,8 +82,8 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		this.children.add(this.availableMods);
 		
 		LiteralText selectedTitle = new LiteralText("Selected Mods");
-		this.selectedMods = new TwoListsWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, cl.getSelectedModList(false) , this, selectedModList, selectedTitle,
-				(TwoListsWidget.LoadListAction) list -> list.setContainerList(cl.getSelectedModList(false)),
+		this.selectedMods = new TwoListsWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, modListLoader.getSelectedModList(false) , this, selectedModList, selectedTitle,
+				(TwoListsWidget.LoadListAction) list -> list.setContainerList(modListLoader.getSelectedModList(false)),
 				(TwoListsWidget.ClickEntryAction) entry -> unloadMod(entry)
 		);
 		this.selectedMods.setLeftPos(this.width / 2 + 4);
@@ -111,10 +111,10 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	@Override
 	public void filesDragged(List<Path> paths) {
 		restartRequired = true;
-		Path modsDirectory = cl.getModsDir();
+		Path modsDirectory = modListLoader.getModsDir();
 		
 		List<Path> mods = paths.stream()
-				.filter(CombinedLoader::isFabricMod)
+				.filter(ModListLoader::isFabricMod)
 				.collect(Collectors.toList());
 
 		if (mods.isEmpty()) {
@@ -125,7 +125,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 				.map(Path::getFileName)
 				.map(Path::toString)
 				.collect(Collectors.joining(", "));
-		Path listFile = cl.getUnLoadFile();
+		Path listFile = modListLoader.getAvailModListFile();
 
 		this.client.openScreen(new ConfirmScreen((value) -> {
 			if (value) {
@@ -134,7 +134,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 				for (Path path : mods) {
 					try {
 						Files.copy(path, modsDirectory.resolve(path.getFileName()));
-						cl.addJarToFile(listFile, path);
+						modListLoader.addJarToFile(listFile, path);
 					} catch (IOException e) {
 						LOG.warn(String.format("Failed to copy mod from {} to {}", path, modsDirectory.resolve(path.getFileName())));
 						SystemToast.addPackCopyFailure(client, path.toString());
@@ -226,7 +226,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void drawListNameInput()
 	{
-		String listName = cl.getLoadFile().getFileName().toString();
+		String listName = modListLoader.getSelectedModList().getFileName().toString();
 		listName = listName.substring(0, listName.lastIndexOf(".txt"));
 		Text listNameText = new LiteralText(listName);
 		this.listNameInput = new TextFieldWidget(this.textRenderer, listNameInputX, getTopRowY(), listNameInputWidth, topRowItemHeight, this.listNameInput, listNameText);
