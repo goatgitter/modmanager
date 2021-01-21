@@ -30,11 +30,17 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 *              CONSTANTS
 	 **************************************************/
 	private final static String TITLE_ID = ModMenuExt.MOD_ID + ".config.screen.title";
+	private static final Identifier SAVE_BUTTON_LOCATION = new Identifier(ModMenuExt.MOD_ID, "save.png");
+	private static final TranslatableText TEXT_SAVE_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".save.tooltip");
 	private static final Identifier ADD_BUTTON_LOCATION = new Identifier(ModMenuExt.MOD_ID, "add.png");
 	private static final TranslatableText TEXT_ADD_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".add.tooltip");
 	private static final TranslatableText TEXT_ADD_DESC = new TranslatableText(ModMenuExt.MOD_ID + ".add.description");
 	private static final TranslatableText TEXT_MOD_LIST = new TranslatableText(ModMenuExt.MOD_ID + ".modlist");
-	
+	private static final int TOP_ROW_HEIGHT = 21;
+	private static final int TOP_BTN_HEIGHT = 13;
+	private static final int LIST_NAME_INPUT_HEIGHT = 11;
+	private static final int LEFT_PANE_X = 5;
+	private static final int SAVE_BTN_WIDTH = 19;
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
@@ -43,10 +49,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private TextFieldWidget listNameInput;
 	private int listNameInputX;
 	private int listNameInputWidth;
-	private int topRowItemHeight = 13;
-	private int topRowHeight = 21;
-	private int leftPaneX = 5;
-	
+	private int saveBtnX;	
 	/***************************************************
 	 *              CONSTRUCTORS
 	 **************************************************/
@@ -78,7 +81,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 				(TwoListsWidget.ClickEntryAction) entry -> loadMod(entry)
 		);
 		
-		this.availableMods.setLeftPos(leftPaneX);
+		this.availableMods.setLeftPos(LEFT_PANE_X);
 		this.children.add(this.availableMods);
 		
 		LiteralText selectedTitle = new LiteralText("Selected Mods");
@@ -87,9 +90,10 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 				(TwoListsWidget.ClickEntryAction) entry -> unloadMod(entry)
 		);
 		this.selectedMods.setLeftPos(this.width / 2 + 4);
-		this.children.add(this.selectedMods);		
-		drawDoneButton();
+		this.children.add(this.selectedMods);
+		drawSaveButton();
 		drawAddButton();
+		drawDoneButton();
 		drawListNameInput();
 	}
 	
@@ -100,11 +104,12 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	    this.selectedMods.render(matrices, mouseX, mouseY, delta);
 	    this.listNameInput.render(matrices, mouseX, mouseY, delta);
 		DrawableHelper.drawTextWithShadow(matrices, this.textRenderer, this.title, this.width / 3 + 4, 8, 16777215);
-		DrawableHelper.drawTextWithShadow(matrices, this.textRenderer, TEXT_ADD_DESC, leftPaneX, getTopRowY(), 16777215);
+		DrawableHelper.drawTextWithShadow(matrices, this.textRenderer, TEXT_ADD_DESC, LEFT_PANE_X, getTopRowY(), 16777215);
 		DrawableHelper.drawTextWithShadow(matrices, this.textRenderer, TEXT_MOD_LIST, rightPaneX, getTopRowY(), 16777215);
 		
-		drawDoneButton();
+		drawSaveButton();
 		drawAddButton();
+		drawDoneButton();
 		super.render(matrices, mouseX, mouseY, delta);
 	}
 	
@@ -164,9 +169,39 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	
 	private int getTopRowY()
 	{
-		return paneY-10;
+		return paneY-5;
+	}
+	/***************************************************
+	 *              SAVE BUTTON
+	 **************************************************/
+	/**
+	 * Draws the Save Button at the correct position on the screen.
+	 */
+	private void drawSaveButton()
+	{
+		saveBtnX =  listNameInputX + listNameInputWidth + 5;
+		ButtonWidget saveBtn = new ModMenuTexturedButtonWidget(saveBtnX, getTopRowY(), TOP_ROW_HEIGHT, TOP_BTN_HEIGHT, 0, 0, SAVE_BUTTON_LOCATION, TOP_ROW_HEIGHT, 42, button -> {
+			saveButtonClick();
+		},TEXT_SAVE_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
+			ModMenuTexturedButtonWidget button = (ModMenuTexturedButtonWidget) buttonWidget;
+			if (button.isJustHovered()) {
+				this.renderTooltip(matrices, TEXT_SAVE_TOOLTIP, mouseX, mouseY);
+			} else if (button.isFocusedButNotHovered()) {
+				this.renderTooltip(matrices, TEXT_SAVE_TOOLTIP, button.x, button.y);
+			}
+		}) {
+		};
+		this.addButton(saveBtn);
 	}
 	
+	/**
+	 * Performs the Save Action when the button is clicked.
+	 * Implementation is TBD, so just show a user message for now.
+	 */
+	private void saveButtonClick()
+	{
+		SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_WARNING, ModMenuExt.TEXT_NOT_IMPL);
+	}
 	/***************************************************
 	 *              DONE BUTTON
 	 **************************************************/
@@ -194,8 +229,8 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void drawAddButton()
 	{
-		int addBtnX =  listNameInputX + listNameInputWidth + 5;
-		ButtonWidget addBtn = new ModMenuTexturedButtonWidget(addBtnX, getTopRowY(), topRowHeight, topRowItemHeight, 0, 0, ADD_BUTTON_LOCATION, topRowHeight, 42, button -> {
+		int addBtnX =  saveBtnX + SAVE_BTN_WIDTH + 5;
+		ButtonWidget addBtn = new ModMenuTexturedButtonWidget(addBtnX, getTopRowY(), TOP_ROW_HEIGHT, TOP_BTN_HEIGHT, 0, 0, ADD_BUTTON_LOCATION, TOP_ROW_HEIGHT, 42, button -> {
 			addButtonClick();
 		},TEXT_ADD_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
 			ModMenuTexturedButtonWidget button = (ModMenuTexturedButtonWidget) buttonWidget;
@@ -228,7 +263,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	{
 		String listName = modListLoader.getSelectedModListName();
 		Text listNameText = new LiteralText(listName);
-		this.listNameInput = new TextFieldWidget(this.textRenderer, listNameInputX, getTopRowY(), listNameInputWidth, topRowItemHeight, this.listNameInput, listNameText);
+		this.listNameInput = new TextFieldWidget(this.textRenderer, listNameInputX, getTopRowY(), listNameInputWidth, LIST_NAME_INPUT_HEIGHT, this.listNameInput, listNameText);
 		this.listNameInput.setText(listName);
 		this.children.add(this.listNameInput);
 		this.setInitialFocus(this.listNameInput);
