@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.github.h1ppyChick.modmenuext.ModMenuExt;
@@ -265,6 +266,8 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		Text listNameText = new LiteralText(listName);
 		this.listNameInput = new TextFieldWidget(this.textRenderer, listNameInputX, getTopRowY(), listNameInputWidth, LIST_NAME_INPUT_HEIGHT, this.listNameInput, listNameText);
 		this.listNameInput.setText(listName);
+		Predicate<String> noSpecialChars = (s -> s.matches("^[a-zA-Z0-9-_]*$"));
+		listNameInput.setTextPredicate(noSpecialChars);
 		this.children.add(this.listNameInput);
 		this.setInitialFocus(this.listNameInput);
 	}
