@@ -193,7 +193,6 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	
 	/**
 	 * Performs the Save Action when the button is clicked.
-	 * Implementation is TBD, so just show a user message for now.
 	 */
 	private void saveButtonClick()
 	{
