@@ -2,6 +2,7 @@ package com.github.h1ppyChick.modmenuext.util;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -9,6 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,9 +122,44 @@ public class ModListLoader {
 		}
 		return props;
 	}
+	
+	private void setPropVal(String key, String value)
+	{
+		File configFile = getConfigFile();
+		getProps().setProperty(key, value);
+	    FileWriter writer;
+		try {
+			writer = new FileWriter(configFile);
+			getProps().store(writer, key);
+		    writer.close();
+		} catch (IOException e) {
+			LOG.warn("Could not write property file => " + configFile.getName() + "."); 
+			e.printStackTrace();
+		}
+	}
+	
 	public String getSelectedModListName()
 	{
 		return getProps().getProperty(KEY_SEL_LIST);
+	}
+	
+	public boolean setSelectedModListName(String newName)
+	{
+		boolean result = true;
+		String oldName = getSelectedModListName();
+		Path oldFilePath = getSelectedModList();
+		setPropVal(KEY_SEL_LIST, newName);
+		Path newFilePath = getModsDir().resolve(getSelectedModListFileName());
+		try {
+			Files.move(oldFilePath, newFilePath, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			result = false;
+			// Set the prop value back in case of error.
+			setPropVal(KEY_SEL_LIST, oldName);
+			LOG.warn("Could not rename mod list file to => " + newName + "."); 
+			e.printStackTrace();
+		}
+		return result;
 	}
 	private String getSelectedModListFileName()
 	{

@@ -12,6 +12,8 @@
   "modmenuext.add.tooltip":"Add",
   "modmenuext.add.description":"Drag & Drop JAR files to Add",
   "modmenuext.save.tooltip":"Save",
+  "modmenuext.save.success":"Saved successfully",
+  "modmenuext.save.error":"Unable to save changes",
   "modmenuext.modlist":"Mod List: ",
    "modmenuext.notimpl": "Feature not yet available!"
 }

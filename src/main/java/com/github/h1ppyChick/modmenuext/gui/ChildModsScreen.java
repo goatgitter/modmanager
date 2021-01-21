@@ -31,10 +31,6 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 *              CONSTANTS
 	 **************************************************/
 	private final static String TITLE_ID = ModMenuExt.MOD_ID + ".config.screen.title";
-	private static final Identifier SAVE_BUTTON_LOCATION = new Identifier(ModMenuExt.MOD_ID, "save.png");
-	private static final TranslatableText TEXT_SAVE_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".save.tooltip");
-	private static final Identifier ADD_BUTTON_LOCATION = new Identifier(ModMenuExt.MOD_ID, "add.png");
-	private static final TranslatableText TEXT_ADD_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".add.tooltip");
 	private static final TranslatableText TEXT_ADD_DESC = new TranslatableText(ModMenuExt.MOD_ID + ".add.description");
 	private static final TranslatableText TEXT_MOD_LIST = new TranslatableText(ModMenuExt.MOD_ID + ".modlist");
 	private static final int TOP_ROW_HEIGHT = 21;
@@ -181,14 +177,14 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private void drawSaveButton()
 	{
 		saveBtnX =  listNameInputX + listNameInputWidth + 5;
-		ButtonWidget saveBtn = new ModMenuTexturedButtonWidget(saveBtnX, getTopRowY(), TOP_ROW_HEIGHT, TOP_BTN_HEIGHT, 0, 0, SAVE_BUTTON_LOCATION, TOP_ROW_HEIGHT, 42, button -> {
+		ButtonWidget saveBtn = new ModMenuTexturedButtonWidget(saveBtnX, getTopRowY(), TOP_ROW_HEIGHT, TOP_BTN_HEIGHT, 0, 0, ModMenuExt.SAVE_BUTTON_LOCATION, TOP_ROW_HEIGHT, 42, button -> {
 			saveButtonClick();
-		},TEXT_SAVE_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
+		},ModMenuExt.TEXT_SAVE_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
 			ModMenuTexturedButtonWidget button = (ModMenuTexturedButtonWidget) buttonWidget;
 			if (button.isJustHovered()) {
-				this.renderTooltip(matrices, TEXT_SAVE_TOOLTIP, mouseX, mouseY);
+				this.renderTooltip(matrices, ModMenuExt.TEXT_SAVE_TOOLTIP, mouseX, mouseY);
 			} else if (button.isFocusedButNotHovered()) {
-				this.renderTooltip(matrices, TEXT_SAVE_TOOLTIP, button.x, button.y);
+				this.renderTooltip(matrices, ModMenuExt.TEXT_SAVE_TOOLTIP, button.x, button.y);
 			}
 		}) {
 		};
@@ -201,7 +197,16 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void saveButtonClick()
 	{
-		SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_WARNING, ModMenuExt.TEXT_NOT_IMPL);
+		boolean result = modListLoader.setSelectedModListName(getListNameInput());
+		if (result)
+		{
+			restartRequired = true;
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_SUCCESS, ModMenuExt.TEXT_SAVE_SUCCESS);
+		}
+		else
+		{
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_ERROR, ModMenuExt.TEXT_SAVE_ERROR);
+		}
 	}
 	/***************************************************
 	 *              DONE BUTTON
@@ -231,14 +236,14 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private void drawAddButton()
 	{
 		int addBtnX =  saveBtnX + SAVE_BTN_WIDTH + 5;
-		ButtonWidget addBtn = new ModMenuTexturedButtonWidget(addBtnX, getTopRowY(), TOP_ROW_HEIGHT, TOP_BTN_HEIGHT, 0, 0, ADD_BUTTON_LOCATION, TOP_ROW_HEIGHT, 42, button -> {
+		ButtonWidget addBtn = new ModMenuTexturedButtonWidget(addBtnX, getTopRowY(), TOP_ROW_HEIGHT, TOP_BTN_HEIGHT, 0, 0, ModMenuExt.ADD_BUTTON_LOCATION, TOP_ROW_HEIGHT, 42, button -> {
 			addButtonClick();
-		},TEXT_ADD_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
+		},ModMenuExt.TEXT_ADD_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
 			ModMenuTexturedButtonWidget button = (ModMenuTexturedButtonWidget) buttonWidget;
 			if (button.isJustHovered()) {
-				this.renderTooltip(matrices, TEXT_ADD_TOOLTIP, mouseX, mouseY);
+				this.renderTooltip(matrices, ModMenuExt.TEXT_ADD_TOOLTIP, mouseX, mouseY);
 			} else if (button.isFocusedButNotHovered()) {
-				this.renderTooltip(matrices, TEXT_ADD_TOOLTIP, button.x, button.y);
+				this.renderTooltip(matrices, ModMenuExt.TEXT_ADD_TOOLTIP, button.x, button.y);
 			}
 		}) {
 		};
@@ -282,10 +287,9 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	
 	/**
 	 *   Method for retrieving the list name.
-	 *   Will be used later.
 	 * @return String - The List Name from the UI Input.
 	 */
-	public String getListNameInput() {
+	private String getListNameInput() {
 		return listNameInput.getText();
 	}
 
