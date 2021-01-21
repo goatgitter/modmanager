@@ -19,6 +19,7 @@ public class ModMenuExt implements ModInitializer {
 	public static final String LOAD_JAR_DIR = "loadedJars/";
 	public static final String CONFIG_DIR = "config/";
 	public static final String MM_PARENT_KEY = "modmenu:parent";
+	public static final String NEW_LIST_NAME = "newModList";
 	
 	public static final TranslatableText TEXT_SUCCESS = new TranslatableText(MOD_ID + ".success");
 	public static final TranslatableText TEXT_ERROR = new TranslatableText(MOD_ID + ".error");
@@ -26,6 +27,8 @@ public class ModMenuExt implements ModInitializer {
 	public static final TranslatableText TEXT_RESTART = new TranslatableText(MOD_ID + ".restart");
 	public static final TranslatableText TEXT_NOT_IMPL = new TranslatableText(MOD_ID + ".notimpl");
 	public static final TranslatableText TEXT_SAVE_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".save.tooltip");
+	public static final TranslatableText TEXT_ADD_SUCCESS = new TranslatableText(ModMenuExt.MOD_ID + ".add.success");
+	public static final TranslatableText TEXT_ADD_ERROR = new TranslatableText(ModMenuExt.MOD_ID + ".add.error");
 	public static final TranslatableText TEXT_SAVE_SUCCESS = new TranslatableText(ModMenuExt.MOD_ID + ".save.success");
 	public static final TranslatableText TEXT_SAVE_ERROR = new TranslatableText(ModMenuExt.MOD_ID + ".save.error");
 	public static final TranslatableText TEXT_ADD_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".add.tooltip");

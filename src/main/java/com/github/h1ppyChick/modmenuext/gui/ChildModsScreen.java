@@ -8,9 +8,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.github.h1ppyChick.modmenuext.ModMenuExt;
-import com.github.h1ppyChick.modmenuext.util.ModListLoader;
 import com.github.h1ppyChick.modmenuext.util.Log;
 import com.github.h1ppyChick.modmenuext.util.ModConfig;
+import com.github.h1ppyChick.modmenuext.util.ModListLoader;
 
 import io.github.prospector.modmenu.gui.ModMenuTexturedButtonWidget;
 import net.minecraft.client.gui.DrawableHelper;
@@ -24,7 +24,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
 
 public class ChildModsScreen extends TwoListsWidgetScreen{
 	/***************************************************
@@ -134,11 +133,12 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 				boolean allSuccessful = true;
 
 				for (Path path : mods) {
+					Path destPath = modsDirectory.resolve(path.getFileName());
 					try {
-						Files.copy(path, modsDirectory.resolve(path.getFileName()));
-						modListLoader.addJarToFile(listFile, path);
+						Files.copy(path, destPath);
+						modListLoader.addJarToFile(listFile, destPath);
 					} catch (IOException e) {
-						LOG.warn(String.format("Failed to copy mod from {} to {}", path, modsDirectory.resolve(path.getFileName())));
+						LOG.warn(String.format("Failed to copy mod from {} to {}", path, destPath));
 						SystemToast.addPackCopyFailure(client, path.toString());
 						allSuccessful = false;
 						break;
@@ -196,7 +196,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void saveButtonClick()
 	{
-		boolean result = modListLoader.setSelectedModListName(getListNameInput());
+		boolean result = modListLoader.setSelectedModListName(getListNameInput(), false);
 		if (result)
 		{
 			restartRequired = true;
@@ -251,11 +251,23 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	
 	/**
 	 * Performs the Add Action when the button is clicked.
-	 * Implementation is TBD, so just show a user message for now.
 	 */
 	private void addButtonClick()
 	{
-		SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_WARNING, ModMenuExt.TEXT_NOT_IMPL);
+		boolean result = modListLoader.setSelectedModListName(ModMenuExt.NEW_LIST_NAME, true);
+		if (result)
+		{
+			restartRequired = true;
+			this.listNameInput.setText(ModMenuExt.NEW_LIST_NAME);
+			selectedMods.onNewList();
+			modListLoader.updateAvailModListFile();
+			availableMods.onLoadList();
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_SUCCESS, ModMenuExt.TEXT_ADD_SUCCESS);
+		}
+		else
+		{
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_ERROR, ModMenuExt.TEXT_ADD_ERROR);
+		}
 	}
 	/***************************************************
 	 *              LIST NAME INPUT BOX 

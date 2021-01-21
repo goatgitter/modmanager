@@ -1,8 +1,5 @@
 package com.github.h1ppyChick.modmenuext.util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +12,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -234,6 +230,7 @@ public class ModConfig {
 	{
 		try {
 			Map<String, ModCandidate> candidateMap = modListLoader.getSelectedMods();
+			if (candidateMap == null) return;
 			LOG.info("Loading " + candidateMap.values().size() + " mods! => " + candidateMap.values().stream()
 					.map(info -> String.format("%s@%s", info.getInfo().getId(), info.getInfo().getVersion().getFriendlyString()))
 					.collect(Collectors.joining(", ")));

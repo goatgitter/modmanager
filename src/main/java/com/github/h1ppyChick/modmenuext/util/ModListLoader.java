@@ -49,7 +49,8 @@ public class ModListLoader {
 	 *              CONSTANTS
 	 **************************************************/
 	private static final String KEY_SEL_LIST = "selectedModList";
-	private static final String AVAIL_MODS_LIST = "unloadlist.txt";
+	private static final String KEY_MOD_LISTS = "modLists";
+	private static final String AVAIL_MODS_LIST = "availModList.txt";
 	private static final String MODS_LIST_DIR = "modmenuext\\";
 	private static final String MODS_DIR = "mods\\";
 	public static final Pattern FABRIC_PATTERN = Pattern.compile("^fabric-.*(-v\\d+)$");
@@ -142,16 +143,47 @@ public class ModListLoader {
 	{
 		return getProps().getProperty(KEY_SEL_LIST);
 	}
+	private String getModLists()
+	{
+		String propValue = getProps().getProperty(KEY_MOD_LISTS);
+		if (propValue == null)
+		{
+			propValue = getSelectedModListName();
+		}
+		return propValue;
+	}
 	
-	public boolean setSelectedModListName(String newName)
+	private void setModLists(String modLists)
+	{
+		setPropVal(KEY_MOD_LISTS, modLists);
+	}
+	
+	public boolean setSelectedModListName(String newName, boolean isNewFile)
 	{
 		boolean result = true;
 		String oldName = getSelectedModListName();
+		// If name has not changed, no updates to be saved.
+		if (oldName.equals(newName)) return result;
+		
+		String modLists = getModLists();		
 		Path oldFilePath = getSelectedModList();
 		setPropVal(KEY_SEL_LIST, newName);
-		Path newFilePath = getModsDir().resolve(getSelectedModListFileName());
+		Path newFilePath = getSelectedModList();
+		
 		try {
-			Files.move(oldFilePath, newFilePath, StandardCopyOption.REPLACE_EXISTING);
+			
+			if (isNewFile)
+			{
+				if(!modLists.contains(newName))
+				{
+					modLists = modLists + "," + newName;
+				}
+			}
+			else
+			{
+				Files.move(oldFilePath, newFilePath, StandardCopyOption.REPLACE_EXISTING);
+				modLists = modLists.replace(oldName, newName);
+			}
 		} catch (IOException e) {
 			result = false;
 			// Set the prop value back in case of error.
@@ -159,8 +191,10 @@ public class ModListLoader {
 			LOG.warn("Could not rename mod list file to => " + newName + "."); 
 			e.printStackTrace();
 		}
+		setModLists(modLists);
 		return result;
 	}
+	
 	private String getSelectedModListFileName()
 	{
 		return getSelectedModListName() + ".txt";
@@ -263,23 +297,51 @@ public class ModListLoader {
 	    return getModList(AVAIL_MODS_LIST);
 	}
 	
+	// Update the avail mod list file when a new mod list is created.
+	public void updateAvailModListFile()
+	{
+		getModList(AVAIL_MODS_LIST, true);
+	}
+	
 	public Path getModList(String fileName)
 	{
-		boolean isLoad = fileName.equals(getSelectedModListFileName());
+		return getModList(fileName, false);
+	}
+	public String getCurrentJarList()
+	{
+		Path selectedModsPath = getModsDir().resolve(getSelectedModListFileName());
+		String currentJarList = "";
+		try {
+			currentJarList = FileUtils.readFileToString(selectedModsPath.toFile(), Charset.defaultCharset());
+		} catch (IOException e) {
+			LOG.warn("Problem retrieving current jar list");
+			e.printStackTrace();
+		}
+		return currentJarList;
+	}
+	
+	public Path getModList(String fileName, boolean refreshContents)
+	{
+		boolean isAvail = fileName.equals(AVAIL_MODS_LIST);
 		Path modListPath = getModsDir().resolve(fileName);
-	    if (! Files.exists(modListPath)){
+		try {
+			if (refreshContents)
+			{
+				Files.deleteIfExists(modListPath);
+			}
+		    if (! Files.exists(modListPath)){
 	    	LOG.info("Creating file " + modListPath.getFileName());
-	        try {
 				Files.createFile(modListPath);
 				// Add all the required mods
 				for(ModContainer mc: getRequiredMods())
 				{
 					addJarToFile(modListPath, mc);
 				}
-				if (isLoad)
+				if (isAvail)
 				{
-					// First time creating the file
-					
+					// Creating new file
+					// Get the list of selected mods
+					String currentJars = getCurrentJarList();
 					// Add all the JAR files in the mod dir.
 					for (File file : getModsDir().toFile().listFiles()) {
 						if (!file.isDirectory())
@@ -287,15 +349,19 @@ public class ModListLoader {
 							if (!file.getName().endsWith(".jar")) continue;
 							String modJarName = file.getName();
 							Path srcJarPath = getModsDir().resolve(modJarName);
-							addJarToFile(modListPath, srcJarPath);
+							// Check to see if the mod is in the selected list.
+							if (!currentJars.contains(srcJarPath.toString()))
+							{
+								addJarToFile(modListPath, srcJarPath);
+							}
 						}
 					}
 				}
-			} catch (IOException e) {
-				LOG.warn("Problem retrieving Mod List file => " + fileName);
-				e.printStackTrace();
-			}
-	    }
+		    }
+		} catch (IOException e) {
+			LOG.warn("Problem retrieving Mod List file => " + fileName);
+			e.printStackTrace();
+		}
 	    return modListPath;
 	}
 	

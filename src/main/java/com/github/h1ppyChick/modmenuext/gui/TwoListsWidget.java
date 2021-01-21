@@ -16,6 +16,7 @@ import net.fabricmc.loader.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
+import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
@@ -71,6 +72,12 @@ public class TwoListsWidget extends AlwaysSelectedEntryListWidget<ModListEntry> 
 		{
 			this.addEntry(new ChildModEntry(container, widget, this));
 		}
+   }
+   
+   public void onNewList() {
+	   this.clearEntries();
+	   addedMods.clear();
+	   _containerList.clear();
    }
    
    public void onClickEntry(ChildModEntry entry) {
