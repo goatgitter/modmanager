@@ -13,5 +13,9 @@ This is Minecraft Fabric mod which extends the Mod Menu mod to add ability to en
 This project is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
 
 ![](https://github.com/h1ppyChick/modmenuext/blob/master/src/main/resources/assets/modmenuext/screenshot1.png?raw=true "")
-
+![](https://github.com/h1ppyChick/modmenuext/blob/master/src/main/resources/assets/modmenuext/screenshot2.png?raw=true "")
+![](https://github.com/h1ppyChick/modmenuext/blob/master/src/main/resources/assets/modmenuext/screenshot3.png?raw=true "")
 ![](https://github.com/h1ppyChick/modmenuext/blob/master/src/main/resources/assets/modmenuext/screenshot4.png?raw=true "")
+![](https://github.com/h1ppyChick/modmenuext/blob/master/src/main/resources/assets/modmenuext/screenshot5.png?raw=true "")
+![](https://github.com/h1ppyChick/modmenuext/blob/master/src/main/resources/assets/modmenuext/screenshot6.png?raw=true "")
+![](https://github.com/h1ppyChick/modmenuext/blob/master/src/main/resources/assets/modmenuext/screenshot7.png?raw=true "")
