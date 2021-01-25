@@ -19,3 +19,5 @@ This project is available under the CC0 license. Feel free to learn from it and 
 ![Screenshot5](https://github.com/h1ppyChick/modmenuext/blob/trunk/src/main/resources/assets/modmenuext/screenshot5.png?raw=true)
 ![Screenshot6](https://github.com/h1ppyChick/modmenuext/blob/trunk/src/main/resources/assets/modmenuext/screenshot6.png?raw=true)
 ![Screenshot7](https://github.com/h1ppyChick/modmenuext/blob/trunk/src/main/resources/assets/modmenuext/screenshot7.png?raw=true)
+![Screenshot8](https://github.com/h1ppyChick/modmenuext/blob/trunk/src/main/resources/assets/modmenuext/screenshot8.png?raw=true)
+![Screenshot9](https://github.com/h1ppyChick/modmenuext/blob/trunk/src/main/resources/assets/modmenuext/screenshot9.png?raw=true)
