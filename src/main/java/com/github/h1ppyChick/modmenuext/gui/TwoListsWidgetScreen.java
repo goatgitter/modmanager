@@ -5,9 +5,11 @@ import com.github.h1ppyChick.modmenuext.util.Log;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModListWidget;
 import io.github.prospector.modmenu.gui.ModsScreen;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
+import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -84,7 +86,7 @@ public abstract class TwoListsWidgetScreen extends Screen {
 	
 	protected int getY1Offset()
 	{
-		return 5;
+		return 10;
 	}
 	
 	protected int getY2Offset()
@@ -132,5 +134,26 @@ public abstract class TwoListsWidgetScreen extends Screen {
 		}
 
 	}
-
+	/**
+    * Adds a button to this screen.
+    * This method should be preferred over {@link Screen#addChild(Element)} since buttons are automatically rendered when added to a screen.
+    */
+   public <T extends AbstractButtonWidget> T addButton(T button) {
+      return super.addButton(button);
+   }
+   
+   /**
+    * Adds a child element to this screen.
+    * If the child element is an {@link net.minecraft.client.gui.widget.AbstractButtonWidget}, you should use {@link Screen#addButton(AbstractButtonWidget)} instead.
+    * 
+    * <p>Adding a child element to a screen does not guarantee the widget is rendered or ticked.
+    * @see net.minecraft.client.gui.screen.Screen#addButton(AbstractButtonWidget)
+    */
+   public <T extends Element> T addChild(T child) {
+      return super.addChild(child);
+   }
+   
+   public <T extends Element> boolean removeChild(T child) {
+      return this.children.remove(child);
+   }
 }

@@ -3,7 +3,7 @@
   "modmenuext.success": "Success",
   "modmenuext.warning": "Warning",
   "modmenuext.refresh.tooltip": "Refresh",
-  "modmenuext.unload.tooltip": "Disable...",
+  "modmenuext.unload.tooltip": "Disable",
   "modmenuext.unload.error": "Problem creating unload list",
   "modmenuext.config.screen.title":"Mod Menu Extension Configuration",
   "modmenuext.restart":"Restart required to apply!",
@@ -17,5 +17,7 @@
   "modmenuext.save.success":"Saved successfully",
   "modmenuext.save.error":"Unable to save changes",
   "modmenuext.modlist":"Mod List: ",
-   "modmenuext.notimpl": "Feature not yet available!"
+  "modmenuext.open.tooltip":"Open",
+  "modmenuext.open.error":"Unable to Open Mod List",
+  "modmenuext.notimpl": "Feature not yet available!"
 }

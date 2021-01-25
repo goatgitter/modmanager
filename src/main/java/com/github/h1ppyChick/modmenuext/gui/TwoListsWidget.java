@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import com.github.h1ppyChick.modmenuext.util.Log;
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import com.github.h1ppyChick.modmenuext.util.Log;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModListWidget;
 import io.github.prospector.modmenu.mixin.EntryListWidgetAccessor;
@@ -16,7 +16,6 @@ import net.fabricmc.loader.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
-import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
@@ -302,5 +301,4 @@ public class TwoListsWidget extends AlwaysSelectedEntryListWidget<ModListEntry> 
 	public Set<ModContainer> getCurrentModSet() {
 		return addedMods;
 	}
-
 }

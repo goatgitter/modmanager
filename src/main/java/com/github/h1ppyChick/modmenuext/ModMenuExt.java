@@ -26,15 +26,21 @@ public class ModMenuExt implements ModInitializer {
 	public static final TranslatableText TEXT_WARNING = new TranslatableText(MOD_ID + ".warning");
 	public static final TranslatableText TEXT_RESTART = new TranslatableText(MOD_ID + ".restart");
 	public static final TranslatableText TEXT_NOT_IMPL = new TranslatableText(MOD_ID + ".notimpl");
+	public static final TranslatableText TEXT_OPEN_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".open.tooltip");
 	public static final TranslatableText TEXT_SAVE_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".save.tooltip");
 	public static final TranslatableText TEXT_ADD_SUCCESS = new TranslatableText(ModMenuExt.MOD_ID + ".add.success");
 	public static final TranslatableText TEXT_ADD_ERROR = new TranslatableText(ModMenuExt.MOD_ID + ".add.error");
+	public static final TranslatableText TEXT_OPEN_ERROR = new TranslatableText(ModMenuExt.MOD_ID + ".open.error");
 	public static final TranslatableText TEXT_SAVE_SUCCESS = new TranslatableText(ModMenuExt.MOD_ID + ".save.success");
 	public static final TranslatableText TEXT_SAVE_ERROR = new TranslatableText(ModMenuExt.MOD_ID + ".save.error");
 	public static final TranslatableText TEXT_ADD_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".add.tooltip");
 
 	public static final Identifier SAVE_BUTTON_LOCATION = new Identifier(ModMenuExt.MOD_ID, "save.png");
+	public static final Identifier OPEN_BUTTON_LOCATION = new Identifier(ModMenuExt.MOD_ID, "open.png");
 	public static final Identifier ADD_BUTTON_LOCATION = new Identifier(ModMenuExt.MOD_ID, "add.png");
+	
+	public static final int TOP_BTN_WIDTH = 19;
+	public static final int TOP_BTN_HEIGHT = 13;
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/

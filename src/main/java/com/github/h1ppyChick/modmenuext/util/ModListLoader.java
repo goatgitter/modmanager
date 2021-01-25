@@ -152,6 +152,15 @@ public class ModListLoader {
 		}
 		return propValue;
 	}
+	public List<String> getAllModLists()
+	{
+		String propValue = getProps().getProperty(KEY_MOD_LISTS);
+		if (propValue == null)
+		{
+			propValue = getSelectedModListName();
+		}
+		return Arrays.asList(propValue.split(","));
+	}
 	
 	private void setModLists(String modLists)
 	{
@@ -181,8 +190,12 @@ public class ModListLoader {
 			}
 			else
 			{
-				Files.move(oldFilePath, newFilePath, StandardCopyOption.REPLACE_EXISTING);
-				modLists = modLists.replace(oldName, newName);
+				if(!modLists.contains(newName))
+				{
+					Files.move(oldFilePath, newFilePath, StandardCopyOption.REPLACE_EXISTING);
+					
+					modLists = modLists.replace(oldName, newName);
+				}
 			}
 		} catch (IOException e) {
 			result = false;
