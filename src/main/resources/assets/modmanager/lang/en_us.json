@@ -19,5 +19,6 @@
   "modmanager.modlist":"Mod List: ",
   "modmanager.open.tooltip":"Open",
   "modmanager.open.error":"Unable to Open Mod List",
+  "modmanager.export.tooltip":"Export",
   "modmanager.notimpl": "Feature not yet available!"
 }

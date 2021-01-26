@@ -43,6 +43,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	protected final DropDownListWidget.OpenListAction onOpenList;
 	protected final DropDownListWidget.SaveListAction onSaveList;
 	protected final DropDownListWidget.AddEntryAction onAddEntry;
+	protected final DropDownListWidget.ExportListAction onExportList;
 	private ButtonWidget openBtn;
 	private boolean isListOpen = false;
 	private TextFieldWidget listInput;
@@ -52,6 +53,8 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	private int listInputHeight = 0;
 	private int openBtnX = 0;
 	private int saveBtnX = 0;
+	private int addBtnX = 0;
+	private int exportBtnX = 0;
 	private int topBtnY = 0;
 	/***************************************************
 	 *              CONSTRUCTORS
@@ -61,6 +64,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 			TwoListsWidgetScreen parent, Text title, LoadListAction onLoadList, 
 			ClickEntryAction onClickEntry, OpenListAction onOpenList,
 			SaveListAction onSaveList, AddEntryAction onAddEntry,
+			ExportListAction onExportList,
 			String selectedEntry) {
 		super(client, width, height, y1, y2, entryHeight);
 		this.method_31322(false);
@@ -73,6 +77,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		this.onClickEntry = onClickEntry;
 		this.onSaveList = onSaveList;
 		this.onAddEntry = onAddEntry;
+		this.onExportList = onExportList;
 		this.selectedEntry = selectedEntry;	
 		client.textRenderer.getClass();
 		this.setRenderHeader(false, 0);
@@ -91,76 +96,31 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	/***************************************************
 	 *              METHODS
 	 **************************************************/
-	
-	public boolean isListOpen()
-	{
-		return isListOpen;
+	public interface LoadListAction {
+		void onLoadList(DropDownListWidget widget);
 	}
 	
-   private void renderListLabel(MatrixStack matrices, int x, int y,int rowWidth, int rowHeight) {
-	    DrawableHelper.drawTextWithShadow(matrices, this.client.textRenderer, this.title, x, y, 16777215);
-   }
-
-   public void onLoadList() {
-	   this.clearEntries();
+	public void onLoadList() {
+		this.clearEntries();
 		addedEntries.clear();
 		this.onLoadList.onLoadList(this);
 		for (String entry: _entryList)
 		{
 			this.addEntry(new StringEntry(entry));
 		}
-   }
-   
-   public void onNewList() {
-	   this.clearEntries();
-	   addedEntries.clear();
-	   _entryList.clear();
-   }
-   
-   public void onClickEntry(StringEntry entry) {
-	   if (isListOpen)
-	   {
-		   this.onClickEntry.onClickEntry(entry);
-	   }
-	   isListOpen = false;
-   }
-   
-   public interface LoadListAction {
-	      void onLoadList(DropDownListWidget widget);
-   }
-   
-   public interface ClickEntryAction {
-	      void onClickEntry(StringEntry entry);
-   }
-   public interface OpenListAction {
-	      void onOpenList(DropDownListWidget widget);
-}
-   public interface SaveListAction {
-	      void onSaveList(DropDownListWidget widget);
-   }
-   public interface AddEntryAction {
-	      void onAddEntry(DropDownListWidget widget);
-   }
-   public void onOpenList(DropDownListWidget widget) {
-	   isListOpen = !isListOpen;
-	   openBtn.visible = !isListOpen;
-		if (openBtn.visible)
+	}
+	
+	public void onClickEntry(StringEntry entry) {
+		if (isListOpen)
 		{
-			parentScreen.addButton(openBtn);
+			this.onClickEntry.onClickEntry(entry);
 		}
-		else
-		{
-			this.onOpenList.onOpenList(widget);
-		}
-   }
-   
-   public void onSaveList(DropDownListWidget widget) {
-	   this.onSaveList.onSaveList(widget);
-   }
-   
-   public void onAddEntry(DropDownListWidget widget) {
-	   this.onAddEntry.onAddEntry(widget);
-   }
+		isListOpen = false;
+	}
+
+	public interface ClickEntryAction {
+		void onClickEntry(StringEntry entry);
+	}
 	
 	@Override
 	protected boolean isFocused() {
@@ -192,23 +152,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		StringEntry selected = getSelected();
 		return selected != null && selected.value.equals(getEntry(index).value);
 	}
-	public void add(String value) {
-		StringEntry newEntry = new StringEntry(value);
-		this.addEntry(newEntry);
-	}
 	
-	public int addEntry(StringEntry entry) {
-		if (addedEntries.contains(entry.getValue())) {
-			return 0;
-		}
-		addedEntries.add(entry.getValue());
-		int i = super.addEntry(entry);
-		if (entry.getValue().equals(selectedEntry)) {
-			setSelected(entry);
-		}
-		return i;
-	}
-
 	public List<String> getValueList() {
 		return _entryList;
 	}
@@ -252,10 +196,9 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	}
 	
 	@Override
-   protected int getRowTop(int index) {
-	      return this.top - (int)this.getScrollAmount() + index * this.itemHeight;
+	protected int getRowTop(int index) {
+		return this.top - (int)this.getScrollAmount() + index * this.itemHeight;
 	}
-	
 	
 	/***************************************************
 	 *              LIST INPUT
@@ -291,6 +234,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		drawOpenButton();
 		drawSaveButton();
 		drawAddButton();
+		drawExportButton();
 	}
 	/***************************************************
 	 *              OPEN BUTTON
@@ -324,6 +268,27 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		}
 	}
 	
+	public interface OpenListAction {
+		void onOpenList(DropDownListWidget widget);
+	}
+	
+	public void onOpenList(DropDownListWidget widget) {
+		isListOpen = !isListOpen;
+		openBtn.visible = !isListOpen;
+		if (openBtn.visible)
+		{
+			parentScreen.addButton(openBtn);
+		}
+		else
+		{
+			this.onOpenList.onOpenList(widget);
+		}
+	}
+	
+	public boolean isListOpen()
+	{
+		return isListOpen;
+	}
 	/***************************************************
 	 *              SAVE BUTTON
 	 **************************************************/
@@ -347,6 +312,13 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		parentScreen.addButton(saveBtn);
 	}
 	
+	public interface SaveListAction {
+		void onSaveList(DropDownListWidget widget);
+	}
+	
+	public void onSaveList(DropDownListWidget widget) {
+		this.onSaveList.onSaveList(widget);
+	}
 	/***************************************************
 	 *              ADD BUTTON
 	 **************************************************/
@@ -355,7 +327,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	 */
 	private void drawAddButton()
 	{
-		int addBtnX =  saveBtnX + ModManager.TOP_BTN_WIDTH;
+		addBtnX =  saveBtnX + ModManager.TOP_BTN_WIDTH;
 		ButtonWidget addBtn = new ModMenuTexturedButtonWidget(addBtnX, topBtnY, this.height, ModManager.TOP_BTN_HEIGHT, 0, 0, ModManager.ADD_BUTTON_LOCATION, this.height, 42, button -> {
 			this.onAddEntry(this);
 		},ModManager.TEXT_ADD_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
@@ -369,7 +341,63 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		};
 		parentScreen.addButton(addBtn);
 	}
-
+	public interface AddEntryAction {
+		void onAddEntry(DropDownListWidget widget);
+	}
+	
+	public void onAddEntry(DropDownListWidget widget) {
+		this.onAddEntry.onAddEntry(widget);
+	}
+	
+	public void add(String value) {
+		StringEntry newEntry = new StringEntry(value);
+		this.addEntry(newEntry);
+	}
+	
+	public int addEntry(StringEntry entry) {
+		if (addedEntries.contains(entry.getValue())) {
+			return 0;
+		}
+		addedEntries.add(entry.getValue());
+		int i = super.addEntry(entry);
+		if (entry.getValue().equals(selectedEntry)) {
+			setSelected(entry);
+		}
+		return i;
+	}
+	
+    /***************************************************
+	 *              EXPORT BUTTON
+	 **************************************************/
+	/**
+	 * Draws the Export Button at the correct position on the screen.
+	 */
+	private void drawExportButton()
+	{
+		exportBtnX =  addBtnX + ModManager.TOP_BTN_WIDTH;
+		ButtonWidget exportBtn = new ModMenuTexturedButtonWidget(exportBtnX, topBtnY, this.height, ModManager.TOP_BTN_HEIGHT, 0, 0, ModManager.EXPORT_BUTTON_LOCATION, this.height, 42, button -> {
+			this.onExportList(this);
+		},ModManager.TEXT_EXPORT_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
+			ModMenuTexturedButtonWidget button = (ModMenuTexturedButtonWidget) buttonWidget;
+			if (button.isJustHovered()) {
+				parentScreen.renderTooltip(matrices, ModManager.TEXT_EXPORT_TOOLTIP, mouseX, mouseY);
+			} else if (button.isFocusedButNotHovered()) {
+				parentScreen.renderTooltip(matrices, ModManager.TEXT_EXPORT_TOOLTIP, button.x, button.y);
+			}
+		}) {
+		};
+		parentScreen.addButton(exportBtn);
+	}
+	public interface ExportListAction {
+		void onExportList(DropDownListWidget widget);
+	}
+	
+	public void onExportList(DropDownListWidget widget) {
+		this.onExportList.onExportList(widget);
+	}
+	/***************************************************
+	 *              RENDERING
+	 **************************************************/
 	private void drawBackgroundBox(Matrix4f matrix, BufferBuilder buffer, Tessellator tessellator, int leftX, int rightX, int topY, int bottomY)
 	{
 		float zero = 0.0F;
@@ -386,6 +414,11 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		RenderSystem.disableBlend();
 		RenderSystem.enableTexture();
 	}
+	
+	private void renderListLabel(MatrixStack matrices, int x, int y,int rowWidth, int rowHeight) {
+		DrawableHelper.drawTextWithShadow(matrices, this.client.textRenderer, this.title, x, y, 16777215);
+	}
+	
 	@Override
 	protected void renderList(MatrixStack matrices, int x, int y, int mouseX, int mouseY, float delta) {
 		int itemCount = this.getItemCount();
@@ -482,7 +515,6 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	    return  isMouseBelowTop && isMouseAboveBottom && isMouseBeyondLeft && isMouseBeforeRight ;
 	}
 	
-
 	 public boolean isMouseOverEntry(double mouseX, double mouseY) {
 		// Break up expression to make it more readable.
 		boolean isMouseBelowTop = mouseY >= (double)this.top;
@@ -599,13 +631,4 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		}
 		return maxPos + 4;
 	}
-
-	public int getDisplayedCount() {
-		return children().size();
-	}
-
-	public Set<String> getCurrentEntrySet() {
-		return addedEntries;
-	}
-
 }
