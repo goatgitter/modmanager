@@ -21,3 +21,6 @@ This project is available under the CC0 license. Feel free to learn from it and 
 ![Screenshot7](https://github.com/h1ppyChick/modmanager/blob/trunk/src/main/resources/assets/modmanager/screenshot7.png?raw=true)
 ![Screenshot8](https://github.com/h1ppyChick/modmanager/blob/trunk/src/main/resources/assets/modmanager/screenshot8.png?raw=true)
 ![Screenshot9](https://github.com/h1ppyChick/modmanager/blob/trunk/src/main/resources/assets/modmanager/screenshot9.png?raw=true)
+![Screenshot10](https://github.com/h1ppyChick/modmanager/blob/trunk/src/main/resources/assets/modmanager/screenshot10.png?raw=true)
+![Screenshot11](https://github.com/h1ppyChick/modmanager/blob/trunk/src/main/resources/assets/modmanager/screenshot11.png?raw=true)
+![Screenshot12](https://github.com/h1ppyChick/modmanager/blob/trunk/src/main/resources/assets/modmanager/screenshot12.png?raw=true)
