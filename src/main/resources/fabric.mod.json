@@ -3,7 +3,7 @@
   "id": "modmenuext",
   "version": "${version}",
 
-  "name": "Mod Menu Extension",
+  "name": "Mod Manager",
   "description": "This is mod which extends the Mod Menu mod to add ability to enable/disable mods in the mod menu.",
   "authors": [
     "H1ppyChick"
