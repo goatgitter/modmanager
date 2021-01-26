@@ -44,6 +44,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	protected final DropDownListWidget.SaveListAction onSaveList;
 	protected final DropDownListWidget.AddEntryAction onAddEntry;
 	protected final DropDownListWidget.ExportListAction onExportList;
+	protected final DropDownListWidget.ImportListAction onImportList;
 	private ButtonWidget openBtn;
 	private boolean isListOpen = false;
 	private TextFieldWidget listInput;
@@ -55,6 +56,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	private int saveBtnX = 0;
 	private int addBtnX = 0;
 	private int exportBtnX = 0;
+	private int importBtnX = 0;
 	private int topBtnY = 0;
 	/***************************************************
 	 *              CONSTRUCTORS
@@ -64,7 +66,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 			TwoListsWidgetScreen parent, Text title, LoadListAction onLoadList, 
 			ClickEntryAction onClickEntry, OpenListAction onOpenList,
 			SaveListAction onSaveList, AddEntryAction onAddEntry,
-			ExportListAction onExportList,
+			ExportListAction onExportList,ImportListAction onImportList,
 			String selectedEntry) {
 		super(client, width, height, y1, y2, entryHeight);
 		this.method_31322(false);
@@ -78,6 +80,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		this.onSaveList = onSaveList;
 		this.onAddEntry = onAddEntry;
 		this.onExportList = onExportList;
+		this.onImportList = onImportList;
 		this.selectedEntry = selectedEntry;	
 		client.textRenderer.getClass();
 		this.setRenderHeader(false, 0);
@@ -235,6 +238,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		drawSaveButton();
 		drawAddButton();
 		drawExportButton();
+		drawImportButton();
 	}
 	/***************************************************
 	 *              OPEN BUTTON
@@ -394,6 +398,35 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	
 	public void onExportList(DropDownListWidget widget) {
 		this.onExportList.onExportList(widget);
+	}
+    /***************************************************
+	 *              IMPORT BUTTON
+	 **************************************************/
+	/**
+	 * Draws the Import Button at the correct position on the screen.
+	 */
+	private void drawImportButton()
+	{
+		importBtnX =  exportBtnX + ModManager.TOP_BTN_WIDTH;
+		ButtonWidget importBtn = new ModMenuTexturedButtonWidget(importBtnX, topBtnY, this.height, ModManager.TOP_BTN_HEIGHT, 0, 0, ModManager.IMPORT_BUTTON_LOCATION, this.height, 42, button -> {
+			this.onImportList(this);
+		},ModManager.TEXT_IMPORT_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
+			ModMenuTexturedButtonWidget button = (ModMenuTexturedButtonWidget) buttonWidget;
+			if (button.isJustHovered()) {
+				parentScreen.renderTooltip(matrices, ModManager.TEXT_IMPORT_TOOLTIP, mouseX, mouseY);
+			} else if (button.isFocusedButNotHovered()) {
+				parentScreen.renderTooltip(matrices, ModManager.TEXT_IMPORT_TOOLTIP, button.x, button.y);
+			}
+		}) {
+		};
+		parentScreen.addButton(importBtn);
+	}
+	public interface ImportListAction {
+		void onImportList(DropDownListWidget widget);
+	}
+	
+	public void onImportList(DropDownListWidget widget) {
+		this.onImportList.onImportList(widget);
 	}
 	/***************************************************
 	 *              RENDERING

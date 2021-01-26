@@ -35,11 +35,13 @@ public class ModManager implements ModInitializer {
 	public static final TranslatableText TEXT_SAVE_ERROR = new TranslatableText(ModManager.MOD_ID + ".save.error");
 	public static final TranslatableText TEXT_ADD_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".add.tooltip");
 	public static final TranslatableText TEXT_EXPORT_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".export.tooltip");
+	public static final TranslatableText TEXT_IMPORT_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".import.tooltip");
 	
 	public static final Identifier SAVE_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "save.png");
 	public static final Identifier OPEN_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "open.png");
 	public static final Identifier ADD_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "add.png");
 	public static final Identifier EXPORT_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "export.png");
+	public static final Identifier IMPORT_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "import.png");
 	
 	public static final int TOP_BTN_WIDTH = 19;
 	public static final int TOP_BTN_HEIGHT = 13;

@@ -198,6 +198,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 				(DropDownListWidget.SaveListAction) widget -> saveButtonClick(widget),
 				(DropDownListWidget.AddEntryAction) widget -> addButtonClick(widget),
 				(DropDownListWidget.ExportListAction) widget -> onExportList(widget),
+				(DropDownListWidget.ImportListAction) widget -> onImportList(widget),
 				listName
 		);
 		this.children.add(modsList);
@@ -271,6 +272,15 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	{
 		SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_NOT_IMPL);
 	}
+	
+	/**
+	 * Performs the Import List Action when the button is clicked.
+	 */
+	private void onImportList(DropDownListWidget widget)
+	{
+		SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_NOT_IMPL);
+	}
+	
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (modsList.isListOpen() &&  modsList.isMouseOverEntry(mouseX, mouseY))
 		{
