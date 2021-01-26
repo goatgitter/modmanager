@@ -233,6 +233,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		if (result)
 		{
 			restartRequired = true;
+			this.modsList.onLoadList();
 			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_SAVE_SUCCESS);
 		}
 		else
