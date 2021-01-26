@@ -1,0 +1,23 @@
+{
+  "modmanager.error": "Error",
+  "modmanager.success": "Success",
+  "modmanager.warning": "Warning",
+  "modmanager.refresh.tooltip": "Refresh",
+  "modmanager.unload.tooltip": "Disable",
+  "modmanager.unload.error": "Problem creating unload list",
+  "modmanager.config.screen.title":"Mod Manager Configuration",
+  "modmanager.restart":"Restart required to apply!",
+  "modmanager.restart.title":"Restart Required",
+  "modmanager.restart.msg":"This change requires restarting the Minecraft Client to be applied.  Would you like to close Minecraft now?",
+  "modmanager.add.tooltip":"Add",
+  "modmanager.add.description":"Drag & Drop JAR files to Add",
+  "modmanager.save.tooltip":"Save",
+  "modmanager.add.success":"New mod list created",
+  "modmanager.add.error":"Unable to create new list",
+  "modmanager.save.success":"Saved successfully",
+  "modmanager.save.error":"Unable to save changes",
+  "modmanager.modlist":"Mod List: ",
+  "modmanager.open.tooltip":"Open",
+  "modmanager.open.error":"Unable to Open Mod List",
+  "modmanager.notimpl": "Feature not yet available!"
+}

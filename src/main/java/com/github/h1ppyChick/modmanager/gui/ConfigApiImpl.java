@@ -1,6 +1,6 @@
-package com.github.h1ppyChick.modmenuext.gui;
+package com.github.h1ppyChick.modmanager.gui;
 
-import com.github.h1ppyChick.modmenuext.util.Log;
+import com.github.h1ppyChick.modmanager.util.Log;
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
 

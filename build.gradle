@@ -105,7 +105,7 @@ publishing {
 task startBuildMsg {
 	outputs.upToDateWhen { false }
 	println '-------------------------------------------------------'
-	println '              Starting Many Mods Build                 '
+	println '              Starting Mod Manager Build                 '
 	println '-------------------------------------------------------'
 	println ' APPDATA Folder       : ' + System.getenv('APPDATA') + " ."
 	println ' org.gradle.jvmargs   : ' + findProperty('org.gradle.jvmargs') + " ."
@@ -117,7 +117,7 @@ task startBuildMsg {
 task endBuildMsg {
 	outputs.upToDateWhen { false }
 	println '-------------------------------------------------------'
-	println '              Ending Many Mods Build                 '
+	println '              Ending Mod Manager Build                 '
 	println '-------------------------------------------------------'
 }
 // Task to copy the latest mod jar file to the minecraft mod folder.

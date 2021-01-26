@@ -1,4 +1,4 @@
-package com.github.h1ppyChick.modmenuext.gui;
+package com.github.h1ppyChick.modmanager.gui;
 
 import java.util.HashSet;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import com.github.h1ppyChick.modmenuext.ModMenuExt;
-import com.github.h1ppyChick.modmenuext.util.Log;
+import com.github.h1ppyChick.modmanager.ModManager;
+import com.github.h1ppyChick.modmanager.util.Log;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.github.prospector.modmenu.gui.ModMenuTexturedButtonWidget;
@@ -303,15 +303,15 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		if (openBtn == null)
 		{
 			openBtnX =  listInputX + listInputWidth;
-			openBtn = new ModMenuTexturedButtonWidget(openBtnX, topBtnY, this.height, ModMenuExt.TOP_BTN_HEIGHT, 0, 0, ModMenuExt.OPEN_BUTTON_LOCATION, this.height, 42, 
+			openBtn = new ModMenuTexturedButtonWidget(openBtnX, topBtnY, this.height, ModManager.TOP_BTN_HEIGHT, 0, 0, ModManager.OPEN_BUTTON_LOCATION, this.height, 42, 
 					button -> {this.onOpenList(this);},
-					ModMenuExt.TEXT_OPEN_TOOLTIP, 
+					ModManager.TEXT_OPEN_TOOLTIP, 
 					(buttonWidget, matrices, mouseX, mouseY) -> {
 						ModMenuTexturedButtonWidget button = (ModMenuTexturedButtonWidget) buttonWidget;
 						if (button.isJustHovered()) {
-							parentScreen.renderTooltip(matrices, ModMenuExt.TEXT_OPEN_TOOLTIP, mouseX, mouseY);
+							parentScreen.renderTooltip(matrices, ModManager.TEXT_OPEN_TOOLTIP, mouseX, mouseY);
 						} else if (button.isFocusedButNotHovered()) {
-							parentScreen.renderTooltip(matrices, ModMenuExt.TEXT_OPEN_TOOLTIP, button.x, button.y);
+							parentScreen.renderTooltip(matrices, ModManager.TEXT_OPEN_TOOLTIP, button.x, button.y);
 						}
 				}) {
 			};
@@ -332,15 +332,15 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	 */
 	private void drawSaveButton()
 	{
-		saveBtnX =  openBtnX + ModMenuExt.TOP_BTN_WIDTH;
-		ButtonWidget saveBtn = new ModMenuTexturedButtonWidget(saveBtnX, topBtnY, this.height, ModMenuExt.TOP_BTN_HEIGHT, 0, 0, ModMenuExt.SAVE_BUTTON_LOCATION, this.height, 42, button -> {
+		saveBtnX =  openBtnX + ModManager.TOP_BTN_WIDTH;
+		ButtonWidget saveBtn = new ModMenuTexturedButtonWidget(saveBtnX, topBtnY, this.height, ModManager.TOP_BTN_HEIGHT, 0, 0, ModManager.SAVE_BUTTON_LOCATION, this.height, 42, button -> {
 			this.onSaveList(this);
-		},ModMenuExt.TEXT_SAVE_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
+		},ModManager.TEXT_SAVE_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
 			ModMenuTexturedButtonWidget button = (ModMenuTexturedButtonWidget) buttonWidget;
 			if (button.isJustHovered()) {
-				parentScreen.renderTooltip(matrices, ModMenuExt.TEXT_SAVE_TOOLTIP, mouseX, mouseY);
+				parentScreen.renderTooltip(matrices, ModManager.TEXT_SAVE_TOOLTIP, mouseX, mouseY);
 			} else if (button.isFocusedButNotHovered()) {
-				parentScreen.renderTooltip(matrices, ModMenuExt.TEXT_SAVE_TOOLTIP, button.x, button.y);
+				parentScreen.renderTooltip(matrices, ModManager.TEXT_SAVE_TOOLTIP, button.x, button.y);
 			}
 		}) {
 		};
@@ -355,15 +355,15 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	 */
 	private void drawAddButton()
 	{
-		int addBtnX =  saveBtnX + ModMenuExt.TOP_BTN_WIDTH;
-		ButtonWidget addBtn = new ModMenuTexturedButtonWidget(addBtnX, topBtnY, this.height, ModMenuExt.TOP_BTN_HEIGHT, 0, 0, ModMenuExt.ADD_BUTTON_LOCATION, this.height, 42, button -> {
+		int addBtnX =  saveBtnX + ModManager.TOP_BTN_WIDTH;
+		ButtonWidget addBtn = new ModMenuTexturedButtonWidget(addBtnX, topBtnY, this.height, ModManager.TOP_BTN_HEIGHT, 0, 0, ModManager.ADD_BUTTON_LOCATION, this.height, 42, button -> {
 			this.onAddEntry(this);
-		},ModMenuExt.TEXT_ADD_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
+		},ModManager.TEXT_ADD_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {
 			ModMenuTexturedButtonWidget button = (ModMenuTexturedButtonWidget) buttonWidget;
 			if (button.isJustHovered()) {
-				parentScreen.renderTooltip(matrices, ModMenuExt.TEXT_ADD_TOOLTIP, mouseX, mouseY);
+				parentScreen.renderTooltip(matrices, ModManager.TEXT_ADD_TOOLTIP, mouseX, mouseY);
 			} else if (button.isFocusedButNotHovered()) {
-				parentScreen.renderTooltip(matrices, ModMenuExt.TEXT_ADD_TOOLTIP, button.x, button.y);
+				parentScreen.renderTooltip(matrices, ModManager.TEXT_ADD_TOOLTIP, button.x, button.y);
 			}
 		}) {
 		};

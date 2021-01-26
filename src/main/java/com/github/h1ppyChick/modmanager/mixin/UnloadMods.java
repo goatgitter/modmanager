@@ -1,4 +1,4 @@
-package com.github.h1ppyChick.modmenuext.mixin;
+package com.github.h1ppyChick.modmanager.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import com.github.h1ppyChick.modmenuext.ModMenuExt;
-import com.github.h1ppyChick.modmenuext.util.Log;
-import com.github.h1ppyChick.modmenuext.util.ModConfig;
+import com.github.h1ppyChick.modmanager.ModManager;
+import com.github.h1ppyChick.modmanager.util.Log;
+import com.github.h1ppyChick.modmanager.util.ModConfig;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModMenuTexturedButtonWidget;
 import io.github.prospector.modmenu.gui.ModsScreen;
@@ -29,10 +29,10 @@ public class UnloadMods extends Screen{
 	private int buttonWidth = 32;
 	private int canvasHeight = 64;
 	private ModListEntry selected;
-	private static final TranslatableText TEXT_UNLOAD_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".unload.tooltip");
-	private static final TranslatableText TEXT_REFRESH_TOOLTIP = new TranslatableText(ModMenuExt.MOD_ID + ".refresh.tooltip");
-	private static final Identifier UNLOAD_BTN_IMG = new Identifier(ModMenuExt.MOD_ID, "button.png");
-	private static final Identifier REFRESH_BTN_IMG = new Identifier(ModMenuExt.MOD_ID, "refresh.png");
+	private static final TranslatableText TEXT_UNLOAD_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".unload.tooltip");
+	private static final TranslatableText TEXT_REFRESH_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".refresh.tooltip");
+	private static final Identifier UNLOAD_BTN_IMG = new Identifier(ModManager.MOD_ID, "button.png");
+	private static final Identifier REFRESH_BTN_IMG = new Identifier(ModManager.MOD_ID, "refresh.png");
 	public UnloadMods(Text title) {
 		super(title);
 	}
@@ -54,7 +54,7 @@ public class UnloadMods extends Screen{
 		{
 			LOG.debug("Requested unloading of mod " + selected);
 			ModConfig.requestUnload(selected);
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_SUCCESS, ModMenuExt.TEXT_RESTART);
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_RESTART);
 		},
 		TEXT_UNLOAD_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> 
 		{

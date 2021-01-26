@@ -1,6 +1,6 @@
-package com.github.h1ppyChick.modmenuext.gui;
+package com.github.h1ppyChick.modmanager.gui;
 
-import com.github.h1ppyChick.modmenuext.util.Log;
+import com.github.h1ppyChick.modmanager.util.Log;
 
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModListWidget;
@@ -16,8 +16,8 @@ import net.minecraft.text.TranslatableText;
 
 public abstract class TwoListsWidgetScreen extends Screen {
 	// Constants
-	private TranslatableText CONFIRM_RESTART_TITLE = new TranslatableText("modmenuext.restart.title");
-	private TranslatableText CONFIRM_RESTART_MSG = new TranslatableText("modmenuext.restart.msg");
+	private TranslatableText CONFIRM_RESTART_TITLE = new TranslatableText("modmanager.restart.title");
+	private TranslatableText CONFIRM_RESTART_MSG = new TranslatableText("modmanager.restart.msg");
 	// Instance Variables
 	private Log LOG = new Log("TwoListsWidgetScreen");
 	protected TwoListsWidget availableMods;

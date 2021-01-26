@@ -1,4 +1,4 @@
-package com.github.h1ppyChick.modmenuext.util;
+package com.github.h1ppyChick.modmanager.util;
 
 import java.io.File;
 import java.io.FileReader;
@@ -26,7 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.h1ppyChick.modmenuext.ModMenuExt;
+import com.github.h1ppyChick.modmanager.ModManager;
 
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
@@ -51,7 +51,7 @@ public class ModListLoader {
 	private static final String KEY_SEL_LIST = "selectedModList";
 	private static final String KEY_MOD_LISTS = "modLists";
 	private static final String AVAIL_MODS_LIST = "availModList.txt";
-	private static final String MODS_LIST_DIR = "modmenuext\\";
+	private static final String MODS_LIST_DIR = "modmanager\\";
 	private static final String MODS_DIR = "mods\\";
 	public static final Pattern FABRIC_PATTERN = Pattern.compile("^fabric-.*(-v\\d+)$");
 	public final static String API_MOD_ID = "fabric-api-base";
@@ -96,11 +96,11 @@ public class ModListLoader {
 	 *              CONFIG FILE METHODS
 	 **************************************************/
 	private static Path getConfigDir() {
-		return fl.getGameDir().normalize().resolve(ModMenuExt.CONFIG_DIR);
+		return fl.getGameDir().normalize().resolve(ModManager.CONFIG_DIR);
 	}
 	public Path getConfigPath()
 	{
-		return getConfigDir().resolve(ModMenuExt.MOD_ID + ".properties");
+		return getConfigDir().resolve(ModManager.MOD_ID + ".properties");
 	}
 	
 	private File getConfigFile()

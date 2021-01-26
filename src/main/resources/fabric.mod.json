@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "modmenuext",
+  "id": "modmanager",
   "version": "${version}",
 
   "name": "Mod Manager",
@@ -9,22 +9,22 @@
     "H1ppyChick"
   ],
   "contact": {
-    "homepage": "https://github.com/h1ppyChick/modmenuext",
-    "sources": "https://github.com/h1ppyChick/modmenuext"
+    "homepage": "https://github.com/h1ppyChick/modmanager",
+    "sources": "https://github.com/h1ppyChick/modmanager"
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modmenuext/icon.png",
+  "icon": "assets/modmanager/icon.png",
 
   "environment": "*",
   "entrypoints": {
-    "client": ["com.github.h1ppyChick.modmenuext.ModMenuExtClient"],
-    "modmenu": ["com.github.h1ppyChick.modmenuext.gui.ConfigApiImpl"],
-    "main": ["com.github.h1ppyChick.modmenuext.ModMenuExt"],
-    "preLaunch": ["com.github.h1ppyChick.modmenuext.ModMenuExtPreLaunch"]
+    "client": ["com.github.h1ppyChick.modmanager.ModClient"],
+    "modmenu": ["com.github.h1ppyChick.modmanager.gui.ConfigApiImpl"],
+    "main": ["com.github.h1ppyChick.modmanager.ModManager"],
+    "preLaunch": ["com.github.h1ppyChick.modmanager.ModPreLaunch"]
 	},
   "jars": ${nestedJars},
-  "mixins": ["modmenuext.mixins.json"],
+  "mixins": ["modmanager.mixins.json"],
   "depends": {
     "fabric": "*",
     "minecraft": "${minecraft_version}"

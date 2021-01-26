@@ -1,7 +1,7 @@
-package com.github.h1ppyChick.modmenuext.gui;
+package com.github.h1ppyChick.modmanager.gui;
 
-import com.github.h1ppyChick.modmenuext.ModMenuExt;
-import com.github.h1ppyChick.modmenuext.util.Conditional;
+import com.github.h1ppyChick.modmanager.ModManager;
+import com.github.h1ppyChick.modmanager.util.Conditional;
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import net.fabricmc.loader.api.ModContainer;
@@ -17,7 +17,7 @@ public class Menu {
 		for( ModContainer key : ModMenu.PARENT_MAP.keySet())
 		{
 			String thisModId = key.getMetadata().getId();
-			if (thisModId.equals(ModMenuExt.MOD_ID)) {
+			if (thisModId.equals(ModManager.MOD_ID)) {
 				return key;
 			}
 			

@@ -1,4 +1,4 @@
-package com.github.h1ppyChick.modmenuext.util;
+package com.github.h1ppyChick.modmanager.util;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -22,9 +22,9 @@ import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
-import com.github.h1ppyChick.modmenuext.ModMenuExt;
-import com.github.h1ppyChick.modmenuext.gui.ChildModEntry;
-import com.github.h1ppyChick.modmenuext.gui.Menu;
+import com.github.h1ppyChick.modmanager.ModManager;
+import com.github.h1ppyChick.modmanager.gui.ChildModEntry;
+import com.github.h1ppyChick.modmanager.gui.Menu;
 
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
@@ -207,7 +207,7 @@ public class ModConfig {
 		while (enumEntries.hasMoreElements()) {
 			java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
 		    
-			if (file.getName().contains(ModMenuExt.CONFIG_DIR) && file.getName().endsWith(".properties")) {
+			if (file.getName().contains(ModManager.CONFIG_DIR) && file.getName().endsWith(".properties")) {
 		    	Path destFilePath = modListLoader.getConfigPath();
 		    	java.io.File f = destFilePath.toFile();
 		    	
@@ -372,8 +372,8 @@ public class ModConfig {
 			try {
 				Map<String, CustomValue> cvUnmodifiableMap = (Map<String, CustomValue>) FieldUtils.readDeclaredField(mm, "customValues", true);
 				Map<String, CustomValue> cvMap = new HashMap<String, CustomValue> (cvUnmodifiableMap);
-				CustomValue cv = new CustomValueImpl.StringImpl(ModMenuExt.MOD_ID);
-				cvMap.put(ModMenuExt.MM_PARENT_KEY, cv);
+				CustomValue cv = new CustomValueImpl.StringImpl(ModManager.MOD_ID);
+				cvMap.put(ModManager.MM_PARENT_KEY, cv);
 				FieldUtils.writeField(mm, "customValues", Collections.unmodifiableMap(cvMap), true);
 			} catch (IllegalAccessException e) {
 				LOG.warn("Problem adding parent to mod => " + childMod.getInfo().getId());
@@ -420,7 +420,7 @@ public class ModConfig {
 		
 		try {
 			// Add parent tag to any mods added to this mod
-			ModContainer modMenuExtMod = oldModMap.get(ModMenuExt.MOD_ID);
+			ModContainer modMenuExtMod = oldModMap.get(ModManager.MOD_ID);
 			for(NestedJarEntry nestedJar: modMenuExtMod.getInfo().getJars())
 			{
 				String jarFileName = modListLoader.getNestedJarFileName(nestedJar);
@@ -512,7 +512,7 @@ public class ModConfig {
 	private static void extractFiles()
 	{
 		Path jarDir = modListLoader.getModsDir();
-		Path jarPath = modListLoader.getModJarPath(ModMenuExt.MOD_ID);
+		Path jarPath = modListLoader.getModJarPath(ModManager.MOD_ID);
 		try {
 		if (Files.notExists(jarDir))
 		{

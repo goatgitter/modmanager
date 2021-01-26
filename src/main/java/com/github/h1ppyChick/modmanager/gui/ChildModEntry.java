@@ -1,4 +1,4 @@
-package com.github.h1ppyChick.modmenuext.gui;
+package com.github.h1ppyChick.modmanager.gui;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -10,8 +10,8 @@ import org.apache.commons.lang3.Validate;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import com.github.h1ppyChick.modmenuext.util.Log;
-import com.github.h1ppyChick.modmenuext.util.ModConfig;
+import com.github.h1ppyChick.modmanager.util.Log;
+import com.github.h1ppyChick.modmanager.util.ModConfig;
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModListWidget;

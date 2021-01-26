@@ -1,4 +1,4 @@
-package com.github.h1ppyChick.modmenuext.util;
+package com.github.h1ppyChick.modmanager.util;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;

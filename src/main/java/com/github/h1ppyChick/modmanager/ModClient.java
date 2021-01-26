@@ -1,11 +1,11 @@
-package com.github.h1ppyChick.modmenuext;
+package com.github.h1ppyChick.modmanager;
 
-import com.github.h1ppyChick.modmenuext.util.Log;
+import com.github.h1ppyChick.modmanager.util.Log;
 import net.fabricmc.api.ClientModInitializer;
 
-public class ModMenuExtClient implements ClientModInitializer{
+public class ModClient implements ClientModInitializer{
 	// Instance Variables
-	Log LOG = new Log("ModMenuExtClient");
+	Log LOG = new Log("ModClient");
 	@Override
 	public void onInitializeClient() {
 		LOG.enter("onInitializeClient");

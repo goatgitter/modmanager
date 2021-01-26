@@ -1,4 +1,4 @@
-package com.github.h1ppyChick.modmenuext.util;
+package com.github.h1ppyChick.modmanager.util;
 
 import java.util.Set;
 

@@ -1,11 +1,11 @@
-package com.github.h1ppyChick.modmenuext.gui;
+package com.github.h1ppyChick.modmanager.gui;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import com.github.h1ppyChick.modmenuext.util.Log;
+import com.github.h1ppyChick.modmanager.util.Log;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.github.prospector.modmenu.gui.ModListEntry;

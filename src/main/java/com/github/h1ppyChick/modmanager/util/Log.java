@@ -1,11 +1,11 @@
-package com.github.h1ppyChick.modmenuext.util;
+package com.github.h1ppyChick.modmanager.util;
 
 import java.lang.reflect.Method;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.h1ppyChick.modmenuext.ModMenuExt;
+import com.github.h1ppyChick.modmanager.ModManager;
 
 /**
  * @author h1ppyChick
@@ -47,7 +47,7 @@ public class Log {
 	
 	public String getPrefixMsg()
 	{
-		return "[" + ModMenuExt.MOD_ID + "->" + prefixName + "] ";
+		return "[" + ModManager.MOD_ID + "->" + prefixName + "] ";
 	}
 	
 	public void info(String msg)

@@ -1,4 +1,4 @@
-package com.github.h1ppyChick.modmenuext.gui;
+package com.github.h1ppyChick.modmanager.gui;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,10 +6,10 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.h1ppyChick.modmenuext.ModMenuExt;
-import com.github.h1ppyChick.modmenuext.util.Log;
-import com.github.h1ppyChick.modmenuext.util.ModConfig;
-import com.github.h1ppyChick.modmenuext.util.ModListLoader;
+import com.github.h1ppyChick.modmanager.ModManager;
+import com.github.h1ppyChick.modmanager.util.Log;
+import com.github.h1ppyChick.modmanager.util.ModConfig;
+import com.github.h1ppyChick.modmanager.util.ModListLoader;
 
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ConfirmScreen;
@@ -25,9 +25,9 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	/***************************************************
 	 *              CONSTANTS
 	 **************************************************/
-	private final static String TITLE_ID = ModMenuExt.MOD_ID + ".config.screen.title";
-	private static final TranslatableText TEXT_ADD_DESC = new TranslatableText(ModMenuExt.MOD_ID + ".add.description");
-	private static final TranslatableText TEXT_MOD_LIST = new TranslatableText(ModMenuExt.MOD_ID + ".modlist");
+	private final static String TITLE_ID = ModManager.MOD_ID + ".config.screen.title";
+	private static final TranslatableText TEXT_ADD_DESC = new TranslatableText(ModManager.MOD_ID + ".add.description");
+	private static final TranslatableText TEXT_MOD_LIST = new TranslatableText(ModManager.MOD_ID + ".modlist");
 	private static final int TOP_ROW_HEIGHT = 20;
 	private static final int LIST_NAME_INPUT_HEIGHT = 14;
 	private static final int LEFT_PANE_X = 5;
@@ -213,7 +213,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		}
 		else
 		{
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_ERROR, ModMenuExt.TEXT_OPEN_ERROR);
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_OPEN_ERROR);
 		}
 	}
 	
@@ -233,11 +233,11 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		if (result)
 		{
 			restartRequired = true;
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_SUCCESS, ModMenuExt.TEXT_SAVE_SUCCESS);
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_SAVE_SUCCESS);
 		}
 		else
 		{
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_ERROR, ModMenuExt.TEXT_SAVE_ERROR);
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_SAVE_ERROR);
 		}
 	}
 	
@@ -246,20 +246,20 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void addButtonClick(DropDownListWidget widget)
 	{
-		boolean result = modListLoader.setSelectedModListName(ModMenuExt.NEW_LIST_NAME, true);
+		boolean result = modListLoader.setSelectedModListName(ModManager.NEW_LIST_NAME, true);
 		if (result)
 		{
 			restartRequired = true;
-			this.modsList.add(ModMenuExt.NEW_LIST_NAME);
-			this.modsList.select(ModMenuExt.NEW_LIST_NAME);
+			this.modsList.add(ModManager.NEW_LIST_NAME);
+			this.modsList.select(ModManager.NEW_LIST_NAME);
 			selectedMods.onNewList();
 			modListLoader.updateAvailModListFile();
 			availableMods.onLoadList();
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_SUCCESS, ModMenuExt.TEXT_ADD_SUCCESS);
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_ADD_SUCCESS);
 		}
 		else
 		{
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModMenuExt.TEXT_ERROR, ModMenuExt.TEXT_ADD_ERROR);
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_ADD_ERROR);
 		}
 	}
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
