@@ -35,6 +35,8 @@ public class ModManager implements ModInitializer {
 	public static final TranslatableText TEXT_SAVE_ERROR = new TranslatableText(ModManager.MOD_ID + ".save.error");
 	public static final TranslatableText TEXT_ADD_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".add.tooltip");
 	public static final TranslatableText TEXT_EXPORT_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".export.tooltip");
+	public static final TranslatableText TEXT_EXPORT_ERROR = new TranslatableText(ModManager.MOD_ID + ".export.error");
+	public static final TranslatableText TEXT_EXPORT_SUCCESS = new TranslatableText(ModManager.MOD_ID + ".export.success");
 	public static final TranslatableText TEXT_IMPORT_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".import.tooltip");
 	
 	public static final Identifier SAVE_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "save.png");

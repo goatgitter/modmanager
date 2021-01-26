@@ -81,7 +81,7 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		this.onAddEntry = onAddEntry;
 		this.onExportList = onExportList;
 		this.onImportList = onImportList;
-		this.selectedEntry = selectedEntry;	
+		this.select(selectedEntry);	
 		client.textRenderer.getClass();
 		this.setRenderHeader(false, 0);
 		
@@ -130,10 +130,6 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 		return parentScreen.getFocused() == this;
 	}
 	
-	public void select(StringEntry entry) {
-		this.setSelected(entry);
-	}
-	
 	public void select(String value) {
 		StringEntry selEntry = new StringEntry(value);
 		this.setSelected(selEntry);
@@ -143,11 +139,14 @@ public class DropDownListWidget extends AlwaysSelectedEntryListWidget<StringEntr
 	public void setSelected(StringEntry entry) {
 		super.setSelected(entry);
 		selectedEntry = entry.value;
-		listInput.setText(selectedEntry);
-		onClickEntry(entry);
-		isListOpen = false;
-		drawListInput();
-		drawButtons();
+		if (listInput != null)
+		{
+			listInput.setText(selectedEntry);
+			onClickEntry(entry);
+			isListOpen = false;
+			drawListInput();
+			drawButtons();
+		}
 	}
 	
 	@Override

@@ -270,7 +270,15 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void onExportList(DropDownListWidget widget)
 	{
-		SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_NOT_IMPL);
+		boolean result = modListLoader.exportModList(modsList.getSelectedValue());
+		if (result)
+		{
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_EXPORT_SUCCESS);
+		}
+		else
+		{
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_EXPORT_ERROR);
+		}
 	}
 	
 	/**

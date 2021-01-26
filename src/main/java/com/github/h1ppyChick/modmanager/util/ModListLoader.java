@@ -1,6 +1,7 @@
 package com.github.h1ppyChick.modmanager.util;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,6 +22,8 @@ import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -554,5 +557,45 @@ public class ModListLoader {
 		} catch (IOException e) {
 			return false;
 		}
+	}
+	
+	public boolean exportModList(String listName)
+	{
+		boolean result = true;
+		Path modListPath = getModList(listName + ".txt", false);
+		Path modListZipPath = getModsDir().resolve(listName + ".zip");
+		try
+		{
+			List<String> mods = Files.readAllLines(modListPath);
+            FileOutputStream fos = new FileOutputStream(modListZipPath.toString());
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            // Add the list text file
+            zos.putNextEntry(new ZipEntry(modListPath.getFileName().toString()));
+            byte[] bytes = Files.readAllBytes(modListPath);
+            zos.write(bytes, 0, bytes.length);
+            zos.closeEntry();
+            
+			for (String modJarName : mods) {
+				if(modJarName.endsWith(".jar"))
+				{
+					File modFile = new File(modJarName);
+					Path srcJarPath = modFile.toPath();
+					if(Files.exists(srcJarPath) && Files.isRegularFile(srcJarPath))
+					{
+						zos.putNextEntry(new ZipEntry(srcJarPath.getFileName().toString()));
+		                bytes = Files.readAllBytes(srcJarPath);
+		                zos.write(bytes, 0, bytes.length);
+		                zos.closeEntry();
+					}
+				}
+			}
+			zos.close();
+			fos.close();
+		} catch (Exception e) {
+			result = false;
+			LOG.warn("Could not add mod from list file => " + listName + "."); 
+			e.printStackTrace();
+		}
+		return result;
 	}
 }

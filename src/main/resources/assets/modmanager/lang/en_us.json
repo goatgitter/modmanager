@@ -20,6 +20,8 @@
   "modmanager.open.tooltip":"Open",
   "modmanager.open.error":"Unable to Open Mod List",
   "modmanager.export.tooltip":"Export",
+  "modmanager.export.success":"Exported mod successfully",
+  "modmanager.export.error":"Unable to export mod",
   "modmanager.import.tooltip":"Import",
   "modmanager.notimpl": "Feature not yet available!"
 }
