@@ -235,7 +235,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		if (result)
 		{
 			restartRequired = true;
-			this.modsList.onLoadList();
+			modsList.onLoadList();
 			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_SAVE_SUCCESS);
 		}
 		else
@@ -253,8 +253,8 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		if (result)
 		{
 			restartRequired = true;
-			this.modsList.add(ModManager.NEW_LIST_NAME);
-			this.modsList.select(ModManager.NEW_LIST_NAME);
+			modsList.add(ModManager.NEW_LIST_NAME);
+			modsList.select(ModManager.NEW_LIST_NAME);
 			selectedMods.onNewList();
 			modListLoader.updateAvailModListFile();
 			availableMods.onLoadList();
@@ -286,7 +286,19 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void onImportList(DropDownListWidget widget)
 	{
-		SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_NOT_IMPL);
+		boolean result = modListLoader.importModList(modsList.getSelectedValue());
+		if (result)
+		{
+			modsList.onLoadList();
+			modListLoader.updateAvailModListFile();
+			availableMods.onLoadList();
+			selectedMods.onLoadList();
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_IMPORT_SUCCESS);
+		}
+		else
+		{
+			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_IMPORT_ERROR);
+		}
 	}
 	
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {

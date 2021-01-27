@@ -38,6 +38,8 @@ public class ModManager implements ModInitializer {
 	public static final TranslatableText TEXT_EXPORT_ERROR = new TranslatableText(ModManager.MOD_ID + ".export.error");
 	public static final TranslatableText TEXT_EXPORT_SUCCESS = new TranslatableText(ModManager.MOD_ID + ".export.success");
 	public static final TranslatableText TEXT_IMPORT_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".import.tooltip");
+	public static final TranslatableText TEXT_IMPORT_ERROR = new TranslatableText(ModManager.MOD_ID + ".import.error");
+	public static final TranslatableText TEXT_IMPORT_SUCCESS = new TranslatableText(ModManager.MOD_ID + ".import.success");
 	
 	public static final Identifier SAVE_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "save.png");
 	public static final Identifier OPEN_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "open.png");

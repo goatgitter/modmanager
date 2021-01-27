@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -15,6 +16,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
@@ -564,6 +567,7 @@ public class ModListLoader {
 		boolean result = true;
 		Path modListPath = getModList(listName + ".txt", false);
 		Path modListZipPath = getModsDir().resolve(listName + ".zip");
+		
 		try
 		{
 			List<String> mods = Files.readAllLines(modListPath);
@@ -576,7 +580,7 @@ public class ModListLoader {
             zos.closeEntry();
             
 			for (String modJarName : mods) {
-				if(modJarName.endsWith(".jar"))
+				if(modJarName.contains(getModsDir().toString()) && modJarName.endsWith(".jar"))
 				{
 					File modFile = new File(modJarName);
 					Path srcJarPath = modFile.toPath();
@@ -596,6 +600,35 @@ public class ModListLoader {
 			LOG.warn("Could not add mod from list file => " + listName + "."); 
 			e.printStackTrace();
 		}
+		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean importModList(String listName)
+	{
+		boolean result = true;
+		Path modListZipPath = getModsDir().resolve(listName + ".zip");
+		try
+		{
+			ZipFile zipFile = new ZipFile(modListZipPath.toString());
+			Enumeration<ZipEntry> enumEntries = (Enumeration<ZipEntry>) zipFile.entries();
+			
+			while( enumEntries.hasMoreElements())
+			{
+				ZipEntry zipEntry = enumEntries.nextElement();
+				InputStream zipInputStream = zipFile.getInputStream(zipEntry);
+				String zipFileName = zipEntry.getName();
+				Path destFilePath = getModsDir();
+		    	Path destZipFilePath = destFilePath.resolve(zipFileName);
+				Files.copy(zipInputStream, destZipFilePath, StandardCopyOption.REPLACE_EXISTING);
+			}
+			zipFile.close();
+		} catch (Exception e) {
+			result = false;
+			LOG.warn("Could not extract mod list archive => " + listName + "."); 
+			e.printStackTrace();
+		}
+		setSelectedModListName(listName, true);
 		return result;
 	}
 }
