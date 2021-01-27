@@ -8,7 +8,7 @@ import io.github.prospector.modmenu.gui.ModsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
-public abstract class TwoListsWidgetScreen extends ScreenBase {
+public abstract class FilePickerScreen extends ScreenBase {
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
@@ -18,8 +18,8 @@ public abstract class TwoListsWidgetScreen extends ScreenBase {
 	protected ModListEntry selected;
 	protected double scrollPercent = 0;
 	protected ModsScreen modsScreen;
-	protected ModListWidget availableModList;
-	protected ModListWidget selectedModList;
+	protected ModListWidget availableList;
+	protected ModListWidget selectedList;
 	protected int paneY;
 	protected int paneWidth;
 	protected int rightPaneX;
@@ -28,15 +28,15 @@ public abstract class TwoListsWidgetScreen extends ScreenBase {
 	/***************************************************
 	 *              CONSTRUCTORS
 	 **************************************************/
-	protected TwoListsWidgetScreen(Text title) {
+	protected FilePickerScreen(Text title) {
 		super(title);
 	}
 	
-	public TwoListsWidgetScreen(Screen previousScreen, String titleId) {
+	public FilePickerScreen(Screen previousScreen, String titleId) {
 		super(previousScreen, titleId);
 		this.modsScreen = (ModsScreen) previousScreen;
-		availableModList = new ModListWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, "", this.availableModList, modsScreen);
-		selectedModList = new ModListWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, "", this.selectedModList, modsScreen);
+		availableList = new ModListWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, "", this.availableList, modsScreen);
+		selectedList = new ModListWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, "", this.selectedList, modsScreen);
 	}
 	
 	/***************************************************
@@ -54,11 +54,11 @@ public abstract class TwoListsWidgetScreen extends ScreenBase {
 	
 	@Override
 	public boolean mouseScrolled(double double_1, double double_2, double double_3) {
-		if (selectedModList.isMouseOver(double_1, double_2)) {
-			return this.selectedModList.mouseScrolled(double_1, double_2, double_3);
+		if (selectedList.isMouseOver(double_1, double_2)) {
+			return this.selectedList.mouseScrolled(double_1, double_2, double_3);
 		}
-		if (availableModList.isMouseOver(double_1, double_2)) {
-			return this.availableModList.mouseScrolled(double_1, double_2, double_3);
+		if (availableList.isMouseOver(double_1, double_2)) {
+			return this.availableList.mouseScrolled(double_1, double_2, double_3);
 		}
 		return false;
 	}
@@ -67,8 +67,8 @@ public abstract class TwoListsWidgetScreen extends ScreenBase {
 	protected void closeScreen()
 	{
 		super.closeScreen();
-		this.selectedModList.close();
-		this.availableModList.close();
+		this.selectedList.close();
+		this.availableList.close();
 		this.selected = null;
 		
 	}
