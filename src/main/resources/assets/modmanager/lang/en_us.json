@@ -25,5 +25,6 @@
   "modmanager.import.tooltip":"Import",
   "modmanager.import.success":"Imported mod successfully",
   "modmanager.import.error":"Unable to import mod",
+  "modmanager.dirup.tooltip":"Move Directory Up",
   "modmanager.notimpl": "Feature not yet available!"
 }

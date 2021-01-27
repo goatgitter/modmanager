@@ -40,12 +40,14 @@ public class ModManager implements ModInitializer {
 	public static final TranslatableText TEXT_IMPORT_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".import.tooltip");
 	public static final TranslatableText TEXT_IMPORT_ERROR = new TranslatableText(ModManager.MOD_ID + ".import.error");
 	public static final TranslatableText TEXT_IMPORT_SUCCESS = new TranslatableText(ModManager.MOD_ID + ".import.success");
+	public static final TranslatableText TEXT_DIR_UP_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".dirup.tooltip");
 	
 	public static final Identifier SAVE_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "save.png");
 	public static final Identifier OPEN_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "open.png");
 	public static final Identifier ADD_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "add.png");
 	public static final Identifier EXPORT_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "export.png");
 	public static final Identifier IMPORT_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "import.png");
+	public static final Identifier UP_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "up.png");
 	
 	public static final int TOP_BTN_WIDTH = 19;
 	public static final int TOP_BTN_HEIGHT = 13;
