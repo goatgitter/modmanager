@@ -28,6 +28,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -630,5 +632,20 @@ public class ModListLoader {
 		}
 		setSelectedModListName(listName, true);
 		return result;
+	}
+	
+	public List<String> getAvailArchives()
+	{
+		List<String> availList = new ArrayList<String>();
+		Path dirToCheck = getModsDir();
+		File[] files = dirToCheck.toFile().listFiles();
+		for (File f:files)
+		{
+			if (f.getName().endsWith(".zip"))
+			{
+				availList.add(f.getName());
+			}
+		}
+		return availList;
 	}
 }

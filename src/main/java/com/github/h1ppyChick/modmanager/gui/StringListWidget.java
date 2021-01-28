@@ -1,12 +1,13 @@
 package com.github.h1ppyChick.modmanager.gui;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 import com.github.h1ppyChick.modmanager.util.Log;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.github.h1ppyChick.modmanager.util.Stencil;
 
 import io.github.prospector.modmenu.mixin.EntryListWidgetAccessor;
 import net.minecraft.client.MinecraftClient;
@@ -14,14 +15,10 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Matrix4f;
 
 public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry> {
 	/***************************************************
@@ -33,7 +30,7 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 	private Set<String> addedEntries = new HashSet<>();
 	protected String selectedEntry = null;
 	private boolean scrolling;
-	private final Text title;
+	protected final Text title;
 	protected final StringListWidget.LoadListAction onLoadList;
 	protected final StringListWidget.ClickEntryAction onClickEntry;
 	protected TextFieldWidget listInput;
@@ -48,7 +45,7 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 	 **************************************************/
 	public StringListWidget(MinecraftClient client, int left, int width, int height, 
 			int y1, int y2, int entryHeight, List<String> widgetList, 
-			TwoListsWidgetScreen parent, Text title, LoadListAction onLoadList, 
+			ScreenBase parent, Text title, LoadListAction onLoadList, 
 			ClickEntryAction onClickEntry, 
 			String selectedEntry) {
 		super(client, width, height, y1, y2, entryHeight);
@@ -122,6 +119,13 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 	public List<String> getValueList() {
 		return _entryList;
 	}
+	
+	public List<String> getAddedList() {
+		Object[] addedObjects = addedEntries.toArray();
+		String[] addedValues = Arrays.copyOf(addedObjects, addedObjects.length, String[].class);
+		List<String> addedList =  Arrays.asList(addedValues);
+		return addedList;
+	}
 
 	public void setList(List<String> theList) {
 		this._entryList = theList;
@@ -142,6 +146,13 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 		return (StringEntry) m;
 	}
 	
+	protected boolean hasEntry(String value) {
+		boolean hasEntry = false;
+		hasEntry = _entryList.contains(value);
+		hasEntry = hasEntry || addedEntries.contains(value);
+		return hasEntry;
+	}
+
 	protected StringEntry remove(int index) {
 		StringEntry entry = getEntry(index);
 		addedEntries.remove(entry.getValue());
@@ -191,99 +202,51 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 	/***************************************************
 	 *              RENDERING
 	 **************************************************/
-	protected void drawBackgroundBox(Matrix4f matrix, BufferBuilder buffer, Tessellator tessellator, int leftX, int rightX, int topY, int bottomY)
-	{
-		float zero = 0.0F;
-		// Paint a black box for given coordinates.
-		RenderSystem.disableTexture();
-		RenderSystem.enableBlend();
-		RenderSystem.color4f(zero, zero, zero, 1.0F);
-		buffer.begin(7, VertexFormats.POSITION);
-		buffer.vertex(matrix, leftX, bottomY, 0.0F).next();
-		buffer.vertex(matrix, rightX, bottomY, 0.0F).next();
-		buffer.vertex(matrix, rightX, topY, 0.0F).next();
-		buffer.vertex(matrix, leftX, topY, 0.0F).next();
-		tessellator.draw();
-		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
-	}
 	
-	protected void renderListLabel(MatrixStack matrices, int x, int y,int rowWidth, int rowHeight) {
-		DrawableHelper.drawTextWithShadow(matrices, this.client.textRenderer, this.title, x, y, 16777215);
+	protected void renderListLabel(MatrixStack matrices) {
+		DrawableHelper.drawTextWithShadow(matrices, this.client.textRenderer, this.title, this.left+3, listInputY, 16777215);
 	}
 	
 	@Override
 	protected void renderList(MatrixStack matrices, int x, int y, int mouseX, int mouseY, float delta) {
-		Tessellator tessellator_1 = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator_1.getBuffer();
 		this.bottom = this.top + this.height;
-		Matrix4f matrix = matrices.peek().getModel();
-		drawBackgroundBox(matrix, buffer, tessellator_1, this.left, this.right, this.top, this.bottom);
-
-		// Add the label for the field to the left of the drop down list.
-		renderListLabel(matrices,this.left+3,listInputY,  this.getRowWidth(), this.itemHeight);
+		Stencil.setColorBlack();
+		Stencil.rectangle(matrices, this.left, this.right, this.top, this.bottom);
+		// Add the label for the field
+		renderListLabel(matrices);
 		if (isListVisible)
 		{
 			renderListEntries(matrices,mouseX, mouseY, delta);
 		}
-		this.listInput.render(matrices, mouseX, mouseY, delta);
+		else
+		{
+			this.listInput.render(matrices, mouseX, mouseY, delta);
+		}
 	}
 
 	protected void renderListEntries(MatrixStack matrices,int mouseX, int mouseY, float delta)
 	{
-		Tessellator tessellator_1 = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator_1.getBuffer();
-		Matrix4f matrix = matrices.peek().getModel();
-		
 		int boxTop = this.top;
 		int boxRightX = getRowLeft() + getRowWidth() +1;
 		int boxLeftX = getRowLeft();
 		int boxBottom = this.top + this.getItemCount() * this.itemHeight;
-		drawBackgroundBox(matrix, buffer, tessellator_1, boxLeftX, boxRightX, boxTop, boxBottom);
+		Stencil.setColorBlack();
+		Stencil.rectangle(matrices, boxLeftX, boxRightX, boxTop, boxBottom);
 		
 		for (int index = 0; index < this.getItemCount(); ++index) {
 			int entryTop = this.getRowTop(index) + 4;
 			int entryBottom = this.getRowTop(index) + this.itemHeight;
 			if (entryBottom >= this.top && entryTop <= getScrollBottom()) {
 				StringEntry entry = this.getEntry(index);
-				int entryLeft;
-				int entryRight;
+				int entryLeft = getEntryLeft();
+				int entryRight = getEntryRight();
+				entry.setSelectedItem(false);
 				if (((EntryListWidgetAccessor) this).isRenderSelection() && this.isSelectedItem(index)) {
-					entryLeft = getEntryLeft() - 1;
-					entryRight = getEntryRight() +1;
-					RenderSystem.disableTexture();
-					//Green
-					RenderSystem.color4f(0,1,0,1);
-					buffer.begin(7, VertexFormats.POSITION);
-					buffer.vertex(matrix, entryLeft, entryBottom + 1, 0.0F).next();
-					buffer.vertex(matrix, entryRight, entryBottom + 1, 0.0F).next();
-					buffer.vertex(matrix, entryRight, entryTop - 1, 0.0F).next();
-					buffer.vertex(matrix, entryLeft, entryTop - 1, 0.0F).next();
-					tessellator_1.draw();
-					RenderSystem.enableTexture();
+					entry.setSelectedItem(true);
 				}
-				entryLeft = getEntryLeft();
-				entryRight = getEntryRight();
 				this.bottom = Math.max(this.bottom, entryBottom);
 				boolean isHovered = this.isMouseOver(mouseX, mouseY) && Objects.equals(this.getEntryAtPos(mouseX, mouseY), entry);
-				if (isHovered)
-				{
-					entryLeft = getEntryLeft() - 1;
-					entryRight = getEntryRight() +1;
-					RenderSystem.disableTexture();
-					//Blue
-					RenderSystem.color4f(0,0,1,1);
-					buffer.begin(7, VertexFormats.POSITION);
-					buffer.vertex(matrix, entryLeft, entryBottom + 1, 0.0F).next();
-					buffer.vertex(matrix, entryRight, entryBottom + 1, 0.0F).next();
-					buffer.vertex(matrix, entryRight, entryTop - 1, 0.0F).next();
-					buffer.vertex(matrix, entryLeft, entryTop - 1, 0.0F).next();
-					tessellator_1.draw();
-					RenderSystem.enableTexture();
-				}
-				entryLeft = getEntryLeft();
-				entryRight = getEntryRight();
-				entry.render(matrices, index, entryTop, entryLeft, this.getRowWidth(), this.itemHeight, mouseX, mouseY, isHovered, delta);
+				entry.render(matrices, index, entryLeft, entryRight, entryTop, entryBottom,  mouseX, mouseY, isHovered, delta);
 			}
 		}
 	}
@@ -322,7 +285,7 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 		} else {
 			StringEntry entry = this.getEntryAtPos(double_1, double_2);
 			if (entry != null) {
-				setSelected(entry);
+				onClickEntry(entry);
 				return true;
 			} else if (int_1 == 0) {
 				this.clickedHeader((int) (double_1 - (double) (this.left + this.width / 2 - this.getRowWidth() / 2)), (int) (double_2 - (double) this.top) + (int) this.getScrollAmount() - 4);

@@ -3,6 +3,7 @@ package com.github.h1ppyChick.modmanager.gui;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +15,6 @@ import com.github.h1ppyChick.modmanager.util.ModListLoader;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ScreenTexts;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
@@ -38,9 +37,9 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private Log LOG = new Log("ChildModsScreen");
 	private ModListLoader modListLoader = new ModListLoader();
 	private int listNameInputX;
-	private int listNameInputWidth;
-	
+	private int listNameInputWidth;	
 	private DropDownListWidget modsList;
+	private FilePickerScreen picker;
 	/***************************************************
 	 *              CONSTRUCTORS
 	 **************************************************/
@@ -161,27 +160,6 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	}
 	
 	/***************************************************
-	 *              DONE BUTTON
-	 **************************************************/
-	/**
-	 * Draws the Done Button at the correct position on the screen.
-	 */
-	private void drawDoneButton()
-	{
-		this.addButton(new ButtonWidget(this.width / 3 + 4, this.height - 28, 150, 20, ScreenTexts.DONE, button -> doneButtonClick()));
-	}
-	/**
-	 * Performs the Done Action when the button is clicked.
-	 * Closes the screen, with restart option, if required.
-	 * {@link #onClose()}
-	 */
-	private void doneButtonClick()
-	{
-		this.onClose();
-	}
-	
-	
-	/***************************************************
 	 *              LIST NAME INPUT BOX 
 	 **************************************************/
 	
@@ -255,6 +233,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 			restartRequired = true;
 			modsList.add(ModManager.NEW_LIST_NAME);
 			modsList.select(ModManager.NEW_LIST_NAME);
+			modsList.listInput.setText(ModManager.NEW_LIST_NAME);
 			selectedMods.onNewList();
 			modListLoader.updateAvailModListFile();
 			availableMods.onLoadList();
@@ -280,24 +259,54 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_EXPORT_ERROR);
 		}
 	}
+	private List<String> getAvailFileList()
+	{
+		List<String> theList = modListLoader.getAvailArchives();
+		return theList;
+	}
 	
+	private List<String> getSelectedFileList()
+	{
+		List<String> selectedList = new ArrayList<String>();
+		if (picker != null && picker.selectedList != null)
+		{
+			selectedList = picker.selectedList.getValueList();
+		}
+		return selectedList;
+	}
+
 	/**
 	 * Performs the Import List Action when the button is clicked.
 	 */
 	private void onImportList(DropDownListWidget widget)
 	{
-		boolean result = modListLoader.importModList(modsList.getSelectedValue());
-		if (result)
-		{
-			modsList.onLoadList();
-			modListLoader.updateAvailModListFile();
-			availableMods.onLoadList();
-			selectedMods.onLoadList();
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_IMPORT_SUCCESS);
+		FilePickerScreen picker = new FilePickerScreen((ScreenBase) this, 
+				(StringListWidget.LoadListAction) pickerWidget  -> pickerWidget.setList(getAvailFileList()),
+				(StringListWidget.LoadListAction) pickerWidget -> pickerWidget.setList(getSelectedFileList()),
+				(FilePickerScreen.ClickDoneButtonAction) selectedList -> onClickDoneButton(selectedList)) ;
+		
+		if (picker != null) {
+			client.openScreen(picker);
 		}
-		else
+	}
+	
+	private void onClickDoneButton(List<String> selectedList)
+	{
+		for(String fileName: selectedList)
 		{
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_IMPORT_ERROR);
+			boolean result = modListLoader.importModList(fileName.substring(0, fileName.lastIndexOf(".zip")));
+			if (result)
+			{
+				modsList.onLoadList();
+				modListLoader.updateAvailModListFile();
+				availableMods.onLoadList();
+				selectedMods.onLoadList();
+				SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_IMPORT_SUCCESS);
+			}
+			else
+			{
+				SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_IMPORT_ERROR);
+			}
 		}
 	}
 	

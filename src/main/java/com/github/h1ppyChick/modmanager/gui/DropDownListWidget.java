@@ -64,17 +64,23 @@ public class DropDownListWidget extends StringListWidget {
 	@Override
 	public void setSelected(StringEntry entry) {
 		super.setSelected(entry);
+	}
+	
+	@Override
+	public void onClickEntry(StringEntry entry)
+	{
+		setSelected(entry);
 		if (listInput != null)
 		{
 			listInput.setText(selectedEntry);
 			if (isListOpen)
 			{
-				onClickEntry(entry);
 				isListOpen = false;
 				drawListInput();
 				drawOpenButton();
 			}
 		}
+		this.onClickEntry.onClickEntry(entry);
 	}
 	
 	public String getCurrentValue()

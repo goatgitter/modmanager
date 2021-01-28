@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -28,6 +29,9 @@ public abstract class ScreenBase extends Screen {
 	protected Text tooltip;
 	protected Text title;
 	protected boolean restartRequired = false;
+	protected int paneY;
+	protected int paneWidth;
+	protected int rightPaneX;
 	
 	/***************************************************
 	 *              CONSTRUCTORS
@@ -109,7 +113,25 @@ public abstract class ScreenBase extends Screen {
 			closeScreen();
 		}
 	}
-	
+	/***************************************************
+	 *              DONE BUTTON
+	 **************************************************/
+	/**
+	 * Draws the Done Button at the correct position on the screen.
+	 */
+	protected void drawDoneButton()
+	{
+		this.addButton(new ButtonWidget(this.width / 3 + 4, this.height - 28, 150, 20, ScreenTexts.DONE, button -> doneButtonClick()));
+	}
+	/**
+	 * Performs the Done Action when the button is clicked.
+	 * Closes the screen, with restart option, if required.
+	 * {@link #onClose()}
+	 */
+	protected void doneButtonClick()
+	{
+		this.onClose();
+	}
 	/**
     * Adds a button to this screen.
     * This method should be preferred over {@link Screen#addChild(Element)} since buttons are automatically rendered when added to a screen.

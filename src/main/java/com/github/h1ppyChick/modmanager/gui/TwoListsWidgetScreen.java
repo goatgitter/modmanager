@@ -20,9 +20,6 @@ public abstract class TwoListsWidgetScreen extends ScreenBase {
 	protected ModsScreen modsScreen;
 	protected ModListWidget availableModList;
 	protected ModListWidget selectedModList;
-	protected int paneY;
-	protected int paneWidth;
-	protected int rightPaneX;
 	protected boolean restartRequired = false;
 	
 	/***************************************************

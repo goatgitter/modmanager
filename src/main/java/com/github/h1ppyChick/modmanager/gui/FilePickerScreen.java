@@ -1,29 +1,25 @@
 package com.github.h1ppyChick.modmanager.gui;
 
+import java.util.List;
+
+import com.github.h1ppyChick.modmanager.ModManager;
+import com.github.h1ppyChick.modmanager.gui.StringListWidget.LoadListAction;
 import com.github.h1ppyChick.modmanager.util.Log;
 
-import io.github.prospector.modmenu.gui.ModListEntry;
-import io.github.prospector.modmenu.gui.ModListWidget;
-import io.github.prospector.modmenu.gui.ModsScreen;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-public abstract class FilePickerScreen extends ScreenBase {
+public class FilePickerScreen extends TwoStringListsScreen {
+	/***************************************************
+	 *              CONSTANTS
+	 **************************************************/
+	private final static String TITLE_ID = ModManager.MOD_ID + ".filepicker.title";
+
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
-	private Log LOG = new Log("TwoListsWidgetScreen");
-	protected TwoListsWidget availableMods;
-	protected TwoListsWidget selectedMods;
-	protected ModListEntry selected;
-	protected double scrollPercent = 0;
-	protected ModsScreen modsScreen;
-	protected ModListWidget availableList;
-	protected ModListWidget selectedList;
-	protected int paneY;
-	protected int paneWidth;
-	protected int rightPaneX;
-	protected boolean restartRequired = false;
+	private Log LOG = new Log("FilePickerScreen");
+	private ClickDoneButtonAction onClickDoneButton;
 	
 	/***************************************************
 	 *              CONSTRUCTORS
@@ -32,44 +28,43 @@ public abstract class FilePickerScreen extends ScreenBase {
 		super(title);
 	}
 	
-	public FilePickerScreen(Screen previousScreen, String titleId) {
-		super(previousScreen, titleId);
-		this.modsScreen = (ModsScreen) previousScreen;
-		availableList = new ModListWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, "", this.availableList, modsScreen);
-		selectedList = new ModListWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, "", this.selectedList, modsScreen);
+	public FilePickerScreen(ScreenBase previousScreen, LoadListAction onLoadAvailList, 
+			LoadListAction onLoadSelectedList,
+			ClickDoneButtonAction onClickDoneButton) {
+		super(previousScreen, TITLE_ID, onLoadAvailList, 
+				"",
+				onLoadSelectedList,
+				"");
+		this.onClickDoneButton = onClickDoneButton;
 	}
 	
 	/***************************************************
 	 *              METHODS
 	 **************************************************/
-	public ModListEntry getSelectedEntry() {
-		return selected;
-	}
-	
-	public void updateSelectedEntry(ModListEntry entry) {
-		if (entry != null) {
-			this.selected = entry;
-		}
+	@Override
+	public void init() {
+		LOG.enter("init");
+		super.init();
+		drawDoneButton();
+		this.addChild(availableList);
+		this.addChild(selectedList);
+		LOG.exit("init");
 	}
 	
 	@Override
-	public boolean mouseScrolled(double double_1, double double_2, double double_3) {
-		if (selectedList.isMouseOver(double_1, double_2)) {
-			return this.selectedList.mouseScrolled(double_1, double_2, double_3);
-		}
-		if (availableList.isMouseOver(double_1, double_2)) {
-			return this.availableList.mouseScrolled(double_1, double_2, double_3);
-		}
-		return false;
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+		this.renderBackground(matrices);
+		super.render(matrices, mouseX, mouseY, delta);
 	}
-
+	
+	public interface ClickDoneButtonAction {
+		void onClickDoneButton(List<String> selectedList);
+	}
+	
 	@Override
-	protected void closeScreen()
+	protected void doneButtonClick()
 	{
-		super.closeScreen();
-		this.selectedList.close();
-		this.availableList.close();
-		this.selected = null;
-		
+		this.onClickDoneButton.onClickDoneButton(selectedList.getAddedList());
+		this.onClose();
 	}
 }

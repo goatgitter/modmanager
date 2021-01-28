@@ -48,6 +48,8 @@ public class ModManager implements ModInitializer {
 	public static final Identifier EXPORT_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "export.png");
 	public static final Identifier IMPORT_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "import.png");
 	public static final Identifier UP_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "up.png");
+	public static final Identifier ARROW_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "arrows.png");
+	public static final Identifier RESOURCE_PACKS_TEXTURE = new Identifier("textures/gui/resource_packs.png");
 	
 	public static final int TOP_BTN_WIDTH = 19;
 	public static final int TOP_BTN_HEIGHT = 13;
