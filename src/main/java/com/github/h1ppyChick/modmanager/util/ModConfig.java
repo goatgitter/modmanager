@@ -114,16 +114,7 @@ public class ModConfig {
 		
 		return canTurnOff;
 	}
-
-	public static Path getPath(Path root, String dirName) throws IOException
-	{
-		Path dirPath = root.resolve(dirName);
-		if (! Files.exists(dirPath)){
-	        Files.createDirectory(dirPath);
-	    }
-		return dirPath;
-	}
-
+	
 	public static void requestUnload(ModListEntry mod)
 	{
 		LOG.trace("Requested unload of mod =>" + mod.getMetadata().getId() + ".");
