@@ -25,6 +25,11 @@
   "modmanager.import.tooltip":"Import",
   "modmanager.import.success":"Imported %s",
   "modmanager.import.error":"Unable to import %s",
+  "modmanager.import.error.open.zip":"Unable to open zip file %s",
+  "modmanager.import.error.open.zip.entry":"Unable to open entry %s in file %s",
+  "modmanager.import.error.extract.entry":"Unable to extract entry %s in file %s to directory %s",
+  "modmanager.import.error.close.zip":"Unable to close zip file %s",
+  "modmanager.import.error.close.zip.entry":"Unable to close entry %s in file %s",
   "modmanager.dirup.tooltip":"Move Directory Up",
   "modmanager.filepicker.title":"Select File(s)",
   "modmanager.notimpl": "Feature not yet available!"

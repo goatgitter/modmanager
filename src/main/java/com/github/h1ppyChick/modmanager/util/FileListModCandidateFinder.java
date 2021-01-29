@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.discovery.ModCandidateFinder;
@@ -44,7 +43,7 @@ public class FileListModCandidateFinder implements ModCandidateFinder {
 				}
 				else
 				{
-					LOG.info("JAR File did not exist =>" + modJarName);
+					LOG.trace("JAR File did not exist =>" + modJarName);
 				}
 			}
 			

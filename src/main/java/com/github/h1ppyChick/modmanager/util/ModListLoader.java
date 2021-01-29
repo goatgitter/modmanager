@@ -28,8 +28,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,6 +43,7 @@ import net.fabricmc.loader.discovery.ModResolutionException;
 import net.fabricmc.loader.discovery.ModResolver;
 import net.fabricmc.loader.metadata.LoaderModMetadata;
 import net.fabricmc.loader.metadata.NestedJarEntry;
+import net.minecraft.client.MinecraftClient;
 
 /**
  * @author h1ppyChick
@@ -70,7 +69,7 @@ public class ModListLoader {
 	public static final String LOAD_CATCHER_MOD_ID = "loadcatcher";
 	public static final String JRE = "java";
 	public static List<String> HIDDEN_MODS = Arrays.asList(API_MOD_ID, INDIGO_MOD_ID, LOADER_MOD_ID, FABRIC_MOD_ID, BASE_MOD_ID, LOAD_CATCHER_MOD_ID, JRE);
-	private static final Logger LOG = LogManager.getFormatterLogger("CombinedLoader");
+	private static final Logger LOG = LogManager.getFormatterLogger("ModListLoader");
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
@@ -276,21 +275,21 @@ public class ModListLoader {
 	public ModContainer getModForJar(String jarFileName, List<ModContainer> mods)
 	{
 		String fn = jarFileName.toLowerCase();
-		LOG.debug("Looking up mod id for jar file name =>" + fn +".");
+		LOG.trace("Looking up mod id for jar file name =>" + fn +".");
 		ModContainer jarMod = null;
 		for (ModContainer mod: mods)
 		{
 			String modId = mod.getInfo().getId();
 			if (!isRequiredMod(modId))
 			{
-				LOG.debug("Checking mod =>" + modId);
+				LOG.trace("Checking mod =>" + modId);
 				if(fn.contains(modId))
 				{
 					String versionString = mod.getInfo().getVersion().getFriendlyString();
-					LOG.debug("Mod version => " + versionString);
+					LOG.trace("Mod version => " + versionString);
 					if (fn.contains(versionString));
 					{
-						LOG.debug("Found " + jarFileName + " => " + modId);
+						LOG.trace("Found " + jarFileName + " => " + modId);
 						jarMod = mod;
 						break;
 					}
@@ -351,7 +350,7 @@ public class ModListLoader {
 				Files.deleteIfExists(modListPath);
 			}
 		    if (! Files.exists(modListPath)){
-	    	LOG.info("Creating file " + modListPath.getFileName());
+	    	LOG.trace("Creating file " + modListPath.getFileName());
 				Files.createFile(modListPath);
 				// Add all the required mods
 				for(ModContainer mc: getRequiredMods())
@@ -606,31 +605,68 @@ public class ModListLoader {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public boolean importModList(String listName)
+	public boolean importModList(String listName, MinecraftClient client)
 	{
 		boolean result = true;
 		Path modListZipPath = getModsDir().resolve(listName + ".zip");
-		try
+
+		ZipFile zipFile = null;
+		try {
+			zipFile = new ZipFile(modListZipPath.toString());
+		} catch (IOException e) {
+			result = false;
+			StickyNote.addErrorMsg(client, ModManager.KEY_IMPORT_ERROR_OPEN_ZIP, modListZipPath.toString());
+			e.printStackTrace();
+		}
+		if (zipFile != null)
 		{
-			ZipFile zipFile = new ZipFile(modListZipPath.toString());
 			Enumeration<ZipEntry> enumEntries = (Enumeration<ZipEntry>) zipFile.entries();
 			
 			while( enumEntries.hasMoreElements())
 			{
 				ZipEntry zipEntry = enumEntries.nextElement();
-				InputStream zipInputStream = zipFile.getInputStream(zipEntry);
 				String zipFileName = zipEntry.getName();
 				Path destFilePath = getModsDir();
 		    	Path destZipFilePath = destFilePath.resolve(zipFileName);
-				Files.copy(zipInputStream, destZipFilePath, StandardCopyOption.REPLACE_EXISTING);
+				InputStream zipInputStream = null;
+				try {
+					zipInputStream = zipFile.getInputStream(zipEntry);
+				} catch (IOException e) {
+					result = false;
+					StickyNote.addErrorMsg(client, ModManager.KEY_IMPORT_ERROR_OPEN_ZIP, zipEntry.getName(), listName);
+					e.printStackTrace();
+				}
+				if (zipInputStream != null)
+				{
+					try {
+						Files.copy(zipInputStream, destZipFilePath, StandardCopyOption.REPLACE_EXISTING);
+					} catch (IOException e) {
+						result = false;
+						StickyNote.addErrorMsg(client, ModManager.KEY_IMPORT_ERROR_EXTRACT_ZIP_ENTRY, zipEntry.getName(), listName, destZipFilePath.getParent().getFileName());
+						e.printStackTrace();
+					}
+				}
+				try {
+					zipInputStream.close();
+				} catch (IOException e) {
+					result = false;
+					StickyNote.addErrorMsg(client, ModManager.KEY_IMPORT_ERROR_CLOSE_ZIP_ENTRY, zipEntry.getName(), listName);
+					e.printStackTrace();
+				}
 			}
-			zipFile.close();
-		} catch (Exception e) {
-			result = false;
-			LOG.warn("Could not extract mod list archive => " + listName + "."); 
-			e.printStackTrace();
+			try {
+				zipFile.close();
+			} catch (IOException e) {
+				result = false;
+				StickyNote.addErrorMsg(client, ModManager.KEY_IMPORT_ERROR_CLOSE_ZIP, listName);
+				e.printStackTrace();
+			}
 		}
-		setSelectedModListName(listName, true);
+		if (result)
+		{
+			setSelectedModListName(listName, true);
+			StickyNote.addSuccessMsg(client, ModManager.KEY_IMPORT_SUCCESS, listName);
+		}
 		return result;
 	}
 	

@@ -69,6 +69,11 @@ public class Log {
 		LOG.warn(getLogMsg(msg));
 	}
 	
+	public void trace(String msg)
+	{
+		LOG.trace(getLogMsg(msg));
+	}
+	
 	public Logger getLog()
 	{
 		return LOG;
@@ -80,39 +85,39 @@ public class Log {
 	}
 	
 	public void enter(String methodName) {
-		LOG.debug(getMethodMsg(methodName) + ENTER_MSG + " method.");
+		LOG.trace(getMethodMsg(methodName) + ENTER_MSG + " method.");
 	}
 	
 	public void enter(String methodName, String msg) {
-		LOG.debug(getMethodMsg(methodName) + ENTER_MSG + " method -> " + msg);
+		LOG.trace(getMethodMsg(methodName) + ENTER_MSG + " method -> " + msg);
 	}
 	
 	public void enterClass()
 	{
-		LOG.debug(getLogMsg(ENTER_MSG + " Class"));
+		LOG.trace(getLogMsg(ENTER_MSG + " Class"));
 	}
 	
 	public void enterClass(String msg)
 	{
-		LOG.debug(getLogMsg(ENTER_MSG + " Class -> "+ msg));
+		LOG.trace(getLogMsg(ENTER_MSG + " Class -> "+ msg));
 	}
 	
 	public void exit(String methodName) {
-		LOG.debug(getMethodMsg(methodName) + EXIT_MSG);
+		LOG.trace(getMethodMsg(methodName) + EXIT_MSG);
 	}
 	
 	public void exit(String methodName, String msg) {
-		LOG.debug(getMethodMsg(methodName) + EXIT_MSG + msg);
+		LOG.trace(getMethodMsg(methodName) + EXIT_MSG + msg);
 	}
 	
 	public void exitClass()
 	{
-		LOG.debug(getLogMsg(EXIT_MSG));
+		LOG.trace(getLogMsg(EXIT_MSG));
 	}
 	
 	public void exitClass(String msg)
 	{
-		LOG.debug(getLogMsg(EXIT_MSG + msg));
+		LOG.trace(getLogMsg(EXIT_MSG + msg));
 	}
 	
 	

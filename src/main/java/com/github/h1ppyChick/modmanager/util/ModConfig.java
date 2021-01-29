@@ -139,7 +139,7 @@ public class ModConfig {
 	}
 	public static void requestUnload(ModListEntry mod)
 	{
-		LOG.info("Requested unload of mod =>" + mod.getMetadata().getId() + ".");
+		LOG.trace("Requested unload of mod =>" + mod.getMetadata().getId() + ".");
 		Path availListPath = modListLoader.getAvailModListFile();
 		Path selectedListPath = modListLoader.getSelectedModList();
 		Path srcJarPath = modListLoader.getModJarPath(mod);
@@ -151,7 +151,7 @@ public class ModConfig {
 	
 	public static void requestLoad(ChildModEntry mod)
 	{
-		LOG.info("Requested load of mod =>" + mod.getMetadata().getId() + ".");
+		LOG.trace("Requested load of mod =>" + mod.getMetadata().getId() + ".");
 		Path availListPath = modListLoader.getAvailModListFile();
 		Path selectedListPath = modListLoader.getSelectedModList();
 		Path srcJarPath = modListLoader.getModJarPath(mod.getContainer());
@@ -328,13 +328,13 @@ public class ModConfig {
 		fl.freeze();
 		fl.loadAccessWideners();
 		try {
-			LOG.debug("Clearing init properties for Mixin Bootstrap");
+			LOG.trace("Clearing init properties for Mixin Bootstrap");
 			Object clearInit = null;
 			GlobalProperties.put(GlobalProperties.Keys.INIT, clearInit);
 			FieldUtils.writeStaticField(MixinBootstrap.class,  "initialised", false, true);
 			FieldUtils.writeStaticField(MixinBootstrap.class,  "platform", null, true);
 			
-			LOG.debug("Calling mixin bootstrap");
+			LOG.trace("Calling mixin bootstrap");
 			MixinBootstrap.init();
 		}
 		catch(Exception except) {
@@ -348,12 +348,12 @@ public class ModConfig {
 			c.setAccessible(true);
 			FabricMixinBootstrap fmb = c.newInstance();
 			FieldUtils.writeField(fmb, "initialized", false, true);
-			LOG.debug("-------------------------------------------------");
-			LOG.debug("             START Mixin BootStrap             ");
+			LOG.trace("-------------------------------------------------");
+			LOG.trace("             START Mixin BootStrap             ");
 			FabricMixinBootstrap.init(fl.getEnvironmentType(), fl);
 			finishMixinBootstrapping();
-			LOG.debug("             END Mixin BootStrap                 ");
-			LOG.debug("-------------------------------------------------");
+			LOG.trace("             END Mixin BootStrap                 ");
+			LOG.trace("-------------------------------------------------");
 		} catch (IllegalAccessException | NoSuchMethodException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 			LOG.warn("Problem initalizing Mixins");
 			e.printStackTrace();
@@ -426,7 +426,7 @@ public class ModConfig {
 				String jarFileName = modListLoader.getNestedJarFileName(nestedJar);
 				ModContainer nestedMod = modListLoader.getModForJar(jarFileName, oldMods);
 				String nestedModId = nestedMod.getInfo().getId();
-				LOG.debug("Adding!-Nested mod => " + nestedModId);
+				LOG.trace("Adding!-Nested mod => " + nestedModId);
 				addParentToMod(nestedMod);
 				//Menu.addChild(modMenuExtMod, nestedMod);
 			}
@@ -435,11 +435,11 @@ public class ModConfig {
 			for(ModContainer mod : changedMods)
 			{
 				String modId = mod.getMetadata().getId();
-				LOG.debug("Checking changed mod id =>" + modId);
+				LOG.trace("Checking changed mod id =>" + modId);
 				// Don't add the fabric api again
 				if (!modListLoader.isRequiredMod(modId) && !oldModMap.containsKey(mod.getInfo().getId()))
 				{
-					LOG.debug("Adding!" + modId);
+					LOG.trace("Adding!" + modId);
 					addParentToMod(mod);
 					//Menu.addChild(modMenuExtMod, mod);
 					oldModMap.put(modId, mod);

@@ -23,6 +23,12 @@ public class ModManager implements ModInitializer {
 	
 	// Translation keys
 	public static final String KEY_IMPORT_ERROR = ModManager.MOD_ID + ".import.error";
+	public static final String KEY_IMPORT_ERROR_OPEN_ZIP = ModManager.MOD_ID + ".import.error.open.zip";
+	public static final String KEY_IMPORT_ERROR_OPEN_ZIP_ENTRY = ModManager.MOD_ID + ".import.error.open.zip.entry";
+	public static final String KEY_IMPORT_ERROR_EXTRACT_ZIP_ENTRY = ModManager.MOD_ID + ".import.error.extract.entry";
+	public static final String KEY_IMPORT_ERROR_CLOSE_ZIP = ModManager.MOD_ID + ".import.error.close.zip";
+	public static final String KEY_IMPORT_ERROR_CLOSE_ZIP_ENTRY = ModManager.MOD_ID + ".import.error.close.zip.entry";
+	
 	public static final String KEY_IMPORT_SUCCESS = ModManager.MOD_ID + ".import.success";
 	
 	// Translatable Texts

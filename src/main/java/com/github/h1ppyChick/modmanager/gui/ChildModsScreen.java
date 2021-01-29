@@ -296,20 +296,13 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		for(String fileName: selectedList)
 		{
 			String listName = fileName.substring(0, fileName.lastIndexOf(".zip"));
-			boolean result = modListLoader.importModList(listName);
+			boolean result = modListLoader.importModList(listName, client);
 			if (result)
 			{
 				modsList.onLoadList();
 				modListLoader.updateAvailModListFile();
 				availableMods.onLoadList();
 				selectedMods.onLoadList();
-				Text successText = new TranslatableText(ModManager.KEY_IMPORT_SUCCESS, listName);
-				SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, successText);
-			}
-			else
-			{
-				Text errorText = new TranslatableText(ModManager.KEY_IMPORT_ERROR, listName);
-				SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, errorText);
 			}
 		}
 	}
