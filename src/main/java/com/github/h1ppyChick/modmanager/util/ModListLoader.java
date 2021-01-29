@@ -615,7 +615,7 @@ public class ModListLoader {
 			zipFile = new ZipFile(modListZipPath.toString());
 		} catch (IOException e) {
 			result = false;
-			StickyNote.addErrorMsg(client, ModManager.KEY_IMPORT_ERROR_OPEN_ZIP, modListZipPath.toString());
+			StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_ERROR_OPEN_ZIP, modListZipPath.toString());
 			e.printStackTrace();
 		}
 		if (zipFile != null)
@@ -633,7 +633,7 @@ public class ModListLoader {
 					zipInputStream = zipFile.getInputStream(zipEntry);
 				} catch (IOException e) {
 					result = false;
-					StickyNote.addErrorMsg(client, ModManager.KEY_IMPORT_ERROR_OPEN_ZIP, zipEntry.getName(), listName);
+					StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_ERROR_OPEN_ZIP, zipEntry.getName(), listName);
 					e.printStackTrace();
 				}
 				if (zipInputStream != null)
@@ -642,7 +642,7 @@ public class ModListLoader {
 						Files.copy(zipInputStream, destZipFilePath, StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException e) {
 						result = false;
-						StickyNote.addErrorMsg(client, ModManager.KEY_IMPORT_ERROR_EXTRACT_ZIP_ENTRY, zipEntry.getName(), listName, destZipFilePath.getParent().getFileName());
+						StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_ERROR_EXTRACT_ZIP_ENTRY, zipEntry.getName(), listName, destZipFilePath.getParent().getFileName());
 						e.printStackTrace();
 					}
 				}
@@ -650,7 +650,7 @@ public class ModListLoader {
 					zipInputStream.close();
 				} catch (IOException e) {
 					result = false;
-					StickyNote.addErrorMsg(client, ModManager.KEY_IMPORT_ERROR_CLOSE_ZIP_ENTRY, zipEntry.getName(), listName);
+					StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_ERROR_CLOSE_ZIP_ENTRY, zipEntry.getName(), listName);
 					e.printStackTrace();
 				}
 			}
@@ -658,14 +658,14 @@ public class ModListLoader {
 				zipFile.close();
 			} catch (IOException e) {
 				result = false;
-				StickyNote.addErrorMsg(client, ModManager.KEY_IMPORT_ERROR_CLOSE_ZIP, listName);
+				StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_ERROR_CLOSE_ZIP, listName);
 				e.printStackTrace();
 			}
 		}
 		if (result)
 		{
 			setSelectedModListName(listName, true);
-			StickyNote.addSuccessMsg(client, ModManager.KEY_IMPORT_SUCCESS, listName);
+			StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_SUCCESS, listName);
 		}
 		return result;
 	}

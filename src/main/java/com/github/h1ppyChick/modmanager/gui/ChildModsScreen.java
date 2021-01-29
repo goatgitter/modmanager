@@ -11,6 +11,7 @@ import com.github.h1ppyChick.modmanager.ModManager;
 import com.github.h1ppyChick.modmanager.util.Log;
 import com.github.h1ppyChick.modmanager.util.ModConfig;
 import com.github.h1ppyChick.modmanager.util.ModListLoader;
+import com.github.h1ppyChick.modmanager.util.StickyNote;
 
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ConfirmScreen;
@@ -305,6 +306,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 				selectedMods.onLoadList();
 			}
 		}
+		StickyNote.showClientMsg(client);
 	}
 	
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {

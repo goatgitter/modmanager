@@ -23,7 +23,7 @@
   "modmanager.export.success":"Exported mod list successfully",
   "modmanager.export.error":"Unable to export mod list",
   "modmanager.import.tooltip":"Import",
-  "modmanager.import.success":"Imported %s",
+  "modmanager.import.success":"Imported %s Successfully",
   "modmanager.import.error":"Unable to import %s",
   "modmanager.import.error.open.zip":"Unable to open zip file %s",
   "modmanager.import.error.open.zip.entry":"Unable to open entry %s in file %s",
