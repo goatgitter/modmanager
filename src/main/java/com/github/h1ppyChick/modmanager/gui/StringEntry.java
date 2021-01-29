@@ -34,7 +34,7 @@ public class StringEntry extends AlwaysSelectedEntryListWidget.Entry<StringEntry
 			Stencil.rectangle(matrices, entryLeft - 1, entryRight + 1, entryTop - 1, entryBottom + 1);
 			if (isRenderArrow)
 			{
-				addArrow(matrices, entryTop, entryLeft, entryRight, entryBottom, mouseX, mouseY);
+				addArrow(matrices, entryTop-1, entryLeft -1, entryRight +1, entryBottom+1, mouseX, mouseY);
 			}
 		}
 		
