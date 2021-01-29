@@ -5,17 +5,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import com.github.h1ppyChick.modmanager.ModManager;
 import com.github.h1ppyChick.modmanager.util.Log;
 import com.github.h1ppyChick.modmanager.util.ModConfig;
+import com.github.h1ppyChick.modmanager.util.StickyNote;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import io.github.prospector.modmenu.gui.ModListEntry;
 import io.github.prospector.modmenu.gui.ModMenuTexturedButtonWidget;
 import io.github.prospector.modmenu.gui.ModsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -52,9 +52,9 @@ public class UnloadMods extends Screen{
 		// Create the unload mixin button with a lambda
 		ButtonWidget mixinButton = new ModMenuTexturedButtonWidget(getButtonX(1), paneY, buttonWidth, buttonHeight, 0, 0, UNLOAD_BTN_IMG, buttonWidth, canvasHeight, button -> 
 		{
-			LOG.debug("Requested unloading of mod " + selected);
+			LOG.trace("Requested unloading of mod " + selected);
 			ModConfig.requestUnload(selected);
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_RESTART);
+			StickyNote.showSuccessMsg(client, ModManager.KEY_RESTART);
 		},
 		TEXT_UNLOAD_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> 
 		{
@@ -88,7 +88,7 @@ public class UnloadMods extends Screen{
 		ButtonWidget mixinButton = new ModMenuTexturedButtonWidget(getButtonX(2), paneY, buttonWidth, buttonHeight, 0, 0, REFRESH_BTN_IMG, buttonWidth, canvasHeight, button -> 
 		{
 			boolean success = true;
-			LOG.info("Requested mod reload");
+			LOG.trace("Requested mod reload");
 			
 		},
 		TEXT_REFRESH_TOOLTIP, (buttonWidget, matrices, mouseX, mouseY) -> {

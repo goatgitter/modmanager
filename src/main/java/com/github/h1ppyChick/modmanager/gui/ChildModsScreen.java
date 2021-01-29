@@ -16,10 +16,8 @@ import com.github.h1ppyChick.modmanager.util.StickyNote;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
 public class ChildModsScreen extends TwoListsWidgetScreen{
@@ -131,7 +129,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 						modListLoader.addJarToFile(listFile, destPath);
 					} catch (IOException e) {
 						LOG.warn(String.format("Failed to copy mod from {} to {}", path, destPath));
-						SystemToast.addPackCopyFailure(client, path.toString());
+						StickyNote.addErrorMsg(client, ModManager.KEY_COPY_ERROR, path, destPath);
 						allSuccessful = false;
 						break;
 					}
@@ -139,8 +137,10 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 
 				if (allSuccessful) {
 					this.availableModList.reloadFilters();
-					SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, new TranslatableText("modmenu.dropSuccessful.line1"), new TranslatableText("modmenu.dropSuccessful.line2"));
+					StickyNote.addSuccessMsg(client, ModManager.KEY_DROP_SUCCESS_1);
+					StickyNote.addSuccessMsg(client, ModManager.KEY_DROP_SUCCESS_2);
 				}
+				StickyNote.showClientMsg(client);
 			}
 			this.client.openScreen(this);
 		}, new TranslatableText("modmenu.dropConfirm"), new LiteralText(modList)));
@@ -195,7 +195,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		}
 		else
 		{
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_OPEN_ERROR);
+			StickyNote.showErrorMsg(client, ModManager.KEY_OPEN_ERROR);
 		}
 	}
 	
@@ -216,11 +216,11 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		{
 			restartRequired = true;
 			modsList.onLoadList();
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_SAVE_SUCCESS);
+			StickyNote.showSuccessMsg(client, ModManager.KEY_SAVE_SUCCESS);
 		}
 		else
 		{
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_SAVE_ERROR);
+			StickyNote.showErrorMsg(client, ModManager.KEY_SAVE_ERROR);
 		}
 	}
 	
@@ -239,11 +239,11 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 			selectedMods.onNewList();
 			modListLoader.updateAvailModListFile();
 			availableMods.onLoadList();
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_ADD_SUCCESS);
+			StickyNote.showSuccessMsg(client, ModManager.KEY_ADD_SUCCESS);
 		}
 		else
 		{
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_ADD_ERROR);
+			StickyNote.showErrorMsg(client, ModManager.KEY_ADD_ERROR);
 		}
 	}
 	/**
@@ -254,11 +254,11 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		boolean result = modListLoader.exportModList(modsList.getSelectedValue());
 		if (result)
 		{
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_EXPORT_SUCCESS);
+			StickyNote.showSuccessMsg(client, ModManager.KEY_EXPORT_SUCCESS);
 		}
 		else
 		{
-			SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_EXPORT_ERROR);
+			StickyNote.showErrorMsg(client, ModManager.KEY_EXPORT_ERROR);
 		}
 	}
 	private List<String> getAvailFileList()

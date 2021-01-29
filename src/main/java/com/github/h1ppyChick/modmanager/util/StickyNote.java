@@ -29,9 +29,21 @@ public class StickyNote {
 		addClientMsg(client, ModToast.Type.ERROR, key, args);
 	}
 	
+	public static void showErrorMsg(MinecraftClient client, String key,Object... args )
+	{
+		addClientMsg(client, ModToast.Type.ERROR, key, args);
+		showClientMsg(client);
+	}
+	
 	public static void addSuccessMsg(MinecraftClient client, String key,Object... args )
 	{
 		addClientMsg(client, ModToast.Type.SUCCESS, key, args);
+	}
+	
+	public static void showSuccessMsg(MinecraftClient client, String key,Object... args )
+	{
+		addClientMsg(client, ModToast.Type.SUCCESS, key, args);
+		showClientMsg(client);
 	}
 	
 	public static void addImportMsg(MinecraftClient client, String key,Object... args )

@@ -22,32 +22,37 @@ public class ModManager implements ModInitializer {
 	public static final String NEW_LIST_NAME = "newModList";
 	
 	// Translation keys
+	// ERRORS
 	public static final String KEY_IMPORT_ERROR = ModManager.MOD_ID + ".import.error";
 	public static final String KEY_IMPORT_ERROR_OPEN_ZIP = ModManager.MOD_ID + ".import.error.open.zip";
 	public static final String KEY_IMPORT_ERROR_OPEN_ZIP_ENTRY = ModManager.MOD_ID + ".import.error.open.zip.entry";
 	public static final String KEY_IMPORT_ERROR_EXTRACT_ZIP_ENTRY = ModManager.MOD_ID + ".import.error.extract.entry";
 	public static final String KEY_IMPORT_ERROR_CLOSE_ZIP = ModManager.MOD_ID + ".import.error.close.zip";
 	public static final String KEY_IMPORT_ERROR_CLOSE_ZIP_ENTRY = ModManager.MOD_ID + ".import.error.close.zip.entry";
+	public static final String KEY_COPY_ERROR = ModManager.MOD_ID + ".copy.error";
+	public static final String KEY_OPEN_ERROR = ModManager.MOD_ID + ".open.error";
+	public static final String KEY_SAVE_ERROR = ModManager.MOD_ID + ".save.error";
+	public static final String KEY_ADD_ERROR = ModManager.MOD_ID + ".add.error";
+	public static final String KEY_EXPORT_ERROR = ModManager.MOD_ID + ".export.error";
 	
+	// Success
 	public static final String KEY_IMPORT_SUCCESS = ModManager.MOD_ID + ".import.success";
+	public static final String KEY_DROP_SUCCESS_1 = "modmenu.dropSuccessful.line1";
+	public static final String KEY_DROP_SUCCESS_2 = "modmenu.dropSuccessful.line2";
+	public static final String KEY_SAVE_SUCCESS = ModManager.MOD_ID + ".save.success";
+	public static final String KEY_ADD_SUCCESS = ModManager.MOD_ID + ".add.success";
+	public static final String KEY_EXPORT_SUCCESS = ModManager.MOD_ID + ".export.success";
+	public static final String KEY_RESTART = MOD_ID + ".restart";
 	
 	// Translatable Texts
 	public static final TranslatableText TEXT_SUCCESS = new TranslatableText(MOD_ID + ".success");
 	public static final TranslatableText TEXT_ERROR = new TranslatableText(MOD_ID + ".error");
 	public static final TranslatableText TEXT_WARNING = new TranslatableText(MOD_ID + ".warning");
-	public static final TranslatableText TEXT_RESTART = new TranslatableText(MOD_ID + ".restart");
 	public static final TranslatableText TEXT_NOT_IMPL = new TranslatableText(MOD_ID + ".notimpl");
 	public static final TranslatableText TEXT_OPEN_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".open.tooltip");
 	public static final TranslatableText TEXT_SAVE_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".save.tooltip");
-	public static final TranslatableText TEXT_ADD_SUCCESS = new TranslatableText(ModManager.MOD_ID + ".add.success");
-	public static final TranslatableText TEXT_ADD_ERROR = new TranslatableText(ModManager.MOD_ID + ".add.error");
-	public static final TranslatableText TEXT_OPEN_ERROR = new TranslatableText(ModManager.MOD_ID + ".open.error");
-	public static final TranslatableText TEXT_SAVE_SUCCESS = new TranslatableText(ModManager.MOD_ID + ".save.success");
-	public static final TranslatableText TEXT_SAVE_ERROR = new TranslatableText(ModManager.MOD_ID + ".save.error");
 	public static final TranslatableText TEXT_ADD_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".add.tooltip");
 	public static final TranslatableText TEXT_EXPORT_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".export.tooltip");
-	public static final TranslatableText TEXT_EXPORT_ERROR = new TranslatableText(ModManager.MOD_ID + ".export.error");
-	public static final TranslatableText TEXT_EXPORT_SUCCESS = new TranslatableText(ModManager.MOD_ID + ".export.success");
 	public static final TranslatableText TEXT_IMPORT_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".import.tooltip");
 	public static final TranslatableText TEXT_DIR_UP_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".dirup.tooltip");
 	

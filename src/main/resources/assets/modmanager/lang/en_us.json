@@ -32,5 +32,6 @@
   "modmanager.import.error.close.zip.entry":"Unable to close entry %s in file %s",
   "modmanager.dirup.tooltip":"Move Directory Up",
   "modmanager.filepicker.title":"Select File(s)",
+  "modmanager.copy.error": "Unable to copy file from %s to %s",
   "modmanager.notimpl": "Feature not yet available!"
 }
