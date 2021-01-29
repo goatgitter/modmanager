@@ -46,8 +46,6 @@ import net.fabricmc.loader.metadata.NestedJarEntry;
  * 
  */
 public class ModConfig {
-	
-	
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
@@ -133,11 +131,7 @@ public class ModConfig {
 	    }
 		return dirPath;
 	}
-	
-	public static Path getCombinedModsDir() throws IOException
-	{
-		return modListLoader.getModsDir();
-	}
+
 	public static void requestUnload(ModListEntry mod)
 	{
 		LOG.trace("Requested unload of mod =>" + mod.getMetadata().getId() + ".");
@@ -166,8 +160,6 @@ public class ModConfig {
 	{
 		LOG.enter("loadMods");
 		// Setup the menu config for the mods that have already been loaded.
-//		ModMenu mm = new ModMenu();
-//		mm.onInitializeClient();
 		extractFiles();
 		try {
 			Map<String, ModContainer> oldModMap = (Map<String, ModContainer>) FieldUtils.readDeclaredField(fl, "modMap", true);
@@ -200,7 +192,6 @@ public class ModConfig {
 		}
 	}
 	
-	// Private methods
 	private static void unzipConfigFile(String jarFileName) throws IOException
 	{
 		JarFile jar = new JarFile(jarFileName);
@@ -243,7 +234,6 @@ public class ModConfig {
 			for (ModCandidate candidate : candidateMap.values()) {
 				if (!oldModMap.containsKey(candidate.getInfo().getId()))
 				{
-					//addMod(candidate);
 					Object[] addArgs = {candidate};
 					MethodUtils.invokeMethod(fl, true, "addMod", addArgs);
 				}
@@ -300,7 +290,6 @@ public class ModConfig {
 				}
 				
 				oldModMap.remove(thisModId, thisMod);
-				//addMod(candidate);
 				oldMods.remove(thisMod);
 			}
 			
@@ -381,7 +370,6 @@ public class ModConfig {
 				e.printStackTrace();
 			}
 		}
-		
 	}
 	
 	private static boolean doesEntryExist(Map<String, List<?>> oldEntries, String stringVal)
@@ -457,7 +445,6 @@ public class ModConfig {
 			        });
 					
 					// Entry Points
-					//oldEntrypointStorage = FieldUtils.readDeclaredField(fl, "entrypointStorage", true);
 					
 					for (String in : mod.getInfo().getOldInitializers()) {
 						String stringVal = modId + "->" + in;
