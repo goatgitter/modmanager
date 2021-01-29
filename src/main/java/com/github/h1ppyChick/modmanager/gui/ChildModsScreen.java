@@ -18,6 +18,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
 public class ChildModsScreen extends TwoListsWidgetScreen{
@@ -294,18 +295,21 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	{
 		for(String fileName: selectedList)
 		{
-			boolean result = modListLoader.importModList(fileName.substring(0, fileName.lastIndexOf(".zip")));
+			String listName = fileName.substring(0, fileName.lastIndexOf(".zip"));
+			boolean result = modListLoader.importModList(listName);
 			if (result)
 			{
 				modsList.onLoadList();
 				modListLoader.updateAvailModListFile();
 				availableMods.onLoadList();
 				selectedMods.onLoadList();
-				SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, ModManager.TEXT_IMPORT_SUCCESS);
+				Text successText = new TranslatableText(ModManager.KEY_IMPORT_SUCCESS, listName);
+				SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_SUCCESS, successText);
 			}
 			else
 			{
-				SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, ModManager.TEXT_IMPORT_ERROR);
+				Text errorText = new TranslatableText(ModManager.KEY_IMPORT_ERROR, listName);
+				SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, ModManager.TEXT_ERROR, errorText);
 			}
 		}
 	}

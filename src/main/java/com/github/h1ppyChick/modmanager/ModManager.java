@@ -21,6 +21,11 @@ public class ModManager implements ModInitializer {
 	public static final String MM_PARENT_KEY = "modmenu:parent";
 	public static final String NEW_LIST_NAME = "newModList";
 	
+	// Translation keys
+	public static final String KEY_IMPORT_ERROR = ModManager.MOD_ID + ".import.error";
+	public static final String KEY_IMPORT_SUCCESS = ModManager.MOD_ID + ".import.success";
+	
+	// Translatable Texts
 	public static final TranslatableText TEXT_SUCCESS = new TranslatableText(MOD_ID + ".success");
 	public static final TranslatableText TEXT_ERROR = new TranslatableText(MOD_ID + ".error");
 	public static final TranslatableText TEXT_WARNING = new TranslatableText(MOD_ID + ".warning");
@@ -38,8 +43,6 @@ public class ModManager implements ModInitializer {
 	public static final TranslatableText TEXT_EXPORT_ERROR = new TranslatableText(ModManager.MOD_ID + ".export.error");
 	public static final TranslatableText TEXT_EXPORT_SUCCESS = new TranslatableText(ModManager.MOD_ID + ".export.success");
 	public static final TranslatableText TEXT_IMPORT_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".import.tooltip");
-	public static final TranslatableText TEXT_IMPORT_ERROR = new TranslatableText(ModManager.MOD_ID + ".import.error");
-	public static final TranslatableText TEXT_IMPORT_SUCCESS = new TranslatableText(ModManager.MOD_ID + ".import.success");
 	public static final TranslatableText TEXT_DIR_UP_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".dirup.tooltip");
 	
 	public static final Identifier SAVE_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "save.png");

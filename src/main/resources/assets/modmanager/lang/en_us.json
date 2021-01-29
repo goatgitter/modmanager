@@ -23,8 +23,8 @@
   "modmanager.export.success":"Exported mod list successfully",
   "modmanager.export.error":"Unable to export mod list",
   "modmanager.import.tooltip":"Import",
-  "modmanager.import.success":"Imported mod list",
-  "modmanager.import.error":"Unable to import mod list",
+  "modmanager.import.success":"Imported %s",
+  "modmanager.import.error":"Unable to import %s",
   "modmanager.dirup.tooltip":"Move Directory Up",
   "modmanager.filepicker.title":"Select File(s)",
   "modmanager.notimpl": "Feature not yet available!"
