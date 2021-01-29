@@ -8,7 +8,12 @@ import com.github.h1ppyChick.modmanager.util.Log;
 
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-
+/**
+ * 
+ * @author H1ppyChick
+ * @since 08/11/2020
+ * 
+ */
 public class FilePickerScreen extends TwoStringListsScreen {
 	/***************************************************
 	 *              CONSTANTS

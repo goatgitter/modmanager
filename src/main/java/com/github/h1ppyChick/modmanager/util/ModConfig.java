@@ -40,6 +40,7 @@ import net.fabricmc.loader.metadata.NestedJarEntry;
 
 /**
  * @author h1ppyChic
+ * @since 08/11/2020
  * 
  * This is class of helper methods for changing the mod configuration
  * 

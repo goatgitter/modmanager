@@ -1,7 +1,6 @@
 package com.github.h1ppyChick.modmanager.gui;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import com.github.h1ppyChick.modmanager.ModManager;
 import com.github.h1ppyChick.modmanager.util.Log;
@@ -11,7 +10,12 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-
+/**
+ * 
+ * @author H1ppyChick
+ * @since 08/11/2020
+ * 
+ */
 public class FileListWidget extends StringListWidget {
 	/***************************************************
 	 *              INSTANCE VARIABLES

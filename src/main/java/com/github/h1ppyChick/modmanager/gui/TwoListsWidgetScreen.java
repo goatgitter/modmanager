@@ -7,7 +7,12 @@ import io.github.prospector.modmenu.gui.ModListWidget;
 import io.github.prospector.modmenu.gui.ModsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
-
+/**
+ * 
+ * @author H1ppyChick
+ * @since 08/11/2020
+ * 
+ */
 public abstract class TwoListsWidgetScreen extends ScreenBase {
 	/***************************************************
 	 *              INSTANCE VARIABLES

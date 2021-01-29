@@ -5,7 +5,12 @@ import java.util.Set;
 import com.google.common.collect.LinkedListMultimap;
 
 import net.fabricmc.loader.api.ModContainer;
-
+/**
+ * 
+ * @author H1ppyChick
+ * @since 08/11/2020
+ * 
+ */
 public class Conditional {
 
 	public static void add(Set<String> set, String id)

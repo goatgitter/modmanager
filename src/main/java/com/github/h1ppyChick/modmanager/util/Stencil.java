@@ -8,7 +8,12 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Matrix4f;
-
+/**
+ * 
+ * @author H1ppyChick
+ * @since 08/11/2020
+ * 
+ */
 public class Stencil {
 	/***************************************************
 	 *              CONSTANTS

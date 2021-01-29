@@ -28,7 +28,12 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Matrix4f;
-
+/**
+ * 
+ * @author H1ppyChick
+ * @since 08/11/2020
+ * 
+ */
 public class TwoListsWidget extends AlwaysSelectedEntryListWidget<ModListEntry> {
 	// Instance Variables
 	private Log LOG = new Log("TwoListsWidget");

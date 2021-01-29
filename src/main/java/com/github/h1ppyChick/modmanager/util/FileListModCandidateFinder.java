@@ -11,7 +11,12 @@ import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.discovery.ModCandidateFinder;
 import net.fabricmc.loader.util.UrlConversionException;
 import net.fabricmc.loader.util.UrlUtil;
-
+/**
+ * 
+ * @author H1ppyChick
+ * @since 08/11/2020
+ * 
+ */
 public class FileListModCandidateFinder implements ModCandidateFinder {
 	private Log LOG = new Log("FileListModCandidateFinder");
 	private ModListLoader modListLoader;

@@ -8,7 +8,12 @@ import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-
+/**
+ * 
+ * @author H1ppyChick
+ * @since 08/11/2020
+ * 
+ */
 public class StringEntry extends AlwaysSelectedEntryListWidget.Entry<StringEntry> {
 	protected final MinecraftClient client;
 	protected final String value;

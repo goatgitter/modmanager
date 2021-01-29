@@ -9,6 +9,7 @@ import com.github.h1ppyChick.modmanager.ModManager;
 
 /**
  * @author h1ppyChick
+ * @since 08/11/2020
  *  This is a utility class for generating log messages to the log file.
  *  
  *  Psst ....

@@ -47,6 +47,7 @@ import net.minecraft.client.MinecraftClient;
 
 /**
  * @author h1ppyChick
+ * @since 08/11/2020
  * 
  * This class contains many helper methods for loading the mods in the mod list.
  *

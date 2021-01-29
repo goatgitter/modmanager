@@ -9,7 +9,12 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-
+/**
+ * 
+ * @author H1ppyChick
+ * @since 08/11/2020
+ * 
+ */
 public abstract class TwoStringListsScreen extends ScreenBase {
 	/***************************************************
 	 *              INSTANCE VARIABLES

@@ -10,9 +10,9 @@ import net.minecraft.text.TranslatableText;
 /******************************************************************************************
  *              STICKY NOTE
  * ---------------------------------------------------------------------------------------
- * Author:	h1ppychick
- * Since:	01/29/2021
- * Purpose:	This class makes adding messages to the UI easier.  Using the 
+ * @author	h1ppychick
+ * @since	01/29/2021
+ * @purpose	This class makes adding messages to the UI easier.  Using the 
  * 			ModToast class to make sure all messages are visible to user.
  ****************************************************************************************/
 public class StickyNote {

@@ -7,7 +7,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.fabricmc.loader.api.metadata.CustomValue;
-
+/**
+ * 
+ * @author H1ppyChick
+ * @since 08/11/2020
+ * 
+ */
 public abstract class CustomValueImpl implements CustomValue {
 
 	public static final CustomValue BOOLEAN_TRUE = new BooleanImpl(true);

@@ -17,9 +17,9 @@ import net.minecraft.text.Text;
 /******************************************************************************************
  *              MOD TOAST
  * ---------------------------------------------------------------------------------------
- * Author:	h1ppychick
- * Since:	01/29/2021
- * Purpose:	Displays messages to user.  Based off of SystemToast.
+ * @author	h1ppychick
+ * @since	01/29/2021
+ * @purpose	Displays messages to user.  Based off of SystemToast.
  *          Allows mods to add multiple messages before displaying the message.
  *          This is done to prevent multiple messages displaying on top of each other
  *          and blocking the using from being able to read all the messages.
