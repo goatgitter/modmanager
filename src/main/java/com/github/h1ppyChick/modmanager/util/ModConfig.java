@@ -47,7 +47,7 @@ public class ModConfig {
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
-	private static Log LOG = new Log("ModConfigUtil");
+	private static Log LOG = new Log("ModConfig");
 	private static FabricLoader fl = (FabricLoader) net.fabricmc.loader.api.FabricLoader.getInstance();
 	private static ModListLoader modListLoader = new ModListLoader();
 	
