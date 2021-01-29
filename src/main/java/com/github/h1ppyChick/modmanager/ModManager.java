@@ -18,6 +18,8 @@ public class ModManager implements ModInitializer {
 	public static final String MOD_ID = "modmanager";
 	public static final String LOAD_JAR_DIR = "loadedJars/";
 	public static final String CONFIG_DIR = "config/";
+	public static final String MODS_DIR = "mods\\";
+	public static final String MODS_LIST_DIR = MOD_ID + "\\";
 	public static final String MM_PARENT_KEY = "modmenu:parent";
 	public static final String NEW_LIST_NAME = "newModList";
 	

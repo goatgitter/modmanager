@@ -1,38 +1,28 @@
 package com.github.h1ppyChick.modmanager.util;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.h1ppyChick.modmanager.ModManager;
+import com.github.h1ppyChick.modmanager.config.Props;
 
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
@@ -43,24 +33,20 @@ import net.fabricmc.loader.discovery.ModResolutionException;
 import net.fabricmc.loader.discovery.ModResolver;
 import net.fabricmc.loader.metadata.LoaderModMetadata;
 import net.fabricmc.loader.metadata.NestedJarEntry;
-import net.minecraft.client.MinecraftClient;
 
 /**
  * @author h1ppyChick
  * @since 08/11/2020
  * 
- * This class contains many helper methods for loading the mods in the mod list.
+ * This class contains many helper methods for loading the mods 
+ * in the mod list.
  *
  */
 public class ModListLoader {
 	/***************************************************
 	 *              CONSTANTS
 	 **************************************************/
-	private static final String KEY_SEL_LIST = "selectedModList";
-	private static final String KEY_MOD_LISTS = "modLists";
 	private static final String AVAIL_MODS_LIST = "availModList.txt";
-	private static final String MODS_LIST_DIR = "modmanager\\";
-	private static final String MODS_DIR = "mods\\";
 	public static final Pattern FABRIC_PATTERN = Pattern.compile("^fabric-.*(-v\\d+)$");
 	public final static String API_MOD_ID = "fabric-api-base";
 	public final static String INDIGO_MOD_ID = "fabric-renderer-indigo";
@@ -77,7 +63,7 @@ public class ModListLoader {
 	private static FabricLoader fl;
 	private static List<ModContainer> requiredMods = new ArrayList<ModContainer>();
 	private static Map<String, ModContainer> requiredModsMap = new HashMap<>();
-	private static Properties props = null;
+	
 	
 	/***************************************************
 	 *              CONSTRUCTORS
@@ -99,147 +85,6 @@ public class ModListLoader {
 	/***************************************************
 	 *              METHODS
 	 **************************************************/
-	
-	/***************************************************
-	 *              CONFIG FILE METHODS
-	 **************************************************/
-	private static Path getConfigDir() {
-		return fl.getGameDir().normalize().resolve(ModManager.CONFIG_DIR);
-	}
-	public Path getConfigPath()
-	{
-		return getConfigDir().resolve(ModManager.MOD_ID + ".properties");
-	}
-	
-	private File getConfigFile()
-	{
-		return getConfigPath().toFile();
-	}
-	
-	private Properties getProps() {
-		if (props == null)
-		{
-		    props = new Properties();
-		    File configFile = getConfigFile();
-		    try {
-		    	FileReader reader = new FileReader(configFile);
-				props.load(reader);
-			} catch (IOException e) {
-				LOG.warn("Could not read property file => " + configFile.getName() + "."); 
-				e.printStackTrace();
-			}
-		}
-		return props;
-	}
-	
-	private void setPropVal(String key, String value)
-	{
-		File configFile = getConfigFile();
-		getProps().setProperty(key, value);
-	    FileWriter writer;
-		try {
-			writer = new FileWriter(configFile);
-			getProps().store(writer, key);
-		    writer.close();
-		} catch (IOException e) {
-			LOG.warn("Could not write property file => " + configFile.getName() + "."); 
-			e.printStackTrace();
-		}
-	}
-	
-	public String getSelectedModListName()
-	{
-		return getProps().getProperty(KEY_SEL_LIST);
-	}
-	private String getModLists()
-	{
-		String propValue = getProps().getProperty(KEY_MOD_LISTS);
-		if (propValue == null)
-		{
-			propValue = getSelectedModListName();
-		}
-		return propValue;
-	}
-	public List<String> getAllModLists()
-	{
-		String propValue = getProps().getProperty(KEY_MOD_LISTS);
-		if (propValue == null)
-		{
-			propValue = getSelectedModListName();
-		}
-		return Arrays.asList(propValue.split(","));
-	}
-	
-	private void setModLists(String modLists)
-	{
-		setPropVal(KEY_MOD_LISTS, modLists);
-	}
-	
-	public boolean setSelectedModListName(String newName, boolean isNewFile)
-	{
-		boolean result = true;
-		String oldName = getSelectedModListName();
-		// If name has not changed, no updates to be saved.
-		if (oldName.equals(newName)) return result;
-		
-		String modLists = getModLists();		
-		Path oldFilePath = getSelectedModList();
-		setPropVal(KEY_SEL_LIST, newName);
-		Path newFilePath = getSelectedModList();
-		
-		try {
-			
-			if (isNewFile)
-			{
-				if(!modLists.contains(newName))
-				{
-					modLists = modLists + "," + newName;
-				}
-			}
-			else
-			{
-				if(!modLists.contains(newName))
-				{
-					Files.move(oldFilePath, newFilePath, StandardCopyOption.REPLACE_EXISTING);
-					
-					modLists = modLists.replace(oldName, newName);
-				}
-			}
-		} catch (IOException e) {
-			result = false;
-			// Set the prop value back in case of error.
-			setPropVal(KEY_SEL_LIST, oldName);
-			LOG.warn("Could not rename mod list file to => " + newName + "."); 
-			e.printStackTrace();
-		}
-		setModLists(modLists);
-		return result;
-	}
-	
-	private String getSelectedModListFileName()
-	{
-		return getSelectedModListName() + ".txt";
-	}
-	
-	public Path getModsDir() {
-		Path baseModDir = getModsBaseDir();
-		Path modListDir = baseModDir.resolve(MODS_LIST_DIR);
-		if(Files.notExists(modListDir))
-		{
-			try {
-				Files.createDirectories(modListDir);
-			} catch (IOException e) {
-				LOG.warn("Could not create required directory => " + modListDir + "."); 
-				e.printStackTrace();
-			}
-		}
-		return modListDir;
-	}
-	
-	public Path getModsBaseDir() {
-		return fl.getGameDir().normalize().resolve(MODS_DIR);
-	}
-
 	@SuppressWarnings("deprecation")
 	public ModContainer getMod(String id)
 	{
@@ -310,7 +155,7 @@ public class ModListLoader {
 	
 	public Path getSelectedModList()
 	{
-		return getModList(getSelectedModListFileName());
+		return getModList(Props.getSelectedModListFileName());
 	}
 	
 	public Path getAvailModListFile()
@@ -330,7 +175,7 @@ public class ModListLoader {
 	}
 	public String getCurrentJarList()
 	{
-		Path selectedModsPath = getModsDir().resolve(getSelectedModListFileName());
+		Path selectedModsPath = Props.getModsDirPath().resolve(Props.getSelectedModListFileName());
 		String currentJarList = "";
 		try {
 			currentJarList = FileUtils.readFileToString(selectedModsPath.toFile(), Charset.defaultCharset());
@@ -344,7 +189,7 @@ public class ModListLoader {
 	public Path getModList(String fileName, boolean refreshContents)
 	{
 		boolean isAvail = fileName.equals(AVAIL_MODS_LIST);
-		Path modListPath = getModsDir().resolve(fileName);
+		Path modListPath = Props.getModsDirPath().resolve(fileName);
 		try {
 			if (refreshContents)
 			{
@@ -364,12 +209,12 @@ public class ModListLoader {
 					// Get the list of selected mods
 					String currentJars = getCurrentJarList();
 					// Add all the JAR files in the mod dir.
-					for (File file : getModsDir().toFile().listFiles()) {
+					for (File file : Props.getModsDirPath().toFile().listFiles()) {
 						if (!file.isDirectory())
 						{
 							if (!file.getName().endsWith(".jar")) continue;
 							String modJarName = file.getName();
-							Path srcJarPath = getModsDir().resolve(modJarName);
+							Path srcJarPath = Props.getModsDirPath().resolve(modJarName);
 							// Check to see if the mod is in the selected list.
 							if (!currentJars.contains(srcJarPath.toString()))
 							{
@@ -550,10 +395,9 @@ public class ModListLoader {
 		return mods;
 	}
 	
-	
 	public Map<String, ModCandidate> getSelectedMods()
 	{
-		return getModMap(getSelectedModListFileName());
+		return getModMap(Props.getSelectedModListFileName());
 	}
 	
 	public static boolean isFabricMod(Path mod) {
@@ -562,127 +406,5 @@ public class ModListLoader {
 		} catch (IOException e) {
 			return false;
 		}
-	}
-	
-	public boolean exportModList(String listName)
-	{
-		boolean result = true;
-		Path modListPath = getModList(listName + ".txt", false);
-		Path modListZipPath = getModsDir().resolve(listName + ".zip");
-		
-		try
-		{
-			List<String> mods = Files.readAllLines(modListPath);
-            FileOutputStream fos = new FileOutputStream(modListZipPath.toString());
-            ZipOutputStream zos = new ZipOutputStream(fos);
-            // Add the list text file
-            zos.putNextEntry(new ZipEntry(modListPath.getFileName().toString()));
-            byte[] bytes = Files.readAllBytes(modListPath);
-            zos.write(bytes, 0, bytes.length);
-            zos.closeEntry();
-            
-			for (String modJarName : mods) {
-				if(modJarName.contains(getModsDir().toString()) && modJarName.endsWith(".jar"))
-				{
-					File modFile = new File(modJarName);
-					Path srcJarPath = modFile.toPath();
-					if(Files.exists(srcJarPath) && Files.isRegularFile(srcJarPath))
-					{
-						zos.putNextEntry(new ZipEntry(srcJarPath.getFileName().toString()));
-		                bytes = Files.readAllBytes(srcJarPath);
-		                zos.write(bytes, 0, bytes.length);
-		                zos.closeEntry();
-					}
-				}
-			}
-			zos.close();
-			fos.close();
-		} catch (Exception e) {
-			result = false;
-			LOG.warn("Could not add mod from list file => " + listName + "."); 
-			e.printStackTrace();
-		}
-		return result;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public boolean importModList(String listName, MinecraftClient client)
-	{
-		boolean result = true;
-		Path modListZipPath = getModsDir().resolve(listName + ".zip");
-
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(modListZipPath.toString());
-		} catch (IOException e) {
-			result = false;
-			StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_ERROR_OPEN_ZIP, modListZipPath.toString());
-			e.printStackTrace();
-		}
-		if (zipFile != null)
-		{
-			Enumeration<ZipEntry> enumEntries = (Enumeration<ZipEntry>) zipFile.entries();
-			
-			while( enumEntries.hasMoreElements())
-			{
-				ZipEntry zipEntry = enumEntries.nextElement();
-				String zipFileName = zipEntry.getName();
-				Path destFilePath = getModsDir();
-		    	Path destZipFilePath = destFilePath.resolve(zipFileName);
-				InputStream zipInputStream = null;
-				try {
-					zipInputStream = zipFile.getInputStream(zipEntry);
-				} catch (IOException e) {
-					result = false;
-					StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_ERROR_OPEN_ZIP, zipEntry.getName(), listName);
-					e.printStackTrace();
-				}
-				if (zipInputStream != null)
-				{
-					try {
-						Files.copy(zipInputStream, destZipFilePath, StandardCopyOption.REPLACE_EXISTING);
-					} catch (IOException e) {
-						result = false;
-						StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_ERROR_EXTRACT_ZIP_ENTRY, zipEntry.getName(), listName, destZipFilePath.getParent().getFileName());
-						e.printStackTrace();
-					}
-				}
-				try {
-					zipInputStream.close();
-				} catch (IOException e) {
-					result = false;
-					StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_ERROR_CLOSE_ZIP_ENTRY, zipEntry.getName(), listName);
-					e.printStackTrace();
-				}
-			}
-			try {
-				zipFile.close();
-			} catch (IOException e) {
-				result = false;
-				StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_ERROR_CLOSE_ZIP, listName);
-				e.printStackTrace();
-			}
-		}
-		if (result)
-		{
-			setSelectedModListName(listName, true);
-			StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_SUCCESS, listName);
-		}
-		return result;
-	}
-	
-	public List<String> getAvailArchives()
-	{
-		List<String> availList = new ArrayList<String>();
-		Path dirToCheck = getModsDir();
-		File[] files = dirToCheck.toFile().listFiles();
-		for (File f:files)
-		{
-			if (f.getName().endsWith(".zip"))
-			{
-				availList.add(f.getName());
-			}
-		}
-		return availList;
 	}
 }

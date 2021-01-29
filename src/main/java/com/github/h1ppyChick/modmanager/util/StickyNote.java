@@ -19,7 +19,7 @@ public class StickyNote {
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
-	private static Log LOG = new Log("ChildModsScreen");
+	private static Log LOG = new Log("StickyNote");
 	private static ModToast userMsg = null;
 	/***************************************************
 	 *              METHODS

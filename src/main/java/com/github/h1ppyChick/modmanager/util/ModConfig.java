@@ -8,12 +8,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -23,6 +20,7 @@ import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import com.github.h1ppyChick.modmanager.ModManager;
+import com.github.h1ppyChick.modmanager.config.Props;
 import com.github.h1ppyChick.modmanager.gui.ChildModEntry;
 import com.github.h1ppyChick.modmanager.gui.Menu;
 
@@ -39,7 +37,7 @@ import net.fabricmc.loader.metadata.EntrypointMetadata;
 import net.fabricmc.loader.metadata.NestedJarEntry;
 
 /**
- * @author h1ppyChic
+ * @author h1ppyChick
  * @since 08/11/2020
  * 
  * This is class of helper methods for changing the mod configuration
@@ -116,13 +114,7 @@ public class ModConfig {
 		
 		return canTurnOff;
 	}
-	
-	
-	public static Path getModsDir()
-	{
-		return modListLoader.getModsDir();
-	}
-	
+
 	public static Path getPath(Path root, String dirName) throws IOException
 	{
 		Path dirPath = root.resolve(dirName);
@@ -160,7 +152,7 @@ public class ModConfig {
 	{
 		LOG.enter("loadMods");
 		// Setup the menu config for the mods that have already been loaded.
-		extractFiles();
+		retrieveRequiredFilesForLoad();
 		try {
 			Map<String, ModContainer> oldModMap = (Map<String, ModContainer>) FieldUtils.readDeclaredField(fl, "modMap", true);
 			List<ModContainer> oldMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
@@ -191,33 +183,6 @@ public class ModConfig {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	private static void unzipConfigFile(String jarFileName) throws IOException
-	{
-		JarFile jar = new JarFile(jarFileName);
-		Enumeration<JarEntry> enumEntries = jar.entries();
-		while (enumEntries.hasMoreElements()) {
-			java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
-		    
-			if (file.getName().contains(ModManager.CONFIG_DIR) && file.getName().endsWith(".properties")) {
-		    	Path destFilePath = modListLoader.getConfigPath();
-		    	java.io.File f = destFilePath.toFile();
-		    	
-		    	if (Files.notExists(destFilePath))
-		    	{
-		    		java.io.InputStream is = jar.getInputStream(file); 
-				    java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
-				    while (is.available() > 0) {  
-				        fos.write(is.read());
-				    }
-				    fos.close();
-				    is.close();
-		    	}
-		    }
-		}
-		jar.close();
-	}
-	
 	private static void addNewMods(Map<String, ModContainer> oldModMap, Object oldEntrypointStorage)
 	{
 		try {
@@ -417,7 +382,6 @@ public class ModConfig {
 				String nestedModId = nestedMod.getInfo().getId();
 				LOG.trace("Adding!-Nested mod => " + nestedModId);
 				addParentToMod(nestedMod);
-				//Menu.addChild(modMenuExtMod, nestedMod);
 			}
 			List<ModContainer> changedMods = (List<ModContainer>) FieldUtils.readDeclaredField(fl, "mods", true);
 			// Add the new mod data
@@ -430,7 +394,6 @@ public class ModConfig {
 				{
 					LOG.trace("Adding!" + modId);
 					addParentToMod(mod);
-					//Menu.addChild(modMenuExtMod, mod);
 					oldModMap.put(modId, mod);
 					oldMods.add(mod);
 					
@@ -444,8 +407,7 @@ public class ModConfig {
 			            }
 			        });
 					
-					// Entry Points
-					
+					// Entry Points					
 					for (String in : mod.getInfo().getOldInitializers()) {
 						String stringVal = modId + "->" + in;
 						boolean entryExists = doesEntryExist(oldEntries, stringVal);
@@ -497,18 +459,18 @@ public class ModConfig {
 		
 	}
 	
-	private static void extractFiles()
+	private static void retrieveRequiredFilesForLoad()
 	{
-		Path jarDir = modListLoader.getModsDir();
+		Path jarDir = Props.getModsDirPath();
 		Path jarPath = modListLoader.getModJarPath(ModManager.MOD_ID);
 		try {
 		if (Files.notExists(jarDir))
 		{
 			Files.createDirectory(jarDir);
 		}
-		unzipConfigFile(jarPath.toString());
+		Cabinet.retrieveConfigFile(jarPath.toString());
 		} catch (IOException e) {
-			LOG.warn("Problem extracting LoadedMods");
+			LOG.warn("Problem extracting config file");
 			e.printStackTrace();
 		}
 	}

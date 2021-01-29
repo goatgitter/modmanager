@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.github.h1ppyChick.modmanager.ModManager;
+import com.github.h1ppyChick.modmanager.config.Props;
+import com.github.h1ppyChick.modmanager.util.Cabinet;
 import com.github.h1ppyChick.modmanager.util.Log;
 import com.github.h1ppyChick.modmanager.util.ModConfig;
 import com.github.h1ppyChick.modmanager.util.ModListLoader;
@@ -107,7 +109,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	@Override
 	public void filesDragged(List<Path> paths) {
 		restartRequired = true;
-		Path modsDirectory = modListLoader.getModsDir();
+		Path modsDirectory = Props.getModsDirPath();
 		
 		List<Path> mods = paths.stream()
 				.filter(ModListLoader::isFabricMod)
@@ -175,9 +177,9 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void drawListNameInput()
 	{
-		String listName = modListLoader.getSelectedModListName();
-		this.modsList = new DropDownListWidget(this.client, listNameInputX, listNameInputWidth, TOP_ROW_HEIGHT, getTopRowY(), TOP_ROW_HEIGHT, LIST_NAME_INPUT_HEIGHT, modListLoader.getAllModLists(), this, TEXT_MOD_LIST,
-				(DropDownListWidget.LoadListAction) widget  -> widget.setList(modListLoader.getAllModLists()),
+		String listName = Props.getSelectedModListName();
+		this.modsList = new DropDownListWidget(this.client, listNameInputX, listNameInputWidth, TOP_ROW_HEIGHT, getTopRowY(), TOP_ROW_HEIGHT, LIST_NAME_INPUT_HEIGHT, Props.getAllModLists(), this, TEXT_MOD_LIST,
+				(DropDownListWidget.LoadListAction) widget  -> widget.setList(Props.getAllModLists()),
 				(DropDownListWidget.ClickEntryAction) entry -> onClickEntry(entry),
 				(DropDownListWidget.OpenListAction) widget -> onOpenList(widget),
 				(DropDownListWidget.SaveListAction) widget -> saveButtonClick(widget),
@@ -190,7 +192,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	}
 	private void onClickEntry(StringEntry entry)
 	{
-		boolean result = modListLoader.setSelectedModListName(modsList.getSelectedValue(), false);
+		boolean result = Props.setSelectedModListName(modsList.getSelectedValue(), false);
 		if (result)
 		{
 			restartRequired = true;
@@ -216,7 +218,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void saveButtonClick(DropDownListWidget widget)
 	{
-		boolean result = modListLoader.setSelectedModListName(getListNameInput(), false);
+		boolean result = Props.setSelectedModListName(getListNameInput(), false);
 		if (result)
 		{
 			restartRequired = true;
@@ -234,7 +236,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void addButtonClick(DropDownListWidget widget)
 	{
-		boolean result = modListLoader.setSelectedModListName(ModManager.NEW_LIST_NAME, true);
+		boolean result = Props.setSelectedModListName(ModManager.NEW_LIST_NAME, true);
 		if (result)
 		{
 			restartRequired = true;
@@ -256,7 +258,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void onExportList(DropDownListWidget widget)
 	{
-		boolean result = modListLoader.exportModList(modsList.getSelectedValue());
+		boolean result = Cabinet.storeModList(modsList.getSelectedValue());
 		if (result)
 		{
 			StickyNote.showSuccessMsg(client, ModManager.KEY_EXPORT_SUCCESS);
@@ -265,11 +267,6 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		{
 			StickyNote.showErrorMsg(client, ModManager.KEY_EXPORT_ERROR);
 		}
-	}
-	private List<String> getAvailFileList()
-	{
-		List<String> theList = modListLoader.getAvailArchives();
-		return theList;
 	}
 	
 	private List<String> getSelectedFileList()
@@ -288,7 +285,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private void onImportList(DropDownListWidget widget)
 	{
 		FilePickerScreen picker = new FilePickerScreen((ScreenBase) this, 
-				(StringListWidget.LoadListAction) pickerWidget  -> pickerWidget.setList(getAvailFileList()),
+				(StringListWidget.LoadListAction) pickerWidget  -> pickerWidget.setList(Cabinet.getAvailArchives()),
 				(StringListWidget.LoadListAction) pickerWidget -> pickerWidget.setList(getSelectedFileList()),
 				(FilePickerScreen.ClickDoneButtonAction) selectedList -> onClickDoneButton(selectedList)) ;
 		
@@ -302,7 +299,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		for(String fileName: selectedList)
 		{
 			String listName = fileName.substring(0, fileName.lastIndexOf(".zip"));
-			boolean result = modListLoader.importModList(listName, client);
+			boolean result = Cabinet.retreiveModList(listName, client);
 			if (result)
 			{
 				modsList.onLoadList();
