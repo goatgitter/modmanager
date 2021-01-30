@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Mod Manager",
-  "description": "This is Minecraft Fabric mod for managing mods. Allows you to disable/enable mods and organize groups of mods into ''Mod Lists''. Useful for those with too many mods, or who play on many servers.",
+  "description": "This is Minecraft Fabric mod for managing mods. Allows you to disable/enable mods, organize groups of mods into ''Mod Lists'', export Mod Lists to a zip file, and import Mod Lists from a zip file. Useful for those with too many mods, or who play on many servers.",
   "authors": [
     "H1ppyChick"
   ],
