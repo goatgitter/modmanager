@@ -80,6 +80,10 @@ public abstract class ScreenBase extends Screen {
 		return -36;
 	}
 	
+	protected int getTopRowY()
+	{
+		return paneY-8;
+	}
 	protected void closeScreen()
 	{
 		for(Object obj: priorScreen.children())

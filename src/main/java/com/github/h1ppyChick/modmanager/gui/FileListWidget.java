@@ -1,14 +1,18 @@
 package com.github.h1ppyChick.modmanager.gui;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import com.github.h1ppyChick.modmanager.ModManager;
 import com.github.h1ppyChick.modmanager.util.Log;
+import com.github.h1ppyChick.modmanager.util.Stencil;
 
 import io.github.prospector.modmenu.gui.ModMenuTexturedButtonWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 /**
  * 
@@ -16,7 +20,7 @@ import net.minecraft.text.Text;
  * @since 08/11/2020
  * 
  */
-public class FileListWidget extends StringListWidget {
+public class FileListWidget extends TwoStringListsWidget {
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
@@ -24,15 +28,15 @@ public class FileListWidget extends StringListWidget {
 	protected final FileListWidget.MoveDirectoryUpAction onMoveDirectoryUp;
 	private ButtonWidget moveDirUpBtn;
 	private boolean isRootDir = false;
-
 	private int moveDirUpBtnX = 0;
 	private int topBtnY = 0;
+	private LiteralText directoryPathText = null;
 	/***************************************************
 	 *              CONSTRUCTORS
 	 **************************************************/
 	public FileListWidget(MinecraftClient client, int left, int width, int height, 
 			int y1, int y2, int entryHeight, List<String> widgetList, 
-			TwoListsWidgetScreen parent, Text title, LoadListAction onLoadList, 
+			ScreenBase parent, Text title, LoadListAction onLoadList, 
 			ClickEntryAction onClickEntry, MoveDirectoryUpAction onMoveDirectoryUp,
 			String selectedEntry) {
 		super(client, left, width, height,y1, y2, entryHeight, widgetList, 
@@ -43,7 +47,7 @@ public class FileListWidget extends StringListWidget {
 		this.onMoveDirectoryUp = onMoveDirectoryUp;
 		drawButtons();
 	}
-	
+
 	/***************************************************
 	 *              METHODS
 	 **************************************************/	
@@ -113,10 +117,27 @@ public class FileListWidget extends StringListWidget {
 	/***************************************************
 	 *              RENDERING
 	 **************************************************/
-
-	@Override
-	protected void renderList(MatrixStack matrices, int x, int y, int mouseX, int mouseY, float delta) {
-		super.renderList(matrices, x, y, mouseX, mouseY, delta);
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+		LiteralText text = getDirectoryPathText();
+		int textLeft = ModManager.LEFT_PANE_X + 4;
+		int textTop = parentScreen.getTopRowY() + 5;
+		int boxBottom = textTop + 15;
+		int boxRight = client.textRenderer.getWidth(text) + 9;
+		Stencil.setColorBlack();
+		Stencil.rectangle(matrices, textLeft - 3, boxRight, textTop - 3, boxBottom);
+		DrawableHelper.drawTextWithShadow(matrices, client.textRenderer, text, textLeft, textTop, 16777215);
 		drawButtons();
+	}
+
+	public LiteralText getDirectoryPathText() {
+		return directoryPathText;
+	}
+
+	public void setDirectoryPathText(LiteralText directoryPathText) {
+		this.directoryPathText = directoryPathText;
+	}
+	
+	public void setDirectoryPath(Path directoryPath) {
+		this.directoryPathText = new LiteralText(directoryPath.toString());
 	}
 }

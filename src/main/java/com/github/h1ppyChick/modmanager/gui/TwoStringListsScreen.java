@@ -2,6 +2,7 @@ package com.github.h1ppyChick.modmanager.gui;
 
 import java.util.ArrayList;
 
+import com.github.h1ppyChick.modmanager.ModManager;
 import com.github.h1ppyChick.modmanager.gui.StringListWidget.LoadListAction;
 import com.github.h1ppyChick.modmanager.util.Log;
 
@@ -56,17 +57,14 @@ public abstract class TwoStringListsScreen extends ScreenBase {
 	@Override
 	public void init() {
 		LOG.enter("init");
-		int paneLeft = 5;
-		int entryHeight = 15;
-		int paneHeight = this.height - 20;
-		availableList = new TwoStringListsWidget(this.client, paneLeft, previousScreen.paneWidth, paneHeight, 
-				previousScreen.paneY + getY1Offset(), this.height + getY2Offset(), entryHeight, 
+		availableList = new TwoStringListsWidget(this.client, ModManager.LEFT_PANE_X, previousScreen.paneWidth, this.height + getY2Offset(), 
+				previousScreen.paneY + getY1Offset(), this.height + getY2Offset(), ModManager.TOP_ENTRY_HEIGHT, 
 				new ArrayList<String>(), previousScreen, availableTitle, 
 				onLoadAvailList, 
 				(StringListWidget.ClickEntryAction) entry -> onClickAvailEntry(entry), 
 				currentAvailEntry);
-		selectedList = new TwoStringListsWidget(this.client, previousScreen.rightPaneX, previousScreen.paneWidth, paneHeight, 
-				previousScreen.paneY + getY1Offset(), this.height + getY2Offset(), entryHeight, 
+		selectedList = new TwoStringListsWidget(this.client, previousScreen.rightPaneX, previousScreen.paneWidth, this.height + getY2Offset(), 
+				previousScreen.paneY + getY1Offset(), this.height + getY2Offset(), ModManager.TOP_ENTRY_HEIGHT, 
 				new ArrayList<String>(), previousScreen, selectedTitle,
 				onLoadSelectedList,
 				(StringListWidget.ClickEntryAction) entry -> onClickSelEntry(entry), 

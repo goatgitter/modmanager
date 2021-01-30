@@ -36,7 +36,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private static final TranslatableText TEXT_MOD_LIST = new TranslatableText(ModManager.MOD_ID + ".modlist");
 	private static final int TOP_ROW_HEIGHT = 20;
 	private static final int LIST_NAME_INPUT_HEIGHT = 14;
-	private static final int LEFT_PANE_X = 5;
+	
 	
 	/***************************************************
 	 *              INSTANCE VARIABLES
@@ -78,7 +78,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 				(TwoListsWidget.ClickEntryAction) entry -> loadMod(entry)
 		);
 		
-		this.availableMods.setLeftPos(LEFT_PANE_X);
+		this.availableMods.setLeftPos(ModManager.LEFT_PANE_X);
 		this.children.add(this.availableMods);
 		
 		LiteralText selectedTitle = new LiteralText("Selected Mods");
@@ -99,7 +99,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	    this.selectedMods.render(matrices, mouseX, mouseY, delta);
 	    this.modsList.render(matrices, mouseX, mouseY, delta);
 		DrawableHelper.drawTextWithShadow(matrices, this.textRenderer, this.title, this.width / 3 + 4, 8, 16777215);
-		DrawableHelper.drawTextWithShadow(matrices, this.textRenderer, TEXT_ADD_DESC, LEFT_PANE_X, getTopRowY(), 16777215);
+		DrawableHelper.drawTextWithShadow(matrices, this.textRenderer, TEXT_ADD_DESC, ModManager.LEFT_PANE_X, getTopRowY(), 16777215);
 		
 		drawDoneButton();
 		this.modsList.getListInput().render(matrices, mouseX, mouseY, delta);
@@ -161,11 +161,6 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private void unloadMod(ChildModEntry mod) {
 		restartRequired = true;
 		ModConfig.requestUnload(mod);
-	}
-	
-	private int getTopRowY()
-	{
-		return paneY-8;
 	}
 	
 	/***************************************************

@@ -69,6 +69,8 @@ public class ModManager implements ModInitializer {
 	
 	public static final int TOP_BTN_WIDTH = 19;
 	public static final int TOP_BTN_HEIGHT = 13;
+	public static final int TOP_ENTRY_HEIGHT = 15;
+	public static final int LEFT_PANE_X = 5;
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/

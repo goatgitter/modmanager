@@ -3,9 +3,11 @@ package com.github.h1ppyChick.modmanager.gui;
 import java.util.List;
 
 import com.github.h1ppyChick.modmanager.ModManager;
+import com.github.h1ppyChick.modmanager.config.Props;
 import com.github.h1ppyChick.modmanager.gui.StringListWidget.LoadListAction;
 import com.github.h1ppyChick.modmanager.util.Log;
 
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 /**
@@ -25,7 +27,7 @@ public class FilePickerScreen extends TwoStringListsScreen {
 	 **************************************************/
 	private Log LOG = new Log("FilePickerScreen");
 	private ClickDoneButtonAction onClickDoneButton;
-	
+	private FileListWidget availFileListWidget = null;	
 	/***************************************************
 	 *              CONSTRUCTORS
 	 **************************************************/
@@ -41,6 +43,7 @@ public class FilePickerScreen extends TwoStringListsScreen {
 				onLoadSelectedList,
 				"");
 		this.onClickDoneButton = onClickDoneButton;
+		
 	}
 	
 	/***************************************************
@@ -53,13 +56,30 @@ public class FilePickerScreen extends TwoStringListsScreen {
 		drawDoneButton();
 		this.addChild(availableList);
 		this.addChild(selectedList);
+		availFileListWidget = new FileListWidget(this.client,  
+				ModManager.LEFT_PANE_X, 
+				previousScreen.paneWidth, 
+				this.height + getY2Offset(), 
+				previousScreen.paneY + getY1Offset(), 
+				this.height + getY2Offset(), 
+				ModManager.TOP_ENTRY_HEIGHT, 
+				availableList.getValueList(), 
+				previousScreen, 
+				availableTitle, 
+				availableList.onLoadList, 
+				(StringListWidget.ClickEntryAction) entry -> availableList.onClickEntry(entry), 
+				(FileListWidget.MoveDirectoryUpAction) widget -> onMoveDirectoryUp(widget), 
+				"");
+		availFileListWidget.setDirectoryPath(Props.getModsDirPath());
+		this.addChild(availFileListWidget);
 		LOG.exit("init");
 	}
 	
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		this.renderBackground(matrices);
 		super.render(matrices, mouseX, mouseY, delta);
+		availFileListWidget.render(matrices, mouseX, mouseY, delta);
+		
 	}
 	
 	public interface ClickDoneButtonAction {
@@ -71,5 +91,9 @@ public class FilePickerScreen extends TwoStringListsScreen {
 	{
 		this.onClickDoneButton.onClickDoneButton(selectedList.getAddedList());
 		this.onClose();
+	}
+	
+	public void onMoveDirectoryUp(FileListWidget widget) {
+		
 	}
 }
