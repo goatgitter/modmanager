@@ -1,6 +1,6 @@
 # Mod Manager
 
-## Description
+## Description 
 This is Minecraft Fabric mod which extends the Mod Menu mod to add ability to:
 - Enable/disable mods in the mod menu
 - Create multiple mod list profiles which can be loaded from the configuration screen
