@@ -42,7 +42,7 @@ public class Cabinet {
 		JarFile jar = new JarFile(jarFileName);
 		Enumeration<JarEntry> enumEntries = jar.entries();
 		while (enumEntries.hasMoreElements()) {
-			java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
+			JarEntry file = (JarEntry) enumEntries.nextElement();
 		    
 			if (file.getName().contains(ModManager.CONFIG_DIR) && file.getName().endsWith(".properties")) {
 		    	Path destFilePath = Props.getModConfigPath();
