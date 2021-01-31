@@ -19,7 +19,7 @@ import net.fabricmc.loader.FabricLoader;
 /******************************************************************************************
  *              Props
  * ---------------------------------------------------------------------------------------
- * @author	h1ppychick
+ * @author	goatgitter
  * @since	01/29/2021
  * @purpose	This class for working with the Mod Configuration Properties.
  ****************************************************************************************/

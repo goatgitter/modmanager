@@ -10,7 +10,7 @@ import net.minecraft.text.TranslatableText;
 /******************************************************************************************
  *              STICKY NOTE
  * ---------------------------------------------------------------------------------------
- * @author	h1ppychick
+ * @author	goatgitter
  * @since	01/29/2021
  * @purpose	This class makes adding messages to the UI easier.  Using the 
  * 			ModToast class to make sure all messages are visible to user.
