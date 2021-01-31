@@ -90,7 +90,7 @@ public abstract class ScreenBase extends Screen {
 		{
 			if (obj instanceof ModListWidget)
 			{
-				LOG.info("Found mod list widget");
+				LOG.trace("Found mod list widget");
 				ModListWidget w = (ModListWidget) obj;
 				w.reloadFilters();
 				w.close();

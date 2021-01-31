@@ -10,6 +10,10 @@ pluginManagement {
 			name = 'sponge'
 			url = 'https://repo.spongepowered.org/maven/'
 		}
+		maven {
+			name = 'ModMenu'
+			url = 'https://maven.terraformersmc.com/releases/com/terraformersmc/'
+		}
     }
 }
 rootProject.name = "modmanager"
