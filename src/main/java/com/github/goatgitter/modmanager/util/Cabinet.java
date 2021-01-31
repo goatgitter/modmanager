@@ -46,12 +46,12 @@ public class Cabinet {
 		    
 			if (file.getName().contains(ModManager.CONFIG_DIR) && file.getName().endsWith(".properties")) {
 		    	Path destFilePath = Props.getModConfigPath();
-		    	java.io.File f = destFilePath.toFile();
+		    	File f = destFilePath.toFile();
 		    	
 		    	if (Files.notExists(destFilePath))
 		    	{
-		    		java.io.InputStream is = jar.getInputStream(file); 
-				    java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
+		    		InputStream is = jar.getInputStream(file); 
+				    FileOutputStream fos = new FileOutputStream(f);
 				    while (is.available() > 0) {  
 				        fos.write(is.read());
 				    }
