@@ -37,8 +37,8 @@ public abstract class TwoListsWidgetScreen extends ScreenBase {
 	public TwoListsWidgetScreen(Screen previousScreen, String titleId) {
 		super(previousScreen, titleId);
 		this.modsScreen = (ModsScreen) previousScreen;
-		availableModList = new ModListWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, "", this.availableModList, modsScreen);
-		selectedModList = new ModListWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, "", this.selectedModList, modsScreen);
+		availableModList = new ModListWidget(this.client, paneWidth, this.height, getTop(), getBottom(), 36, "", this.availableModList, modsScreen);
+		selectedModList = new ModListWidget(this.client, paneWidth, this.height, getTop(), getBottom(), 36, "", this.selectedModList, modsScreen);
 	}
 	
 	/***************************************************
@@ -71,7 +71,6 @@ public abstract class TwoListsWidgetScreen extends ScreenBase {
 		super.closeScreen();
 		this.selectedModList.close();
 		this.availableModList.close();
-		this.selected = null;
-		
+		this.selected = null;		
 	}
 }

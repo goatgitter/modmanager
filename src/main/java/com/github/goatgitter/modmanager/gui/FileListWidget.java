@@ -28,8 +28,7 @@ public class FileListWidget extends TwoStringListsWidget {
 	protected final FileListWidget.MoveDirectoryUpAction onMoveDirectoryUp;
 	private ButtonWidget moveDirUpBtn;
 	private boolean isRootDir = false;
-	private int moveDirUpBtnX = 0;
-	private int topBtnY = 0;
+	private int textRight = 0;
 	private LiteralText directoryPathText = null;
 	/***************************************************
 	 *              CONSTRUCTORS
@@ -41,11 +40,12 @@ public class FileListWidget extends TwoStringListsWidget {
 			String selectedEntry) {
 		super(client, left, width, height,y1, y2, entryHeight, widgetList, 
 				parent,title, onLoadList,onClickEntry, selectedEntry);
+		LOG.enter("FileListWidget");
 		this.method_31322(false);
 		this.setLeftPos(left);
 	    this.centerListVertically = false;
 		this.onMoveDirectoryUp = onMoveDirectoryUp;
-		drawButtons();
+		LOG.exit("FileListWidget");
 	}
 
 	/***************************************************
@@ -57,7 +57,6 @@ public class FileListWidget extends TwoStringListsWidget {
 	 **************************************************/
 	protected void drawButtons()
 	{
-		topBtnY = listInputY - 2;
 		drawMoveDirectoryUpButton();
 	}
 	/***************************************************
@@ -70,8 +69,9 @@ public class FileListWidget extends TwoStringListsWidget {
 	{
 		if (moveDirUpBtn == null)
 		{
-			moveDirUpBtnX =  listInputX + listInputWidth;
-			moveDirUpBtn = new ModMenuTexturedButtonWidget(moveDirUpBtnX, topBtnY, this.height, ModManager.TOP_BTN_HEIGHT, 0, 0, ModManager.UP_BUTTON_LOCATION, this.height, 42, 
+			int left =  textRight;
+			int top = getTop();	
+			moveDirUpBtn = new ModMenuTexturedButtonWidget(left, top, ModManager.TOP_BTN_WIDTH, ModManager.TOP_BTN_HEIGHT, 0, 0, ModManager.UP_BUTTON_LOCATION, ModManager.TOP_BTN_WIDTH, 42, 
 					button -> {this.onMoveDirectoryUp(this);},
 					ModManager.TEXT_DIR_UP_TOOLTIP, 
 					(buttonWidget, matrices, mouseX, mouseY) -> {
@@ -97,7 +97,7 @@ public class FileListWidget extends TwoStringListsWidget {
 	}
 	
 	public void onMoveDirectoryUp(FileListWidget widget) {
-		isRootDir = !isRootDir;
+		
 		moveDirUpBtn.visible = !isRootDir;
 		if (moveDirUpBtn.visible)
 		{
@@ -114,17 +114,42 @@ public class FileListWidget extends TwoStringListsWidget {
 		return isRootDir;
 	}
 	
+	private int getXOffset()
+	{
+		return 2;
+	}
+	
+	private int getYOffset()
+	{
+		return -1 * ModManager.TOP_BTN_HEIGHT;
+	}
+	
+	@Override
+	public int getTop()
+	{
+		return parentScreen.getTop() + getYOffset();
+	}
+	
+	public int getLeft()
+	{
+		return ModManager.LEFT_PANE_X + getXOffset();
+	}
+	
+	public int getBottom()
+	{
+		return getTop() + ModManager.TOP_BTN_HEIGHT;
+	}
 	/***************************************************
 	 *              RENDERING
 	 **************************************************/
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 		LiteralText text = getDirectoryPathText();
-		int textLeft = ModManager.LEFT_PANE_X + 4;
-		int textTop = parentScreen.getTopRowY() + 5;
-		int boxBottom = textTop + 15;
-		int boxRight = client.textRenderer.getWidth(text) + 9;
+		int textLeft = getLeft();
+		int textTop = getTop();
+		int boxBottom = getBottom();
+		textRight = client.textRenderer.getWidth(text) + 9;
 		Stencil.setColorBlack();
-		Stencil.rectangle(matrices, textLeft - 3, boxRight, textTop - 3, boxBottom);
+		Stencil.rectangle(matrices, textLeft - 2, textRight, textTop - 1, boxBottom);
 		DrawableHelper.drawTextWithShadow(matrices, client.textRenderer, text, textLeft, textTop, 16777215);
 		drawButtons();
 	}

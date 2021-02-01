@@ -34,7 +34,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private final static String TITLE_ID = ModManager.MOD_ID + ".config.screen.title";
 	private static final TranslatableText TEXT_ADD_DESC = new TranslatableText(ModManager.MOD_ID + ".add.description");
 	private static final TranslatableText TEXT_MOD_LIST = new TranslatableText(ModManager.MOD_ID + ".modlist");
-	private static final int TOP_ROW_HEIGHT = 20;
+	
 	private static final int LIST_NAME_INPUT_HEIGHT = 14;
 	
 	
@@ -66,14 +66,13 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	
 	private void addItemsToScreen()
 	{
-		paneY = 28;
 		paneWidth = this.width / 2 - 8;
 		rightPaneX = width - paneWidth;
 		listNameInputWidth = paneWidth;
 		listNameInputX = rightPaneX-4;
 		LiteralText availTitle = new LiteralText("Available Mods");	
 		
-		this.availableMods = new TwoListsWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, modListLoader.getAvailableModList(), this, availableModList, availTitle,
+		this.availableMods = new TwoListsWidget(this.client, paneWidth, this.height, getTop(), getBottom(), 36, modListLoader.getAvailableModList(), this, availableModList, availTitle,
 				(TwoListsWidget.LoadListAction) widget  -> widget.setContainerList(modListLoader.getAvailableModList()),
 				(TwoListsWidget.ClickEntryAction) entry -> loadMod(entry)
 		);
@@ -82,7 +81,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		this.children.add(this.availableMods);
 		
 		LiteralText selectedTitle = new LiteralText("Selected Mods");
-		this.selectedMods = new TwoListsWidget(this.client, paneWidth, this.height, paneY + getY1Offset(), this.height + getY2Offset(), 36, modListLoader.getSelectedModList(false) , this, selectedModList, selectedTitle,
+		this.selectedMods = new TwoListsWidget(this.client, paneWidth, this.height, getTop() + LIST_NAME_INPUT_HEIGHT, getBottom(), 36, modListLoader.getSelectedModList(false) , this, selectedModList, selectedTitle,
 				(TwoListsWidget.LoadListAction) list -> list.setContainerList(modListLoader.getSelectedModList(false)),
 				(TwoListsWidget.ClickEntryAction) entry -> unloadMod(entry)
 		);
@@ -173,7 +172,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private void drawListNameInput()
 	{
 		String listName = Props.getSelectedModListName();
-		this.modsList = new DropDownListWidget(this.client, listNameInputX, listNameInputWidth, TOP_ROW_HEIGHT, getTopRowY(), TOP_ROW_HEIGHT, LIST_NAME_INPUT_HEIGHT, Props.getAllModLists(), this, TEXT_MOD_LIST,
+		this.modsList = new DropDownListWidget(this.client, listNameInputX, listNameInputWidth, ModManager.TOP_ROW_HEIGHT, getTopRowY(), ModManager.TOP_ROW_HEIGHT, LIST_NAME_INPUT_HEIGHT, Props.getAllModLists(), this, TEXT_MOD_LIST,
 				(DropDownListWidget.LoadListAction) widget  -> widget.setList(Props.getAllModLists()),
 				(DropDownListWidget.ClickEntryAction) entry -> onClickEntry(entry),
 				(DropDownListWidget.OpenListAction) widget -> onOpenList(widget),

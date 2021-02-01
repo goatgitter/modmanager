@@ -57,14 +57,14 @@ public abstract class TwoStringListsScreen extends ScreenBase {
 	@Override
 	public void init() {
 		LOG.enter("init");
-		availableList = new TwoStringListsWidget(this.client, ModManager.LEFT_PANE_X, previousScreen.paneWidth, this.height + getY2Offset(), 
-				previousScreen.paneY + getY1Offset(), this.height + getY2Offset(), ModManager.TOP_ENTRY_HEIGHT, 
+		availableList = new TwoStringListsWidget(this.client, ModManager.LEFT_PANE_X, previousScreen.paneWidth, getBottom(), 
+				getTop(), getBottom(), ModManager.TOP_ENTRY_HEIGHT, 
 				new ArrayList<String>(), previousScreen, availableTitle, 
 				onLoadAvailList, 
 				(StringListWidget.ClickEntryAction) entry -> onClickAvailEntry(entry), 
 				currentAvailEntry);
-		selectedList = new TwoStringListsWidget(this.client, previousScreen.rightPaneX, previousScreen.paneWidth, this.height + getY2Offset(), 
-				previousScreen.paneY + getY1Offset(), this.height + getY2Offset(), ModManager.TOP_ENTRY_HEIGHT, 
+		selectedList = new TwoStringListsWidget(this.client, previousScreen.rightPaneX, previousScreen.paneWidth, getBottom(), 
+				getTop(), getBottom(), ModManager.TOP_ENTRY_HEIGHT, 
 				new ArrayList<String>(), previousScreen, selectedTitle,
 				onLoadSelectedList,
 				(StringListWidget.ClickEntryAction) entry -> onClickSelEntry(entry), 

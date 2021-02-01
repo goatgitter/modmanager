@@ -1,5 +1,6 @@
 package com.github.goatgitter.modmanager.gui;
 
+import com.github.goatgitter.modmanager.ModManager;
 import com.github.goatgitter.modmanager.util.Log;
 
 import io.github.prospector.modmenu.gui.ModListWidget;
@@ -34,7 +35,6 @@ public abstract class ScreenBase extends Screen {
 	protected Text tooltip;
 	protected Text title;
 	protected boolean restartRequired = false;
-	protected int paneY;
 	protected int paneWidth;
 	protected int rightPaneX;
 	
@@ -82,8 +82,19 @@ public abstract class ScreenBase extends Screen {
 	
 	protected int getTopRowY()
 	{
-		return paneY-8;
+		return ModManager.TOP_ROW_HEIGHT;
 	}
+	
+	protected int getTop()
+	{
+		return getTopRowY() + getY1Offset();
+	}
+	
+	protected int getBottom()
+	{
+		return this.height + getY2Offset();
+	}
+	
 	protected void closeScreen()
 	{
 		for(Object obj: priorScreen.children())
