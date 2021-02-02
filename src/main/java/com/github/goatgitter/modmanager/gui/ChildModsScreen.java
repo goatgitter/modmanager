@@ -250,7 +250,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	 */
 	private void onExportList(DropDownListWidget widget)
 	{
-		boolean result = Cabinet.storeModList(modsList.getSelectedValue());
+		boolean result = Cabinet.storeModList(modsList.getSelectedValue(), client);
 		if (result)
 		{
 			StickyNote.showSuccessMsg(client, ModManager.KEY_EXPORT_SUCCESS);
@@ -294,7 +294,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	{
 		for(String fileName: selectedList)
 		{
-			boolean result = Cabinet.retreiveModList(fileName, client);
+			boolean result = Cabinet.retreiveModList(fileName, client, modListLoader);
 			if (result)
 			{
 				modsList.onLoadList();

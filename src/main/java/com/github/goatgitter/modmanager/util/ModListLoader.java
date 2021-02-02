@@ -319,7 +319,6 @@ public class ModListLoader {
 		return getModJarPath(mc);
 	}
 	
-	
 	public List<ModContainer> getRequiredMods()
 	{
 		return requiredMods;

@@ -22,6 +22,8 @@ public class ModManager implements ModInitializer {
 	public static final String MODS_LIST_DIR = MOD_ID + "\\";
 	public static final String MM_PARENT_KEY = "modmenu:parent";
 	public static final String NEW_LIST_NAME = "newModList";
+	public static final String ZIP_MOD_LIST_NAME = "_export";
+	public static final String MODS_PATH_PLACEHOLDER = "{MODS_PATH}";
 	
 	// Translation keys
 	// ERRORS
@@ -31,11 +33,13 @@ public class ModManager implements ModInitializer {
 	public static final String KEY_IMPORT_ERROR_EXTRACT_ZIP_ENTRY = ModManager.MOD_ID + ".import.error.extract.entry";
 	public static final String KEY_IMPORT_ERROR_CLOSE_ZIP = ModManager.MOD_ID + ".import.error.close.zip";
 	public static final String KEY_IMPORT_ERROR_CLOSE_ZIP_ENTRY = ModManager.MOD_ID + ".import.error.close.zip.entry";
+	public static final String KEY_IMPORT_MOD_LIST_ERROR = ModManager.MOD_ID + ".import.error.modlist";
 	public static final String KEY_COPY_ERROR = ModManager.MOD_ID + ".copy.error";
 	public static final String KEY_OPEN_ERROR = ModManager.MOD_ID + ".open.error";
 	public static final String KEY_SAVE_ERROR = ModManager.MOD_ID + ".save.error";
 	public static final String KEY_ADD_ERROR = ModManager.MOD_ID + ".add.error";
 	public static final String KEY_EXPORT_ERROR = ModManager.MOD_ID + ".export.error";
+	public static final String KEY_EXPORT_MOD_LIST_ERROR = ModManager.MOD_ID + ".export.error.modlist";
 	
 	// Success
 	public static final String KEY_IMPORT_SUCCESS = ModManager.MOD_ID + ".import.success";

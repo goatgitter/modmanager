@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -17,9 +19,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
+
 import com.github.goatgitter.modmanager.ModManager;
 import com.github.goatgitter.modmanager.config.Props;
 
+import net.fabricmc.loader.ModContainer;
 import net.minecraft.client.MinecraftClient;
 
 /******************************************************************************************
@@ -84,7 +89,7 @@ public class Cabinet {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static boolean retreiveModList(String filePath, MinecraftClient client)
+	public static boolean retreiveModList(String filePath, MinecraftClient client, ModListLoader modListLoader)
 	{
 		boolean result = true;
 		Path modListZipPath = Paths.get(filePath);
@@ -143,6 +148,7 @@ public class Cabinet {
 				e.printStackTrace();
 			}
 		}
+		result = updateZipModList(listName, client, modListLoader);
 		if (result)
 		{
 			Props.setSelectedModListName(listName, true);
@@ -151,23 +157,55 @@ public class Cabinet {
 		return result;
 	}
 	
-	public static boolean storeModList(String listName)
+	private static boolean updateZipModList(String listName,MinecraftClient client, ModListLoader modListLoader)
+	{
+		boolean result = true;
+		Path zipModList = Props.getModsDirPath().resolve(listName + ModManager.ZIP_MOD_LIST_NAME + ".txt");
+		Path listPath = Props.getModsDirPath().resolve(listName + ".txt");
+		try
+		{
+			if (Files.notExists(listPath))
+			{
+				Files.createFile(listPath);
+			}
+			
+			for(ModContainer mc: modListLoader.getRequiredMods())
+			{
+				modListLoader.addJarToFile(listPath, mc);
+			}
+			
+			String currentJarList = FileUtils.readFileToString(zipModList.toFile(), Charset.defaultCharset());
+			String newJarList = currentJarList.replace(ModManager.MODS_PATH_PLACEHOLDER, Props.getModsDirPath().toString());				
+			Files.write(listPath, newJarList.getBytes(), StandardOpenOption.APPEND);
+			Files.delete(zipModList);
+			
+		} catch (IOException e) {
+			result = false;
+			StickyNote.addImportMsg(client, ModManager.KEY_IMPORT_MOD_LIST_ERROR, listName);
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public static boolean storeModList(String listName,MinecraftClient client)
 	{
 		boolean result = true;
 		Path modListPath = Props.getModsDirPath().resolve(listName + ".txt");
 		Path modListZipPath = Props.getModsDirPath().resolve(listName + ".zip");
+		Path zipModList = Props.getModsDirPath().resolve(listName + ModManager.ZIP_MOD_LIST_NAME + ".txt");
 		
 		try
 		{
 			List<String> mods = Files.readAllLines(modListPath);
+			StringBuffer newJarList = new StringBuffer();
             FileOutputStream fos = new FileOutputStream(modListZipPath.toString());
             ZipOutputStream zos = new ZipOutputStream(fos);
-            // Add the list text file
-            zos.putNextEntry(new ZipEntry(modListPath.getFileName().toString()));
-            byte[] bytes = Files.readAllBytes(modListPath);
-            zos.write(bytes, 0, bytes.length);
-            zos.closeEntry();
+            if (Files.notExists(zipModList))
+			{
+				Files.createFile(zipModList);
+			}
             
+            byte[] bytes;
 			for (String modJarName : mods) {
 				if(modJarName.contains(Props.getModsDirPath().toString()) && modJarName.endsWith(".jar"))
 				{
@@ -180,13 +218,22 @@ public class Cabinet {
 		                zos.write(bytes, 0, bytes.length);
 		                zos.closeEntry();
 					}
+					String newJarName = modJarName.replace(Props.getModsDirPath().toString(), ModManager.MODS_PATH_PLACEHOLDER);
+					newJarList.append(newJarName + System.lineSeparator());
 				}
 			}
+			
+			Files.write(zipModList, newJarList.toString().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+            zos.putNextEntry(new ZipEntry(zipModList.getFileName().toString()));
+            bytes = Files.readAllBytes(zipModList);
+            zos.write(bytes, 0, bytes.length);
+            zos.closeEntry();
 			zos.close();
 			fos.close();
+			Files.delete(zipModList);		
 		} catch (Exception e) {
 			result = false;
-			LOG.warn("Could not add mod from list file => " + listName + "."); 
+			StickyNote.addErrorMsg(client, ModManager.KEY_EXPORT_ERROR, listName);
 			e.printStackTrace();
 		}
 		return result;
