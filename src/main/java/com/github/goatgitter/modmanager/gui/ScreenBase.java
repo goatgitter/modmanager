@@ -159,7 +159,15 @@ public abstract class ScreenBase extends Screen {
    public <T extends AbstractButtonWidget> T addButton(T button) {
       return super.addButton(button);
    }
-   
+	/**
+    * Removes a button from this screen.
+    */
+   public <T extends AbstractButtonWidget> boolean removeButton(T button) {
+	   button.visible = false;
+	   this.children.remove(button);
+	   this.buttons.remove(button);
+      return true;
+   }
    /**
     * Adds a child element to this screen.
     * If the child element is an {@link net.minecraft.client.gui.widget.AbstractButtonWidget}, you should use {@link Screen#addButton(AbstractButtonWidget)} instead.

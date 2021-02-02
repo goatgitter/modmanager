@@ -1,5 +1,6 @@
 package com.github.goatgitter.modmanager.gui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -31,7 +32,7 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 	 **************************************************/
 	private Log LOG = new Log("StringListWidget");
 	protected ScreenBase parentScreen = null;	
-	private List<String> _entryList = null;
+	private List<String> _entryList = new ArrayList<String>();
 	private Set<String> addedEntries = new HashSet<>();
 	protected String selectedEntry = null;
 	private boolean scrolling;
@@ -61,6 +62,7 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 		this.parentScreen = parent;
 		this.onLoadList = onLoadList;
 		this.onClickEntry = onClickEntry;
+		setList(widgetList);
 		this.select(selectedEntry);	
 		client.textRenderer.getClass();
 		this.setRenderHeader(false, 0);

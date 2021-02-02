@@ -65,8 +65,12 @@ public class Cabinet {
 	
 	public static List<String> getAvailArchives()
 	{
+		return getAvailArchives(Props.getModsDirPath());
+	}
+	
+	public static List<String> getAvailArchives(Path dirToCheck)
+	{
 		List<String> availList = new ArrayList<String>();
-		Path dirToCheck = Props.getModsDirPath();
 		File[] files = dirToCheck.toFile().listFiles();
 		for (File f:files)
 		{

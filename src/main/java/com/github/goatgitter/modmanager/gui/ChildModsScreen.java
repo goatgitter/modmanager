@@ -3,7 +3,6 @@ package com.github.goatgitter.modmanager.gui;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +45,6 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private int listNameInputX;
 	private int listNameInputWidth;	
 	private DropDownListWidget modsList;
-	private FilePickerScreen picker;
 	/***************************************************
 	 *              CONSTRUCTORS
 	 **************************************************/
@@ -262,16 +260,6 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 			StickyNote.showErrorMsg(client, ModManager.KEY_EXPORT_ERROR);
 		}
 	}
-	
-	private List<String> getSelectedFileList()
-	{
-		List<String> selectedList = new ArrayList<String>();
-		if (picker != null && picker.selectedList != null)
-		{
-			selectedList = picker.selectedList.getValueList();
-		}
-		return selectedList;
-	}
 
 	/**
 	 * Performs the Import List Action when the button is clicked.
@@ -279,15 +267,29 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	private void onImportList(DropDownListWidget widget)
 	{
 		FilePickerScreen picker = new FilePickerScreen((ScreenBase) this, 
-				(StringListWidget.LoadListAction) pickerWidget  -> pickerWidget.setList(Cabinet.getAvailArchives()),
-				(StringListWidget.LoadListAction) pickerWidget -> pickerWidget.setList(getSelectedFileList()),
-				(FilePickerScreen.ClickDoneButtonAction) selectedList -> onClickDoneButton(selectedList)) ;
+				(FilePickerScreen.ClickDoneButtonAction) selectedList -> onClickDoneButton(selectedList),
+				Props.getModsDirPath(),
+				(FilePickerScreen.LoadFileListAction) (directoryPath, fileListWidget) -> onLoadFileList(directoryPath, fileListWidget)
+		);
 		
 		if (picker != null) {
 			client.openScreen(picker);
 		}
 	}
 	
+	/**
+	 * Performs the Load File List Action.
+	 */
+	private void onLoadFileList(Path directoryPath, TwoStringListsWidget widget)
+	{
+		List<String> fileList = Cabinet.getAvailArchives(directoryPath);
+		widget.setList(fileList);
+		widget.onLoadList();
+	}
+	
+	/**
+	 * Performs the Done Button Click Action.
+	 */
 	private void onClickDoneButton(List<String> selectedList)
 	{
 		for(String fileName: selectedList)
@@ -305,6 +307,9 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 		StickyNote.showClientMsg(client);
 	}
 	
+	/**
+	 * Performs the Mouse Button Click Action.
+	 */
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (modsList.isListOpen() &&  modsList.isMouseOverEntry(mouseX, mouseY))
 		{

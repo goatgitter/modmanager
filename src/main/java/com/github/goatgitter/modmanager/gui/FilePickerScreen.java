@@ -1,10 +1,9 @@
 package com.github.goatgitter.modmanager.gui;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import com.github.goatgitter.modmanager.ModManager;
-import com.github.goatgitter.modmanager.config.Props;
-import com.github.goatgitter.modmanager.gui.StringListWidget.LoadListAction;
 import com.github.goatgitter.modmanager.util.Log;
 
 import net.minecraft.client.util.math.MatrixStack;
@@ -24,9 +23,11 @@ public class FilePickerScreen extends TwoStringListsScreen {
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
-	private Log LOG = new Log("FilePickerScreen");
+	private static Log LOG = new Log("FilePickerScreen");
 	private ClickDoneButtonAction onClickDoneButton;
-	private FileListWidget availFileListWidget = null;	
+	private LoadFileListAction onLoadFileList;
+	private FileListWidget availFileListWidget = null;
+	private Path directoryPath = null;
 	/***************************************************
 	 *              CONSTRUCTORS
 	 **************************************************/
@@ -34,15 +35,17 @@ public class FilePickerScreen extends TwoStringListsScreen {
 		super(title);
 	}
 	
-	public FilePickerScreen(ScreenBase previousScreen, LoadListAction onLoadAvailList, 
-			LoadListAction onLoadSelectedList,
-			ClickDoneButtonAction onClickDoneButton) {
-		super(previousScreen, TITLE_ID, onLoadAvailList, 
+	public FilePickerScreen(ScreenBase previousScreen, 
+			ClickDoneButtonAction onClickDoneButton, 
+			Path directoryPath,
+			LoadFileListAction onLoadFileList) {
+		super(previousScreen, TITLE_ID, (StringListWidget.LoadListAction) widget  -> onLoadList(widget), 
 				"",
-				onLoadSelectedList,
+				(StringListWidget.LoadListAction) widget  -> onLoadList(widget),
 				"");
 		this.onClickDoneButton = onClickDoneButton;
-		
+		this.directoryPath = directoryPath;
+		this.onLoadFileList = onLoadFileList;
 	}
 	
 	/***************************************************
@@ -64,16 +67,21 @@ public class FilePickerScreen extends TwoStringListsScreen {
 				36, 
 				availableList.getValueList(), 
 				this, 
-				availableTitle, 
-				availableList.onLoadList, 
+				availableTitle,  
 				(StringListWidget.ClickEntryAction) entry -> availableList.onClickEntry(entry), 
 				(FileListWidget.MoveDirectoryUpAction) widget -> onMoveDirectoryUp(widget), 
-				"");
-		availFileListWidget.setDirectoryPath(Props.getModsDirPath());
+				"",
+				directoryPath);
 		this.addChild(availFileListWidget);
+		this.onLoadFileList();
 		LOG.exit("init");
 	}
 	
+	// Do nothing extra when a string list is loaded.  Handled by onLoadFileList
+	public static void onLoadList(StringListWidget widget)
+	{
+		LOG.trace("onLoadList");
+	}
 	
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
@@ -92,7 +100,27 @@ public class FilePickerScreen extends TwoStringListsScreen {
 		this.onClose();
 	}
 	
+	public interface LoadFileListAction {
+		void onLoadFileList(Path directoryPath, TwoStringListsWidget widget);
+	}
+	
+	protected void onLoadFileList()
+	{
+		Path directoryPath = availFileListWidget.getDirectoryPath();
+		TwoStringListsWidget widget = availableList;
+		this.onLoadFileList.onLoadFileList(directoryPath, widget);
+	}
+	
 	public void onMoveDirectoryUp(FileListWidget widget) {
-		
+		onLoadFileList();
+	}
+
+	public Path getDirectoryPath() {
+		return directoryPath;
+	}
+
+	public void setDirectoryPath(Path directoryPath) {
+		this.directoryPath = directoryPath;
+		availFileListWidget.setDirectoryPath(directoryPath);
 	}
 }
