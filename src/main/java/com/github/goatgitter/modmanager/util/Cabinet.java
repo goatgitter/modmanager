@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -83,10 +84,11 @@ public class Cabinet {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static boolean retreiveModList(String listName, MinecraftClient client)
+	public static boolean retreiveModList(String filePath, MinecraftClient client)
 	{
 		boolean result = true;
-		Path modListZipPath = Props.getModsDirPath().resolve(listName + ".zip");
+		String listName = filePath.substring(0, filePath.lastIndexOf(".zip"));
+		Path modListZipPath = Paths.get(filePath);
 
 		ZipFile zipFile = null;
 		try {

@@ -200,6 +200,10 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 			return 0;
 		}
 		addedEntries.add(entry.getValue());
+		if (!_entryList.contains(entry.getDisplayValue()))
+		{
+			_entryList.add(entry.getDisplayValue());
+		}
 		int i = super.addEntry(entry);
 		if (entry.getValue().equals(selectedEntry)) {
 			setSelected(entry);

@@ -112,6 +112,7 @@ public class FilePickerScreen extends TwoStringListsScreen {
 	}
 	
 	public void onMoveDirectoryUp(FileListWidget widget) {
+		setDirectoryPath(availFileListWidget.getDirectoryPath());
 		onLoadFileList();
 	}
 
@@ -122,5 +123,17 @@ public class FilePickerScreen extends TwoStringListsScreen {
 	public void setDirectoryPath(Path directoryPath) {
 		this.directoryPath = directoryPath;
 		availFileListWidget.setDirectoryPath(directoryPath);
+	}
+	
+	@Override
+	public void onClickAvailEntry(StringEntry entry)
+	{
+		if (availableList.hasEntry(entry.value))
+		{
+			availableList.removeEntry(entry);
+			String val = getDirectoryPath().resolve(entry.value).toString();
+			entry.setValue(val);
+			selectedList.addEntry(entry);
+		}
 	}
 }

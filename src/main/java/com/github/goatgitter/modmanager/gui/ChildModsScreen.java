@@ -294,8 +294,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 	{
 		for(String fileName: selectedList)
 		{
-			String listName = fileName.substring(0, fileName.lastIndexOf(".zip"));
-			boolean result = Cabinet.retreiveModList(listName, client);
+			boolean result = Cabinet.retreiveModList(fileName, client);
 			if (result)
 			{
 				modsList.onLoadList();

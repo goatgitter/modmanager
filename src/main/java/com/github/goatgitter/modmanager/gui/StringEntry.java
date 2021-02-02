@@ -16,7 +16,8 @@ import net.minecraft.text.Text;
  */
 public class StringEntry extends AlwaysSelectedEntryListWidget.Entry<StringEntry> {
 	protected final MinecraftClient client;
-	protected final String value;
+	protected String value;
+	protected String displayValue;
 	private boolean isOnRightSide = false;
 	private boolean isSelectedItem = false;
 	private boolean isRenderArrow = false;
@@ -24,6 +25,13 @@ public class StringEntry extends AlwaysSelectedEntryListWidget.Entry<StringEntry
 	
 	public StringEntry(String val) {
 		this.value = val;
+		this.displayValue = val;
+		this.client = MinecraftClient.getInstance();
+	}
+	
+	public StringEntry(String val, String displayVal) {
+		this.value = val;
+		this.displayValue = displayVal;
 		this.client = MinecraftClient.getInstance();
 	}
 
@@ -49,8 +57,8 @@ public class StringEntry extends AlwaysSelectedEntryListWidget.Entry<StringEntry
 			entryLeft += entryBottom - entryTop;
 		}
 		entryTop += getYOffset();
-		Text valueText = new LiteralText(value);
-	    DrawableHelper.drawTextWithShadow(matrices, this.client.textRenderer, valueText, entryLeft, entryTop, 16777215);
+		Text displayText = new LiteralText(getDisplayValue());
+	    DrawableHelper.drawTextWithShadow(matrices, this.client.textRenderer, displayText, entryLeft, entryTop, 16777215);
 	}
 	
 	public void addArrow(MatrixStack matrices, int entryTop, int entryLeft, int entryRight, int entryBottom, int mouseX, int mouseY)
@@ -83,6 +91,21 @@ public class StringEntry extends AlwaysSelectedEntryListWidget.Entry<StringEntry
 	public String getValue()
 	{
 		return this.value;
+	}
+	
+	public void setValue(String val)
+	{
+		this.value = val;
+	}
+	
+	public String getDisplayValue()
+	{
+		return this.displayValue;
+	}
+	
+	public void setDisplayValue(String displayVal)
+	{
+		this.displayValue = displayVal;
 	}
 
 	public boolean isOnRightSide() {
