@@ -196,14 +196,21 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 	}
 	
 	public int addEntry(StringEntry entry) {
-		if (addedEntries.contains(entry.getValue())) {
+		boolean hasValue = addedEntries.contains(entry.getValue());
+		boolean hasDisplayValue = _entryList.contains(entry.getDisplayValue());
+		if (hasValue && hasDisplayValue) {
 			return 0;
 		}
-		addedEntries.add(entry.getValue());
-		if (!_entryList.contains(entry.getDisplayValue()))
+		if(!hasValue)
 		{
+			addedEntries.add(entry.getValue());
+		}
+		if (!hasDisplayValue)
+		{
+			_entryList = new ArrayList<String>(_entryList);
 			_entryList.add(entry.getDisplayValue());
 		}
+		
 		int i = super.addEntry(entry);
 		if (entry.getValue().equals(selectedEntry)) {
 			setSelected(entry);

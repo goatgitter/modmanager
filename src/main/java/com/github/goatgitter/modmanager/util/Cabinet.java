@@ -87,9 +87,10 @@ public class Cabinet {
 	public static boolean retreiveModList(String filePath, MinecraftClient client)
 	{
 		boolean result = true;
-		String listName = filePath.substring(0, filePath.lastIndexOf(".zip"));
 		Path modListZipPath = Paths.get(filePath);
-
+		String fileName = modListZipPath.getFileName().toString();
+		String listName = fileName.substring(0, fileName.lastIndexOf(".zip"));
+		
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(modListZipPath.toString());
