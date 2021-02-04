@@ -26,6 +26,7 @@ import com.github.goatgitter.modmanager.gui.Menu;
 
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
+import net.fabricmc.accesswidener.AccessWidener;
 import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.ModContainer;
 import net.fabricmc.loader.api.LanguageAdapter;
@@ -267,13 +268,21 @@ public class ModConfig {
 	{
 		try {
 			FieldUtils.writeField(fl, "frozen", false, true);
+			AccessWidener oldAw = (AccessWidener)FieldUtils.readDeclaredField(fl, "accessWidener", true);
+			String oldNamespace = (String)FieldUtils.readDeclaredField(oldAw, "namespace", true);
+			FieldUtils.writeField(oldAw, "namespace", null, true);
+			FieldUtils.writeField(fl, "accessWidener", oldAw, true);
+			fl.freeze();
+			modListLoader.loadAccessWideners();
+			FieldUtils.writeField(oldAw, "namespace", oldNamespace, true);
+			FieldUtils.writeField(fl, "accessWidener", oldAw, true);
 		} catch (IllegalAccessException e) {
 			LOG.warn("Problem updating frozen field");
 			e.printStackTrace();
 		}
-		fl.freeze();
-		fl.loadAccessWideners();
+		
 		try {
+			
 			LOG.trace("Clearing init properties for Mixin Bootstrap");
 			Object clearInit = null;
 			GlobalProperties.put(GlobalProperties.Keys.INIT, clearInit);
@@ -294,6 +303,7 @@ public class ModConfig {
 			c.setAccessible(true);
 			FabricMixinBootstrap fmb = c.newInstance();
 			FieldUtils.writeField(fmb, "initialized", false, true);
+			
 			LOG.trace("-------------------------------------------------");
 			LOG.trace("             START Mixin BootStrap             ");
 			FabricMixinBootstrap.init(fl.getEnvironmentType(), fl);

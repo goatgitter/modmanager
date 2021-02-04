@@ -1,5 +1,6 @@
 package com.github.goatgitter.modmanager.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -26,6 +27,7 @@ import com.github.goatgitter.modmanager.config.Props;
 
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
+import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.ModContainer;
 import net.fabricmc.loader.discovery.ModCandidate;
@@ -56,7 +58,8 @@ public class ModListLoader {
 	public static final String LOAD_CATCHER_MOD_ID = "loadcatcher";
 	public static final String JRE = "java";
 	public static List<String> HIDDEN_MODS = Arrays.asList(API_MOD_ID, INDIGO_MOD_ID, LOADER_MOD_ID, FABRIC_MOD_ID, BASE_MOD_ID, LOAD_CATCHER_MOD_ID, JRE);
-	private static final Logger LOG = LogManager.getFormatterLogger("ModListLoader");
+	private static final Logger LOGGER = LogManager.getFormatterLogger("ModListLoader");
+	private static Log LOG = new Log("ModListLoader");
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
@@ -112,7 +115,7 @@ public class ModListLoader {
 					return null;
 				}
 			} catch (URISyntaxException e) {
-				LOG.warn("Invalid syntax for JAR " + mc.getMetadata().getId());
+				LOGGER.warn("Invalid syntax for JAR " + mc.getMetadata().getId());
 			}
 		}
 		return jarPath;
@@ -121,21 +124,21 @@ public class ModListLoader {
 	public ModContainer getModForJar(String jarFileName, List<ModContainer> mods)
 	{
 		String fn = jarFileName.toLowerCase();
-		LOG.trace("Looking up mod id for jar file name =>" + fn +".");
+		LOGGER.trace("Looking up mod id for jar file name =>" + fn +".");
 		ModContainer jarMod = null;
 		for (ModContainer mod: mods)
 		{
 			String modId = mod.getInfo().getId();
 			if (!isRequiredMod(modId))
 			{
-				LOG.trace("Checking mod =>" + modId);
+				LOGGER.trace("Checking mod =>" + modId);
 				if(fn.contains(modId))
 				{
 					String versionString = mod.getInfo().getVersion().getFriendlyString();
-					LOG.trace("Mod version => " + versionString);
+					LOGGER.trace("Mod version => " + versionString);
 					if (fn.contains(versionString));
 					{
-						LOG.trace("Found " + jarFileName + " => " + modId);
+						LOGGER.trace("Found " + jarFileName + " => " + modId);
 						jarMod = mod;
 						break;
 					}
@@ -180,7 +183,7 @@ public class ModListLoader {
 		try {
 			currentJarList = FileUtils.readFileToString(selectedModsPath.toFile(), Charset.defaultCharset());
 		} catch (IOException e) {
-			LOG.warn("Problem retrieving current jar list");
+			LOGGER.warn("Problem retrieving current jar list");
 			e.printStackTrace();
 		}
 		return currentJarList;
@@ -196,7 +199,7 @@ public class ModListLoader {
 				Files.deleteIfExists(modListPath);
 			}
 		    if (! Files.exists(modListPath)){
-	    	LOG.trace("Creating file " + modListPath.getFileName());
+	    	LOGGER.trace("Creating file " + modListPath.getFileName());
 				Files.createFile(modListPath);
 				// Add all the required mods
 				for(ModContainer mc: getRequiredMods())
@@ -225,7 +228,7 @@ public class ModListLoader {
 				}
 		    }
 		} catch (IOException e) {
-			LOG.warn("Problem retrieving Mod List file => " + fileName);
+			LOGGER.warn("Problem retrieving Mod List file => " + fileName);
 			e.printStackTrace();
 		}
 	    return modListPath;
@@ -265,7 +268,7 @@ public class ModListLoader {
 					Files.write(listPath, line.getBytes(), StandardOpenOption.APPEND);
 				}
 			} catch (IOException e) {
-				LOG.warn("Problem adding jar to file !");
+				LOGGER.warn("Problem adding jar to file !");
 				e.printStackTrace();
 			}
 			
@@ -286,7 +289,7 @@ public class ModListLoader {
 					Files.write(listPath, newJarList.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
 				}
 			} catch (IOException e) {
-				LOG.warn("Problem removing jar from file!");
+				LOGGER.warn("Problem removing jar from file!");
 				e.printStackTrace();
 			}
 		}
@@ -346,7 +349,7 @@ public class ModListLoader {
 		try {
 			candidateMap = resolver.resolve(fl);
 		} catch (ModResolutionException e) {
-			LOG.warn("Problem getting loaded mods");
+			LOGGER.warn("Problem getting loaded mods");
 			e.printStackTrace();
 		}
 		return candidateMap;
@@ -404,6 +407,25 @@ public class ModListLoader {
 			return jarFile.getEntry("fabric.mod.json") != null;
 		} catch (IOException e) {
 			return false;
+		}
+	}
+	
+	public void loadAccessWideners() {
+		AccessWidenerReader accessWidenerReader = new AccessWidenerReader(fl.getAccessWidener());
+		for (net.fabricmc.loader.api.ModContainer modContainer : fl.getAllMods()) {
+			LoaderModMetadata modMetadata = (LoaderModMetadata) modContainer.getMetadata();
+			String accessWidener = modMetadata.getAccessWidener();
+
+			if (accessWidener != null) {
+				Path path = modContainer.getPath(accessWidener);
+
+				try (BufferedReader reader = Files.newBufferedReader(path)) {
+					
+					accessWidenerReader.read(reader, "intermediary");
+				} catch (Exception e) {
+					throw new RuntimeException("Failed to read accessWidener file from mod " + modMetadata.getId(), e);
+				}
+			}
 		}
 	}
 }

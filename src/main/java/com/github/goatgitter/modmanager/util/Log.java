@@ -1,5 +1,6 @@
 package com.github.goatgitter.modmanager.util;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.apache.logging.log4j.LogManager;
@@ -129,6 +130,13 @@ public class Log {
 	 */
 	public void logClassMethodInfo(Class<?> classType)
 	{
+		for(Field f: classType.getFields())
+		{
+			LOG.info("fieldName =>" + f.getName());
+			LOG.info("TypeName =>" + f.getType().getName());
+			LOG.info("CannocialName => " + f.getType().getCanonicalName());
+		}
+		
 		for(Method m : classType.getMethods())
 		  {
 			  
