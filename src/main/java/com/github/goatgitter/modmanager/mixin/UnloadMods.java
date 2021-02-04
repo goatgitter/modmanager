@@ -46,9 +46,6 @@ public class UnloadMods extends Screen{
 		LOG.enter("drawMenuButton");
 		ButtonWidget unloadBtn = getUnloadButton();
 		this.addButton(unloadBtn);
-		// Coming soon
-		//ButtonWidget refreshBtn = getRefreshButton();
-		//this.addButton(refreshBtn);
 		LOG.exit("drawMenuButton");
 	}
 	

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -338,36 +339,6 @@ public class ModConfig {
 		}
 	}
 	
-	private static boolean doesEntryExist(Map<String, List<?>> oldEntries, String stringVal)
-	{
-		boolean entryExists = false;
-		for(Object entry: oldEntries.values())
-		{
-			if (entry.toString().equals(stringVal)) {
-				entryExists = true;
-				break;
-			}
-		}
-		return entryExists;
-	}
-	
-	private static boolean doesEntryExist(Map<String, List<?>> oldEntries, String key, String stringVal)
-	{
-		boolean entryExists = false;
-		List<?> entries = oldEntries.get(key);
-		if (entries != null)
-		{
-			for(Object entry: entries)
-			{
-				if (entry.toString().equals(stringVal)) {
-					entryExists = true;
-					break;
-				}
-			}
-		}
-		
-		return entryExists;
-	}
 	@SuppressWarnings("unchecked")
 	private static void updateLoaderFields(Map<String, ModContainer> oldModMap, List<ModContainer> oldMods, Map<String, LanguageAdapter> oldAdapterMap, Object oldGameDir,
 			Object oldEntrypointStorage, Map<String, List<?>> oldEntries)
@@ -408,30 +379,16 @@ public class ModConfig {
 			            }
 			        });
 					
-					// Entry Points					
-					for (String in : mod.getInfo().getOldInitializers()) {
-						String stringVal = modId + "->" + in;
-						boolean entryExists = doesEntryExist(oldEntries, stringVal);
-						
-						if (!entryExists)
-						{
-							String adapter = mod.getInfo().getOldStyleLanguageAdapter();
-							Object[] addArgs = {mod, adapter, in};
-							MethodUtils.invokeMethod(oldEntrypointStorage, true, "addDeprecated", addArgs);
-						}
-						
-					}
-
+					// Entry Points
 					for (String key : mod.getInfo().getEntrypointKeys()) {
-						for (EntrypointMetadata in : mod.getInfo().getEntrypoints(key)) {
-							String stringVal = modId + "->(0.3.x)" + in.getValue();
-							boolean entryExists = doesEntryExist(oldEntries, key, stringVal);
-							if (!entryExists)
-							{
-								Object[] addArgs = {mod, key, in, oldAdapterMap};
-								MethodUtils.invokeMethod(oldEntrypointStorage, true, "add", addArgs);
-							}
-						}
+						Map<String, List<?>> newEntries = (Map<String, List<?>>)FieldUtils.readDeclaredField(oldEntrypointStorage, "entryMap", true);
+						
+						List<?> newKeyEntries = newEntries.get(key);
+						List<?> oldKeyEntries = oldEntries.get(key);
+						List<?> combinedEntries = Stream.concat(newKeyEntries.stream(),oldKeyEntries.stream())
+								.distinct()
+								.collect(Collectors.toList());
+						oldEntries.put(key, combinedEntries);
 					}
 				}
 			}
@@ -453,7 +410,7 @@ public class ModConfig {
 			FieldUtils.writeField(oldEntrypointStorage, "entryMap", oldEntries, true);
 			FieldUtils.writeField(fl, "entrypointStorage", oldEntrypointStorage, true);
 			
-		} catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException  e) {
+		} catch (IllegalAccessException e) {
 			LOG.warn("Problem updating FabricLoader fields");
 			e.printStackTrace();
 		}
