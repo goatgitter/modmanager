@@ -28,6 +28,9 @@ fileTree(dir: 'nested', include: '**/*.jar').visit { FileVisitDetails details ->
 	nestedJars.add('{"file": "nested/' + details.file.name + '"}')
 }
 def jarName = "${archivesBaseName}-${version}.jar"
+test {
+	useJUnitPlatform()
+}
 
 dependencies {
 	//to change the versions see the gradle.properties file
@@ -37,7 +40,8 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-
+	implementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
+    
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
 	implementation group: 'org.javassist', name: 'javassist', version: '3.23.1-GA'

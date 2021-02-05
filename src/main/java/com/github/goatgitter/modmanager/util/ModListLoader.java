@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -178,15 +177,22 @@ public class ModListLoader {
 	}
 	public String getCurrentJarList()
 	{
-		Path selectedModsPath = Props.getModsDirPath().resolve(Props.getSelectedModListFileName());
-		String currentJarList = "";
+		Path selectedModsPath = Props.getModsDirPath().normalize().resolve(Props.getSelectedModListFileName());
+		String currentJarList = readFile(selectedModsPath);
+		return currentJarList;
+	}
+	
+	public String readFile(Path filePath)
+	{
+		String fileContents = "";
 		try {
-			currentJarList = FileUtils.readFileToString(selectedModsPath.toFile(), Charset.defaultCharset());
+			File theFile = new File(filePath.normalize().toUri());
+			fileContents = FileUtils.readFileToString(theFile, "UTF-8");
 		} catch (IOException e) {
-			LOGGER.warn("Problem retrieving current jar list");
+			LOGGER.warn("Problem reading file");
 			e.printStackTrace();
 		}
-		return currentJarList;
+		return fileContents;
 	}
 	
 	public Path getModList(String fileName, boolean refreshContents)
@@ -242,7 +248,7 @@ public class ModListLoader {
 		{
 			if(Files.exists(jarPath))
 			{
-				String currentJarList = FileUtils.readFileToString(listPath.toFile(), Charset.defaultCharset());
+				String currentJarList = readFile(listPath);
 				String jarFile = jarPath.toString();
 				if (jarPath != null && !currentJarList.contains(jarFile))
 				{
@@ -259,9 +265,8 @@ public class ModListLoader {
 		if (Files.exists(jarPath))
 		{
 			try {
-				String currentJarList = FileUtils.readFileToString(listPath.toFile(), Charset.defaultCharset());
-				// Remove extra .\ from path string.
-				String jarFile = jarPath.toString().replace("run\\.", "run");
+				String currentJarList = readFile(listPath);
+				String jarFile = jarPath.normalize().toString();
 				if (jarPath != null && !currentJarList.contains(jarFile))
 				{
 					String line = jarFile + System.lineSeparator();
@@ -281,8 +286,8 @@ public class ModListLoader {
 		if (Files.exists(jarPath))
 		{
 			try {
-				String currentJarList = FileUtils.readFileToString(listPath.toFile(), Charset.defaultCharset());
-				String jarFile = jarPath.toString();
+				String currentJarList = readFile(listPath);
+				String jarFile = jarPath.normalize().toString();
 				if (jarPath != null && currentJarList.contains(jarFile))
 				{
 					String newJarList = currentJarList.replace(jarFile + System.lineSeparator(), "");				
@@ -300,8 +305,8 @@ public class ModListLoader {
 		boolean isModInLoadFile = false;
 		if (jarPath != null && Files.exists(jarPath))
 		{
-			String currentJarList = FileUtils.readFileToString(listPath.toFile(), Charset.defaultCharset());
-			String jarFile = jarPath.toString();
+			String currentJarList = readFile(listPath);
+			String jarFile = jarPath.normalize().toString();
 			if (jarPath != null && currentJarList.contains(jarFile))
 			{
 				isModInLoadFile = true;

@@ -385,10 +385,17 @@ public class ModConfig {
 						
 						List<?> newKeyEntries = newEntries.get(key);
 						List<?> oldKeyEntries = oldEntries.get(key);
-						List<?> combinedEntries = Stream.concat(newKeyEntries.stream(),oldKeyEntries.stream())
-								.distinct()
-								.collect(Collectors.toList());
-						oldEntries.put(key, combinedEntries);
+						if(oldKeyEntries == null && newKeyEntries != null)
+						{
+							oldEntries.put(key, newKeyEntries);
+						}
+						else if (oldKeyEntries != null && newKeyEntries != null)
+						{
+							List<?> combinedEntries = Stream.concat(newKeyEntries.stream(),oldKeyEntries.stream())
+									.distinct()
+									.collect(Collectors.toList());
+							oldEntries.put(key, combinedEntries);
+						}
 					}
 				}
 			}
