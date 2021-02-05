@@ -1,6 +1,5 @@
 package com.github.goatgitter.modmanager.util;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,31 +28,26 @@ public class FileListModCandidateFinder implements ModCandidateFinder {
 	}
 
 	@Override
-	public void findCandidates(FabricLoader loader, BiConsumer<URL, Boolean> urlProposer){
-		try 
-		{
-			Path selectedListPath = modListLoader.getModList(modListFile);
-			List<String> mods = Files.readAllLines(selectedListPath);
+	public void findCandidates(FabricLoader loader, BiConsumer<URL, Boolean> urlProposer)
+	{
+		Path selectedListPath = modListLoader.getModList(modListFile);
+		List<String> mods = Notebook.getAsList(selectedListPath);
 
-			for (String modJarName : mods) {
-				File modFile = new File(modJarName);
-				Path srcJarPath = modFile.toPath();
-				if(Files.exists(srcJarPath))
-				{
-					try {
-						urlProposer.accept(UrlUtil.asUrl(modFile), false);
-					} catch (UrlConversionException e) {
-						throw new RuntimeException("Failed to convert URL for mod '" + modJarName + "'!", e);
-					}
-				}
-				else
-				{
-					LOG.trace("JAR File did not exist =>" + modJarName);
+		for (String modJarName : mods) {
+			File modFile = new File(modJarName);
+			Path srcJarPath = modFile.toPath();
+			if(Files.exists(srcJarPath))
+			{
+				try {
+					urlProposer.accept(UrlUtil.asUrl(modFile), false);
+				} catch (UrlConversionException e) {
+					throw new RuntimeException("Failed to convert URL for mod '" + modJarName + "'!", e);
 				}
 			}
-			
-		} catch (IOException e1) {
-			LOG.warn("Unable to read mod file list =>" + modListFile);
+			else
+			{
+				LOG.trace("JAR File did not exist =>" + modJarName);
+			}
 		}
 	}
 }

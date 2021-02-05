@@ -4,6 +4,7 @@ import com.github.goatgitter.modmanager.ModManager;
 import com.github.goatgitter.modmanager.gui.ModToast;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.toast.ToastManager;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -21,9 +22,15 @@ public class StickyNote {
 	 **************************************************/
 	private static Log LOG = new Log("StickyNote");
 	private static ModToast userMsg = null;
+	
 	/***************************************************
 	 *              METHODS
 	 **************************************************/
+	public static void logErrorMsg(Log theLog, String key,Object... args )
+	{
+		logClientMsg(theLog, ModToast.Type.ERROR, key, args);
+	}
+	
 	public static void addErrorMsg(MinecraftClient client, String key,Object... args )
 	{
 		addClientMsg(client, ModToast.Type.ERROR, key, args);
@@ -76,6 +83,33 @@ public class StickyNote {
 		{
 			userMsg.addTextToList(client, msg);
 		}
+		logClientMsg(LOG,type, key, args);
+	}
+	
+	public static void logClientMsg(Log theLog, ModToast.Type type, String key,Object... args )
+	{
+		String title = null;
+	    String msg = I18n.translate(key, args);
+	    String logMsg = null;
+		switch(type)
+		{
+			case IMPORT:
+				title = I18n.translate(ModManager.KEY_IMPORT_TOOLTIP);
+				logMsg = title + " => " + msg;
+				theLog.debug(logMsg);
+				break;
+			case SUCCESS:
+				title = I18n.translate(ModManager.KEY_SUCCESS);
+				logMsg = title + " => " + msg;
+				theLog.debug(logMsg);
+				break;
+			default:
+				title = I18n.translate(ModManager.KEY_ERROR);				
+				logMsg = title + " => " + msg;
+				theLog.warn(logMsg);
+				break;
+		}
+		
 	}
 	
 	public static void showClientMsg(MinecraftClient client)
@@ -87,5 +121,6 @@ public class StickyNote {
 			userMsg = null;
 		}
 	}
+
 	
 }

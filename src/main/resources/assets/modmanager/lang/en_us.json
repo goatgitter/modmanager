@@ -35,5 +35,6 @@
   "modmanager.dirup.tooltip":"Move Directory Up",
   "modmanager.filepicker.title":"Select File(s)",
   "modmanager.copy.error": "Unable to copy file from %s to %s",
+  "modmanager.notebook.error.get": "Unable to read file %s",
   "modmanager.notimpl": "Feature not yet available!"
 }

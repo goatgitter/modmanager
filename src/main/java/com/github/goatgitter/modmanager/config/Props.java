@@ -74,7 +74,7 @@ public class Props {
 	public static Path getModsDirPath() {
 		if (modsDirPath == null)
 		{
-			modsDirPath = getGameModsPath().resolve(ModManager.MODS_LIST_DIR);
+			modsDirPath = getGameModsPath().resolve(ModManager.MODS_LIST_DIR).normalize();
 			if(Files.notExists(modsDirPath))
 			{
 				try {

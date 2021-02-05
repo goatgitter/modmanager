@@ -1,6 +1,7 @@
 package com.github.goatgitter.modmanager;
 
 import com.github.goatgitter.modmanager.util.Log;
+
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -27,6 +28,8 @@ public class ModManager implements ModInitializer {
 	
 	// Translation keys
 	// ERRORS
+	public static final String KEY_ERROR = MOD_ID + ".error";	
+	public static final String KEY_SUCCESS =MOD_ID + ".success";
 	public static final String KEY_IMPORT_ERROR = ModManager.MOD_ID + ".import.error";
 	public static final String KEY_IMPORT_ERROR_OPEN_ZIP = ModManager.MOD_ID + ".import.error.open.zip";
 	public static final String KEY_IMPORT_ERROR_OPEN_ZIP_ENTRY = ModManager.MOD_ID + ".import.error.open.zip.entry";
@@ -40,7 +43,7 @@ public class ModManager implements ModInitializer {
 	public static final String KEY_ADD_ERROR = ModManager.MOD_ID + ".add.error";
 	public static final String KEY_EXPORT_ERROR = ModManager.MOD_ID + ".export.error";
 	public static final String KEY_EXPORT_MOD_LIST_ERROR = ModManager.MOD_ID + ".export.error.modlist";
-	
+	public static final String KEY_NOTEBOOK_ERROR_GET = ModManager.MOD_ID + ".notebook.error.get";
 	// Success
 	public static final String KEY_IMPORT_SUCCESS = ModManager.MOD_ID + ".import.success";
 	public static final String KEY_DROP_SUCCESS_1 = "modmenu.dropSuccessful.line1";
@@ -49,17 +52,20 @@ public class ModManager implements ModInitializer {
 	public static final String KEY_ADD_SUCCESS = ModManager.MOD_ID + ".add.success";
 	public static final String KEY_EXPORT_SUCCESS = ModManager.MOD_ID + ".export.success";
 	public static final String KEY_RESTART = MOD_ID + ".restart";
+	// Tooltip
+	public static final String KEY_IMPORT_TOOLTIP = ModManager.MOD_ID + ".import.tooltip";
+	
 	
 	// Translatable Texts
-	public static final TranslatableText TEXT_SUCCESS = new TranslatableText(MOD_ID + ".success");
-	public static final TranslatableText TEXT_ERROR = new TranslatableText(MOD_ID + ".error");
+	public static final TranslatableText TEXT_SUCCESS = new TranslatableText(KEY_SUCCESS);
+	public static final TranslatableText TEXT_ERROR = new TranslatableText(KEY_ERROR);
 	public static final TranslatableText TEXT_WARNING = new TranslatableText(MOD_ID + ".warning");
 	public static final TranslatableText TEXT_NOT_IMPL = new TranslatableText(MOD_ID + ".notimpl");
 	public static final TranslatableText TEXT_OPEN_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".open.tooltip");
 	public static final TranslatableText TEXT_SAVE_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".save.tooltip");
 	public static final TranslatableText TEXT_ADD_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".add.tooltip");
 	public static final TranslatableText TEXT_EXPORT_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".export.tooltip");
-	public static final TranslatableText TEXT_IMPORT_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".import.tooltip");
+	public static final TranslatableText TEXT_IMPORT_TOOLTIP = new TranslatableText(KEY_IMPORT_TOOLTIP);
 	public static final TranslatableText TEXT_DIR_UP_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".dirup.tooltip");
 	
 	public static final Identifier SAVE_BUTTON_LOCATION = new Identifier(ModManager.MOD_ID, "save.png");

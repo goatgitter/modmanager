@@ -178,27 +178,14 @@ public class ModListLoader {
 	public String getCurrentJarList()
 	{
 		Path selectedModsPath = Props.getModsDirPath().normalize().resolve(Props.getSelectedModListFileName());
-		String currentJarList = readFile(selectedModsPath);
+		String currentJarList = Notebook.get(selectedModsPath);
 		return currentJarList;
-	}
-	
-	public String readFile(Path filePath)
-	{
-		String fileContents = "";
-		try {
-			File theFile = new File(filePath.normalize().toUri());
-			fileContents = FileUtils.readFileToString(theFile, "UTF-8");
-		} catch (IOException e) {
-			LOGGER.warn("Problem reading file");
-			e.printStackTrace();
-		}
-		return fileContents;
 	}
 	
 	public Path getModList(String fileName, boolean refreshContents)
 	{
 		boolean isAvail = fileName.equals(AVAIL_MODS_LIST);
-		Path modListPath = Props.getModsDirPath().resolve(fileName);
+		Path modListPath = Props.getModsDirPath().normalize().resolve(fileName);
 		try {
 			if (refreshContents)
 			{
@@ -248,7 +235,7 @@ public class ModListLoader {
 		{
 			if(Files.exists(jarPath))
 			{
-				String currentJarList = readFile(listPath);
+				String currentJarList = Notebook.get(listPath);
 				String jarFile = jarPath.toString();
 				if (jarPath != null && !currentJarList.contains(jarFile))
 				{
@@ -265,7 +252,7 @@ public class ModListLoader {
 		if (Files.exists(jarPath))
 		{
 			try {
-				String currentJarList = readFile(listPath);
+				String currentJarList = Notebook.get(listPath);
 				String jarFile = jarPath.normalize().toString();
 				if (jarPath != null && !currentJarList.contains(jarFile))
 				{
@@ -286,7 +273,7 @@ public class ModListLoader {
 		if (Files.exists(jarPath))
 		{
 			try {
-				String currentJarList = readFile(listPath);
+				String currentJarList = Notebook.get(listPath);
 				String jarFile = jarPath.normalize().toString();
 				if (jarPath != null && currentJarList.contains(jarFile))
 				{
@@ -305,7 +292,7 @@ public class ModListLoader {
 		boolean isModInLoadFile = false;
 		if (jarPath != null && Files.exists(jarPath))
 		{
-			String currentJarList = readFile(listPath);
+			String currentJarList = Notebook.get(listPath);
 			String jarFile = jarPath.normalize().toString();
 			if (jarPath != null && currentJarList.contains(jarFile))
 			{
