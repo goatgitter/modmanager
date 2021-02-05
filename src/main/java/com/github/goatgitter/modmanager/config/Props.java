@@ -175,6 +175,7 @@ public class Props {
 		String modLists = getModLists();		
 		Path oldFilePath = getSelectedModListPath();
 		setPropVal(KEY_SEL_LIST, newName);
+		selectedModListPath = null;
 		Path newFilePath = getSelectedModListPath();
 		
 		try {			
@@ -190,7 +191,6 @@ public class Props {
 				if(!modLists.contains(newName))
 				{
 					Files.move(oldFilePath, newFilePath, StandardCopyOption.REPLACE_EXISTING);
-					
 					modLists = modLists.replace(oldName, newName);
 				}
 			}
@@ -198,6 +198,7 @@ public class Props {
 			result = false;
 			// Set the prop value back in case of error.
 			setPropVal(KEY_SEL_LIST, oldName);
+			oldFilePath = getSelectedModListPath();
 			LOG.warn("Could not rename mod list file to => " + newName + "."); 
 			e.printStackTrace();
 		}

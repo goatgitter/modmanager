@@ -235,6 +235,7 @@ public class ChildModsScreen extends TwoListsWidgetScreen{
 			modsList.add(ModManager.NEW_LIST_NAME);
 			modsList.select(ModManager.NEW_LIST_NAME);
 			modsList.listInput.setText(ModManager.NEW_LIST_NAME);
+			modListLoader.getSelectedModList();
 			selectedMods.onNewList();
 			modListLoader.updateAvailModListFile();
 			availableMods.onLoadList();
