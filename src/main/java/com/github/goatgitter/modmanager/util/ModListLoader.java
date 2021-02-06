@@ -332,6 +332,16 @@ public class ModListLoader {
 		return isRequiredMod;
 	}
 	
+	public boolean isLibraryMod(LoaderModMetadata metadata)
+	{
+		boolean isLibraryMod = false;
+		isLibraryMod = (metadata.containsCustomValue("modmenu:api") 
+						&& metadata.getCustomValue("modmenu:api").getAsBoolean()) ;
+		isLibraryMod = isLibraryMod || (metadata.containsCustomValue("fabric-loom:generated") 
+						&& metadata.getCustomValue("fabric-loom:generated").getAsBoolean());
+		isLibraryMod = isLibraryMod || isRequiredMod(metadata.getId());
+		return isLibraryMod;
+	}
 
 	private Map<String, ModCandidate> getModMap(String fileName)
 	{
@@ -343,6 +353,16 @@ public class ModListLoader {
 		} catch (ModResolutionException e) {
 			LOGGER.warn("Problem getting loaded mods");
 			e.printStackTrace();
+		}
+		
+		// Add Library Mods to the Library Map
+		for (ModCandidate modCandidate: candidateMap.values())
+		{
+			LoaderModMetadata metadata = modCandidate.getInfo();
+			boolean isLibrary = isLibraryMod(metadata);
+			if (isLibrary) {
+				ModMenu.LIBRARY_MODS.add(metadata.getId());
+			}
 		}
 		return candidateMap;
 	}

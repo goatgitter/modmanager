@@ -323,7 +323,7 @@ public class ModConfig {
 	{
 		if (childMod != null)
 		{
-			// Add custom metadata to show the loaded mod as a child of many mods.
+			// Add custom metadata to show the loaded mod as a child of this mod.
 			ModMetadata mm = childMod.getMetadata();
 			System.out.print(mm.getType());
 			try {
