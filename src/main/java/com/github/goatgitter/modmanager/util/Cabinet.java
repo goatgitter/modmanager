@@ -45,6 +45,7 @@ public class Cabinet {
 	 **************************************************/
 	public static void retrieveConfigFile(String jarFileName) throws IOException
 	{
+		LOG.enter("retrieveConfigFile");
 		JarFile jar = new JarFile(jarFileName);
 		Enumeration<JarEntry> enumEntries = jar.entries();
 		while (enumEntries.hasMoreElements()) {
@@ -67,6 +68,7 @@ public class Cabinet {
 		    }
 		}
 		jar.close();
+		LOG.exit("retrieveConfigFile");
 	}
 	
 	public static List<String> getAvailArchives()

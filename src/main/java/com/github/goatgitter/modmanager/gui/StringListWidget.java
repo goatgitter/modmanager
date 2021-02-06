@@ -55,6 +55,7 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 			ClickEntryAction onClickEntry, 
 			String selectedEntry) {
 		super(client, width, height, y1, y2, entryHeight);
+		LOG.enter("StringListWidget");
 		this.method_31322(false);
 		this.setLeftPos(left);
 	    this.centerListVertically = false;
@@ -74,6 +75,7 @@ public class StringListWidget extends AlwaysSelectedEntryListWidget<StringEntry>
 		setScrollAmount(0);
 		drawListInput();
 		onLoadList();
+		LOG.exit("StringListWidget");
 	}
 	
 	/***************************************************

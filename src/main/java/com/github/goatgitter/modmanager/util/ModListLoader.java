@@ -18,7 +18,6 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,6 +71,7 @@ public class ModListLoader {
 	 **************************************************/
 	@SuppressWarnings("deprecation")
 	public ModListLoader() {
+		LOG.enter("ModListLoader");
 		fl = (FabricLoader) net.fabricmc.loader.api.FabricLoader.getInstance();	
 		for(ModContainer mc: fl.getMods())
 		{
@@ -81,7 +81,7 @@ public class ModListLoader {
 				requiredModsMap.put(modId, mc);
 			}
 		}
-		
+		LOG.exit("ModListLoader");
 	}
 
 	/***************************************************

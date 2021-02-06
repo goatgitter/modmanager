@@ -52,6 +52,7 @@ public class DropDownListWidget extends StringListWidget {
 			String selectedEntry) {
 		super(client, left, width, height,y1, y2, entryHeight, widgetList, 
 				parent,title, onLoadList,onClickEntry, selectedEntry);
+		LOG.enter("DropDownListWidget");
 		this.method_31322(false);
 		this.setLeftPos(left);
 	    this.centerListVertically = false;
@@ -61,6 +62,7 @@ public class DropDownListWidget extends StringListWidget {
 		this.onExportList = onExportList;
 		this.onImportList = onImportList;
 		drawButtons();
+		LOG.exit("DropDownListWidget");
 	}
 	
 	/***************************************************

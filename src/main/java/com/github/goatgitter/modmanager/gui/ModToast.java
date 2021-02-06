@@ -128,7 +128,6 @@ public class ModToast implements Toast{
 		manager.getGame().getTextureManager().bindTexture(TEXTURE);
 		RenderSystem.color3f(1.0F, 1.0F, 1.0F);
 		int i = this.getWidth();
-		int j = 1;
 		int o;
 		if (i == 160 && this.lines.size() <= 1) 
 		{
@@ -137,7 +136,6 @@ public class ModToast implements Toast{
 		else 
 		{
 			o = this.getHeight() + Math.max(0, this.lines.size() - 1) * 12;
-			int l = 1;
 			int m = Math.min(4, o - 28);
 			this.drawPart(matrices, manager, i, 0, 0, 28);
 

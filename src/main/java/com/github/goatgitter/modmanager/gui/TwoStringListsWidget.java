@@ -20,7 +20,7 @@ public class TwoStringListsWidget extends StringListWidget {
 	/***************************************************
 	 *              INSTANCE VARIABLES
 	 **************************************************/
-	private Log LOG = new Log("StringListWidget");
+	private Log LOG = new Log("TwoStringListsWidget");
 	private boolean isOnRightSide = false;
 
 	/***************************************************
@@ -31,9 +31,11 @@ public class TwoStringListsWidget extends StringListWidget {
 			ClickEntryAction onClickEntry, String selectedEntry) {
 		super(client, left, width, height, y1, y2, entryHeight, widgetList, parent, title, onLoadList, onClickEntry,
 				selectedEntry);
+		LOG.enter("TwoStringListsWidget");
 		listInputWidth = this.width;
 		listInputX = this.left;
 		listInputY = this.top;
+		LOG.exit("TwoStringListsWidget");
 	}
 	
 	/***************************************************

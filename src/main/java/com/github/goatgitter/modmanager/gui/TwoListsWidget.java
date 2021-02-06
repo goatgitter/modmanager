@@ -50,7 +50,8 @@ public class TwoListsWidget extends AlwaysSelectedEntryListWidget<ModListEntry> 
 	// Constructors
 	public TwoListsWidget(MinecraftClient client, int width, int height, int y1, int y2, int entryHeight, List<ModContainer> widgetList, TwoListsWidgetScreen parent, ModListWidget widget, Text title, LoadListAction onLoadList, ClickEntryAction onClickEntry) {
 		super(client, width, height, y1, y2, entryHeight);
-	    this.centerListVertically = false;
+	    LOG.enter("TwoListsWidget");
+		this.centerListVertically = false;
 	    this.title = title;
 		this.parentScreen = parent;
 		this.widget = widget;
@@ -60,6 +61,7 @@ public class TwoListsWidget extends AlwaysSelectedEntryListWidget<ModListEntry> 
 		setScrollAmount(parentScreen.getScrollPercent() * Math.max(0, this.getMaxPosition() - (this.bottom - this.top - 4)));
 		client.textRenderer.getClass();
 		this.setRenderHeader(true, (int)(9.0F * 1.5F));
+		LOG.exit("TwoListsWidget");
 	}
 	
 	// Methods
