@@ -2,6 +2,8 @@ package com.github.goatgitter.modmanager.gui;
 
 import com.github.goatgitter.modmanager.ModManager;
 import com.github.goatgitter.modmanager.util.Conditional;
+import com.github.goatgitter.modmanager.util.ModListLoader;
+
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
 import net.fabricmc.loader.api.ModContainer;
@@ -30,11 +32,12 @@ public class Menu {
 		return null;
 	}
 
-	public static void addChild(ModContainer parentMod, ModContainer childMod)
+	public static void addChild(ModContainer childMod)
 	{
+		ModContainer thisModContainer = getThisMod();
 		ModMetadata metadata = childMod.getMetadata();
 		String id = metadata.getId();
-		boolean isLibrary = metadata.containsCustomValue("modmenu:api") && metadata.getCustomValue("modmenu:api").getAsBoolean();
+		boolean isLibrary = ModListLoader.isLibraryMod(metadata);
 		if (isLibrary) {
 			ModMenu.addLibraryMod(id);
 		}
@@ -54,7 +57,7 @@ public class Menu {
 			}
 		}
 		// Add mapping to Parent Map.
-		Conditional.add(ModMenu.PARENT_MAP,parentMod, childMod);
+		Conditional.add(ModMenu.PARENT_MAP,thisModContainer, childMod);
 		if (isLibrary) {
 			Conditional.add(ModMenu.CHILD_LIBRARIES,id);
 		} else {
@@ -65,9 +68,9 @@ public class Menu {
 
 	public static void removeChildEntry(ModListEntry modEntry)
 	{
-		ModContainer modMenuExtMod = getThisMod();
+		ModContainer thisModContainer = getThisMod();
 		ModContainer modToRemove = null;
-		for (ModContainer mod : ModMenu.PARENT_MAP.get(modMenuExtMod))
+		for (ModContainer mod : ModMenu.PARENT_MAP.get(thisModContainer))
 		{
 			String thisModId = mod.getMetadata().getId();
 			String modEntryId = modEntry.getMetadata().getId();
@@ -90,7 +93,7 @@ public class Menu {
 			ModMenu.CLIENTSIDE_MODS.remove(modId);
 			ModMenu.DEPRECATED_MODS.remove(modId);
 			ModMenu.PATCHWORK_FORGE_MODS.remove(modId);	
-			ModMenu.PARENT_MAP.remove(modMenuExtMod, modToRemove);
+			ModMenu.PARENT_MAP.remove(thisModContainer, modToRemove);
 		}
 		
 	}

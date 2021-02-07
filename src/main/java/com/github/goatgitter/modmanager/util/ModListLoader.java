@@ -28,6 +28,7 @@ import io.github.prospector.modmenu.gui.ModListEntry;
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.ModContainer;
+import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.discovery.ModCandidate;
 import net.fabricmc.loader.discovery.ModResolutionException;
 import net.fabricmc.loader.discovery.ModResolver;
@@ -324,7 +325,7 @@ public class ModListLoader {
 		return requiredModsMap;
 	}
 	
-	public boolean isRequiredMod(String modId)
+	public static boolean isRequiredMod(String modId)
 	{
 		boolean isRequiredMod = false;
 		Matcher matcher = FABRIC_PATTERN.matcher(modId);
@@ -332,7 +333,7 @@ public class ModListLoader {
 		return isRequiredMod;
 	}
 	
-	public boolean isLibraryMod(LoaderModMetadata metadata)
+	public static boolean isLibraryMod(ModMetadata metadata)
 	{
 		boolean isLibraryMod = false;
 		isLibraryMod = (metadata.containsCustomValue("modmenu:api") 

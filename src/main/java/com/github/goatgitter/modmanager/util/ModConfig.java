@@ -131,13 +131,17 @@ public class ModConfig {
 	
 	public static void requestLoad(ChildModEntry mod)
 	{
-		LOG.trace("Requested load of mod =>" + mod.getMetadata().getId() + ".");
+		String modId = getModId(mod);
+		LOG.trace("Requested load of mod =>" + modId + ".");
 		Path availListPath = modListLoader.getAvailModListFile();
 		Path selectedListPath = modListLoader.getSelectedModList();
 		Path srcJarPath = modListLoader.getModJarPath(mod.getContainer());
 		modListLoader.addJarToFile(selectedListPath, srcJarPath);
 		modListLoader.removeJarFromFile(availListPath, srcJarPath);
+		
 		loadMods();
+		ModContainer newModContainer = modListLoader.getMod(modId);
+		Menu.addChild(newModContainer);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -325,7 +329,7 @@ public class ModConfig {
 		{
 			// Add custom metadata to show the loaded mod as a child of this mod.
 			ModMetadata mm = childMod.getMetadata();
-			System.out.print(mm.getType());
+			LOG.trace(mm.getType());
 			try {
 				Map<String, CustomValue> cvUnmodifiableMap = (Map<String, CustomValue>) FieldUtils.readDeclaredField(mm, "customValues", true);
 				Map<String, CustomValue> cvMap = new HashMap<String, CustomValue> (cvUnmodifiableMap);
@@ -346,8 +350,8 @@ public class ModConfig {
 		
 		try {
 			// Add parent tag to any mods added to this mod
-			ModContainer modMenuExtMod = oldModMap.get(ModManager.MOD_ID);
-			for(NestedJarEntry nestedJar: modMenuExtMod.getInfo().getJars())
+			ModContainer thisModContainer = oldModMap.get(ModManager.MOD_ID);
+			for(NestedJarEntry nestedJar: thisModContainer.getInfo().getJars())
 			{
 				String jarFileName = modListLoader.getNestedJarFileName(nestedJar);
 				ModContainer nestedMod = modListLoader.getModForJar(jarFileName, oldMods);
