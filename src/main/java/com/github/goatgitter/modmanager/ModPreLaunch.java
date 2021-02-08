@@ -14,7 +14,15 @@ public class ModPreLaunch implements PreLaunchEntrypoint{
 	@Override
 	public void onPreLaunch() {
 		LOG.enter("onPreLaunch");
-		ModConfig.loadMods();
+		try {
+			ModConfig.loadMods();
+		}
+		catch(Exception e)
+		{
+			LOG.warn("Problem in onPreLaunch");
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 		LOG.exit("onPreLaunch");
 	}
 

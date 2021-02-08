@@ -162,9 +162,10 @@ public class ModConfig {
 			initMixins();
 			updateLoaderFields(oldModMap, oldMods, oldAdapterMap, oldGameDir,
 					oldEntrypointStorage, oldEntries);
-		} catch (IllegalAccessException e1) {
-			LOG.warn("How is this possible?");
-			e1.printStackTrace();
+		} catch (Exception e) {
+			LOG.warn("Error in loadMods");
+			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		LOG.exit("loadMods");
 	}
@@ -333,13 +334,14 @@ public class ModConfig {
 			try {
 				Map<String, CustomValue> cvUnmodifiableMap = (Map<String, CustomValue>) FieldUtils.readDeclaredField(mm, "customValues", true);
 				Map<String, CustomValue> cvMap = new HashMap<String, CustomValue> (cvUnmodifiableMap);
-				LOG.trace("Adding parent to mod id =>" + mm.getId());
+				LOG.debug("Adding parent to mod id =>" + mm.getId());
 				CustomValue cv = new CustomValueImpl.StringImpl(ModManager.MOD_ID);
 				cvMap.put(ModManager.MM_PARENT_KEY, cv);
 				FieldUtils.writeField(mm, "customValues", Collections.unmodifiableMap(cvMap), true);
-			} catch (IllegalAccessException e) {
+			} catch (Exception e) {
 				LOG.warn("Problem adding parent to mod => " + childMod.getInfo().getId());
 				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -370,7 +372,7 @@ public class ModConfig {
 				if (!ModListLoader.isLibraryMod(mod.getMetadata())
 						&& !oldModMap.containsKey(mod.getInfo().getId()))
 				{
-					LOG.trace("Adding!" + modId);
+					LOG.debug("Adding!" + modId);
 					addParentToMod(mod);
 					oldModMap.put(modId, mod);
 					oldMods.add(mod);
@@ -423,9 +425,10 @@ public class ModConfig {
 			FieldUtils.writeField(oldEntrypointStorage, "entryMap", oldEntries, true);
 			FieldUtils.writeField(fl, "entrypointStorage", oldEntrypointStorage, true);
 			
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
 			LOG.warn("Problem updating FabricLoader fields");
 			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		
 	}
