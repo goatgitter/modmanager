@@ -97,7 +97,7 @@ public class ModConfig {
 	{
 		boolean canTurnOff = true;
 		String modId = getModId(mod);
-		if (modListLoader.isRequiredMod(modId)) 
+		if (ModListLoader.isRequiredMod(modId)) 
 		{
 			canTurnOff = false;
 		}
@@ -333,6 +333,7 @@ public class ModConfig {
 			try {
 				Map<String, CustomValue> cvUnmodifiableMap = (Map<String, CustomValue>) FieldUtils.readDeclaredField(mm, "customValues", true);
 				Map<String, CustomValue> cvMap = new HashMap<String, CustomValue> (cvUnmodifiableMap);
+				LOG.trace("Adding parent to mod id =>" + mm.getId());
 				CustomValue cv = new CustomValueImpl.StringImpl(ModManager.MOD_ID);
 				cvMap.put(ModManager.MM_PARENT_KEY, cv);
 				FieldUtils.writeField(mm, "customValues", Collections.unmodifiableMap(cvMap), true);
@@ -365,8 +366,9 @@ public class ModConfig {
 			{
 				String modId = mod.getMetadata().getId();
 				LOG.trace("Checking changed mod id =>" + modId);
-				// Don't add the fabric api again
-				if (!modListLoader.isRequiredMod(modId) && !oldModMap.containsKey(mod.getInfo().getId()))
+				// Filter out required mods and library mods
+				if (!ModListLoader.isLibraryMod(mod.getMetadata())
+						&& !oldModMap.containsKey(mod.getInfo().getId()))
 				{
 					LOG.trace("Adding!" + modId);
 					addParentToMod(mod);
@@ -408,7 +410,7 @@ public class ModConfig {
 			for (ModContainer mod: oldMods)
 			{
 				String modId = mod.getMetadata().getId();
-				if (modListLoader.isRequiredMod(modId) && !modId.equals(ModListLoader.BASE_MOD_ID))
+				if (ModListLoader.isLibraryMod(mod.getMetadata()) && !modId.equals(ModListLoader.BASE_MOD_ID))
 				{
 					modsToRemove.add(mod);
 				}
