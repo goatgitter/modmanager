@@ -3,6 +3,6 @@
   "minVersion": "0.8",
   "package": "com.github.goatgitter.modmanager.mixin",
   "compatibilityLevel": "JAVA_8",
-  "client": ["UnloadMods"],
+  "client": ["ModMenuInit"],
   "injectors": {"defaultRequire": 1}
  }

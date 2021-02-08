@@ -17,6 +17,11 @@
   "icon": "assets/modmanager/icon.png",
 
   "environment": "*",
+  "custom": {
+    "modmenu": {
+       "icon": "assets/modmanager/icon.png"
+    }
+  },
   "entrypoints": {
     "client": ["com.github.goatgitter.modmanager.ModClient"],
     "modmenu": ["com.github.goatgitter.modmanager.gui.ConfigApiImpl"],

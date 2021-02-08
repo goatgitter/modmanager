@@ -27,8 +27,8 @@ import net.minecraft.util.Identifier;
  * 
  */
 @Mixin(ModsScreen.class)
-public class UnloadMods extends Screen{
-	private static final Log LOG = new Log("UnloadMods");
+public class ModMenuInit extends Screen{
+	private static final Log LOG = new Log("ModMenuInit");
 	private int paneY = 48;
 	private int buttonHeight = 20;
 	private int buttonWidth = 32;
@@ -38,7 +38,7 @@ public class UnloadMods extends Screen{
 	private static final TranslatableText TEXT_REFRESH_TOOLTIP = new TranslatableText(ModManager.MOD_ID + ".refresh.tooltip");
 	private static final Identifier UNLOAD_BTN_IMG = new Identifier(ModManager.MOD_ID, "button.png");
 	private static final Identifier REFRESH_BTN_IMG = new Identifier(ModManager.MOD_ID, "refresh.png");
-	public UnloadMods(Text title) {
+	public ModMenuInit(Text title) {
 		super(title);
 	}
 	@Inject(at = @At("RETURN"), method = "init()V")
