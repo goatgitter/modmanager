@@ -27,7 +27,6 @@ import io.github.prospector.modmenu.util.HardcodedUtil;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.texture.NativeImage;
@@ -59,9 +58,10 @@ public class ModsScreenMixin extends Screen{
 		super(title);
 	}
 	
-	@Inject(at = @At("RETURN"), method = "render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V")
+	@Inject(at = @At("INVOKE"), method = "render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V")
 	public void drawIcon(CallbackInfo info) {	
 		LOG.enter("drawIcon");
+		
 		if (selected instanceof ParentEntry)
 		{
 			ParentEntry entry = (ParentEntry) selected;
@@ -69,11 +69,11 @@ public class ModsScreenMixin extends Screen{
 		}
 		LOG.exit("drawIcon");
 	}
-
+	
 	private void bindIconTexture(ParentEntry entry) {
 		ModMetadata metadata = entry.getMetadata();
 		Identifier iconLocation = new Identifier("modmenu", metadata.getId() + "_icon");
-		NativeImageBackedTexture icon = this.createIcon(entry);
+		NativeImageBackedTexture icon = this.createIconWithoutCache(entry);
 		if (icon != null) {
 			this.client.getTextureManager().registerTexture(iconLocation, icon);
 		} else {
@@ -83,8 +83,8 @@ public class ModsScreenMixin extends Screen{
 		this.client.getTextureManager().bindTexture(iconLocation);
 	}
 	
-	private NativeImageBackedTexture createIcon(ParentEntry entry) {
-		ModMetadata metadata = entry.getMetadata();
+	private ModContainer getModContainer(ModMetadata metadata)
+	{
 		ModContainer container = null;
 		for(ModContainer mod:modList.getCurrentModSet())
 		{
@@ -94,10 +94,17 @@ public class ModsScreenMixin extends Screen{
 				break;
 			}
 		}
+		return container;
+	}
+	
+	private NativeImageBackedTexture createIconWithoutCache(ParentEntry entry) {
+		ModMetadata metadata = entry.getMetadata();
+		ModContainer container = getModContainer(metadata);
+		
 		if (container != null)
 		{
 			try {
-				Path path = container.getPath(metadata.getIconPath(64 * MinecraftClient.getInstance().options.guiScale).orElse("assets/" + metadata.getId() + "/icon.png"));
+				Path path = container.getPath(metadata.getIconPath(64 * client.options.guiScale).orElse("assets/" + metadata.getId() + "/icon.png"));
 				
 				if (!Files.exists(path)) {
 					ModContainer modMenu = FabricLoader.getInstance().getModContainer(ModMenu.MOD_ID).orElseThrow(IllegalAccessError::new);
