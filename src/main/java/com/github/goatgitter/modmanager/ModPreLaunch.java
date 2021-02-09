@@ -3,6 +3,7 @@ package com.github.goatgitter.modmanager;
 import com.github.goatgitter.modmanager.util.Log;
 import com.github.goatgitter.modmanager.util.ModConfig;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
+import net.fabricmc.loader.gui.FabricGuiEntry;
 /**
  * 
  * @author GoatGitter
@@ -17,11 +18,11 @@ public class ModPreLaunch implements PreLaunchEntrypoint{
 		try {
 			ModConfig.loadMods();
 		}
-		catch(Exception e)
+		catch(Exception exception)
 		{
 			LOG.warn("Problem in onPreLaunch");
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			exception.printStackTrace();
+			FabricGuiEntry.displayCriticalError(exception, true);
 		}
 		LOG.exit("onPreLaunch");
 	}
