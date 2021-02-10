@@ -18,6 +18,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,6 +26,7 @@ import com.github.goatgitter.modmanager.config.Props;
 
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.gui.ModListEntry;
+import net.fabricmc.accesswidener.AccessWidener;
 import net.fabricmc.accesswidener.AccessWidenerReader;
 import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.ModContainer;
@@ -424,20 +426,52 @@ public class ModListLoader {
 	}
 	
 	public void loadAccessWideners() {
-		AccessWidenerReader accessWidenerReader = new AccessWidenerReader(fl.getAccessWidener());
+		AccessWidenerReader accessWidenerCurrentReader = new AccessWidenerReader(fl.getAccessWidener());
+		
 		for (net.fabricmc.loader.api.ModContainer modContainer : fl.getAllMods()) {
 			LoaderModMetadata modMetadata = (LoaderModMetadata) modContainer.getMetadata();
 			String accessWidener = modMetadata.getAccessWidener();
 
 			if (accessWidener != null) {
 				Path path = modContainer.getPath(accessWidener);
-
-				try (BufferedReader reader = Files.newBufferedReader(path)) {
-					
-					accessWidenerReader.read(reader, "intermediary");
-				} catch (Exception e) {
-					throw new RuntimeException("Failed to read accessWidener file from mod " + modMetadata.getId(), e);
+				BufferedReader reader = null;
+				try {
+					reader = Files.newBufferedReader(path);
+					try  {
+						accessWidenerCurrentReader.read(reader, fl.getMappingResolver().getCurrentRuntimeNamespace());
+					} catch (RuntimeException e) {
+						try {
+							// Reset reader and try namespace intemediary
+							reader = Files.newBufferedReader(path);
+							AccessWidener accessWidenerIntemediary = new AccessWidener();
+							FieldUtils.writeField(accessWidenerIntemediary, "namespace", "intermediary", true);
+							AccessWidenerReader accessWidenerIntemediaryReader = new AccessWidenerReader(accessWidenerIntemediary);
+							accessWidenerIntemediaryReader.read(reader, "intermediary");
+						}
+						catch (Exception e2)
+						{
+							throw new RuntimeException("Failed to read accessWidener file from mod " + modMetadata.getId(), e);
+						}
+						
+					} catch (IOException e) {
+						throw new RuntimeException("Failed to read accessWidener file from mod " + modMetadata.getId(), e);
+					}
+				} catch (IOException e1) {
+					throw new RuntimeException("Unable to open file " + path.getFileName().toString(), e1);
 				}
+				finally
+				{
+					try {
+						if (reader != null)
+						{
+							reader.close();
+							reader=null;
+						}
+					} catch (IOException e) {
+						throw new RuntimeException("Unable to close file " + path.getFileName().toString(), e);
+					}
+				}
+				
 			}
 		}
 	}
